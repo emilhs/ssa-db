@@ -3,12 +3,12 @@
     session_start();
     
     // Create constants to store non-repeating values
-    //Get Heroku ClearDB connection information
+    // Get Heroku ClearDB connection information
     $cleardb_url = parse_url(getenv("CLEARDB_DATABASE_URL"));
     $cleardb_server = $cleardb_url["jj820qt5lpu6krut.cbetxkdyhwsb.us-east-1.rds.amazonaws.com"];
-    $cleardb_username = $cleardb_url["fknimuhilplydf54"];
+    $cleardb_username = $cleardb_url["g5epois4jr3fvwjm"];
     $cleardb_password = $cleardb_url["fknimuhilplydf54"];
-    $cleardb_db = substr($cleardb_url["path"],1);
+    $cleardb_db = substr($cleardb_url["i4zt2ijecbj7ykgu"],1);
     $active_group = 'default';
     $query_builder = TRUE;
     // Connect to DB
