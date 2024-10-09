@@ -3,14 +3,18 @@
     session_start();
     
     // Create constants to store non-repeating values
-    define('SITEURL', 'http://localhost/ssa-db/');
-    define('LOCALHOST', 'localhost');
-    define('DB_USERNAME', 'root');
-    define('DB_PASSWORD', '');
-    define('DB_NAME', 'new_ssa_db');
-
-    $conn = mysqli_connect(LOCALHOST, DB_USERNAME, DB_PASSWORD) or (mysqli_error()); //Database Connection    
-    $db_select = mysqli_select_db($conn, DB_NAME) or die(mysqli_error()); //Selecting Database
+    //Get Heroku ClearDB connection information
+    $cleardb_url = parse_url(getenv("CLEARDB_DATABASE_URL"));
+    $cleardb_server = $cleardb_url["host"];
+    $cleardb_username = $cleardb_url["user"];
+    $cleardb_password = $cleardb_url["pass"];
+    $cleardb_db = substr($cleardb_url["path"],1);
+    $active_group = 'default';
+    $query_builder = TRUE;
+    // Connect to DB
+    $conn = mysqli_connect($cleardb_server, $cleardb_username, $cleardb_password, $cleardb_db);
+    
+    //$db_select = mysqli_select_db($conn, DB_NAME) or die(mysqli_error()); //Selecting Database
     
     $letters = array("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z");
     $ages = array("Active Start", "6-8", "9-10", "11", "12", "13", "B1", "B2", "A1", "A2", "M", "F");
