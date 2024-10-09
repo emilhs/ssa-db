@@ -5,7 +5,6 @@
     // Create constants to store non-repeating values
     //Get Heroku ClearDB connection information
     $cleardb_url = parse_url(getenv("JAWSDB_URL"));
-    print_r($cleardb_url);
     $cleardb_server = $cleardb_url["host"];
     $cleardb_username = $cleardb_url["user"];
     $cleardb_password = $cleardb_url["pass"];
