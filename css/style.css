@@ -1,0 +1,352 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Arimo:ital,wght@0,400..700;1,400..700&display=swap');
+
+body {
+    display: block;
+}
+
+a, a:hover, a:visited{
+    text-decoration: none;
+    margin: 0;
+}
+
+.text-center{
+    text-align: center;
+}
+
+.login {
+    margin: 0;
+    background-color:  rgb(235, 235, 235);
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #435664;
+}
+
+.enterbtn{    
+    background-color: white;
+    text-decoration: none;
+    border: none;
+    font-size: 18px;
+    border-radius: 6px;
+    padding: 8px;
+    padding-left: 20px;
+    padding-right: 20px;
+    margin-top: 16px;
+    border: 1px solid #435664;
+    box-shadow: 0px 0px black;
+    /* box-shadow: 1px 1px 2px black; */
+}
+
+.enterbtn:hover{
+    font-size: 18px;
+    border-radius: 6px;
+    padding: 8px;
+    padding-left: 20px;
+    padding-right: 20px;
+    margin-top: 16px;
+    box-shadow: 0px 0px black;
+    color: white;
+    background-color: #199bff;
+}
+
+
+.arimo {
+    font-family: "Arimo", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 200;
+    font-style: normal;
+}
+.bebas-neue {
+    font-family: "Bebas Neue", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.darktext{
+    color: #435664;
+}
+.bluetext{
+    color: #199bff;
+}
+.greytext{
+    color: #97a4ae;
+}
+.whitetext{
+    color:white;
+}
+.blacktext{
+    color: black;
+}
+
+.header{
+    display: flex;
+    justify-content: space-between;
+    padding-top: 15px;
+    padding-left: 50px;
+    padding-right: 50px;
+}
+.left, .right {
+    margin:0;
+    align-items: center; /* Vertically align items */
+    gap: 15px; /* Adjust spacing between image and text as needed */
+}
+.left {
+    display: flex;
+    min-width: 900px;
+}
+.right {
+    font-size: 25px;
+    text-align: right;
+}
+
+
+#homelogo {
+    height: 60px; /* Keep aspect ratio */
+    width: auto; /* Adjust image size */
+}
+#title {
+    padding-top: 8px;
+    font-size: 60;
+    margin: 0; /* Remove default margin */
+    line-height: 1.0; /* Adjust line spacing */
+}
+.header{
+    background-color: white;
+    padding-bottom: 15px;
+}
+
+.menuH{
+    border: 0px solid black;
+    text-align: center;
+}
+
+.filesubmission{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.pagetitle{
+    margin: 10;
+    text-align: center;
+    font-size: 40px;
+}
+
+.letterbutton, .letterbutton-selected, .letterbutton-selected:hover, .letterbutton:hover{
+    display: inline-block;
+    font-size: 40px;
+    font-weight: 600;
+    padding: 10px 0;
+    width: 40px;
+    height: 40px;
+    margin: 3px;
+    border-radius: 6px;
+    line-height: 1.15;
+}
+
+.letterbutton:hover, .letterbutton-selected, .letterbutton-selected:hover{
+    color:white;
+    background-color: #199bff;
+}
+
+.yearbtn, .yearbtn-selected, .yearbtn-selected:hover, .yearbtn:hover{
+    display: inline-block;
+    font-size: 30px;
+    font-weight: 400;
+    padding: 15px;
+    margin: 3px;
+    border-radius: 6px;
+    line-height: 1.15;
+}
+
+.yearbtn:hover, .yearbtn-selected, .yearbtn-selected:hover{
+    color:white;
+    background-color: #199bff;
+}
+
+.medsize{
+    font-size: 25px;
+}
+.smallsize{
+    font-size: 20px;
+    margin-bottom: 8px;
+    margin-top: 8px;
+}
+
+.intextlink{
+    color: inherit;
+    font-weight: bold;
+}
+
+.dangertext{
+    color: darkred;
+}
+
+.desc{
+    margin: 0;
+    text-align: center;
+    font-size: 18px;
+}
+
+.header img{
+    height: 60px;
+    width: auto;
+}
+
+.homebtn{    
+    display: block;
+    font-size: 80px;
+    border-radius: 6px;
+    padding: 20px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    /* border: 1px solid #435664; */
+    box-shadow: 0px 0px black;
+    /* box-shadow: 1px 1px 2px black; */
+}
+
+.homebtn:hover{
+    display: block;
+    font-size: 80px;
+    border-radius: 6px;
+    padding: 20px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0px 0px black;
+    color: white;
+    background-color: #199bff;
+}
+
+.selector-label{
+    display: block;
+    background-color: #435664;
+    border-radius: 6px;
+    padding: 8px;
+}
+
+.padded {
+    display: block;
+    padding: 12px;
+}
+
+.top-selector-label{
+    margin-top: 0;
+}
+
+.selectorbtn{
+    display: inline-block;
+    font-size: 18px;
+    border-radius: 6px;
+    padding: 10px;
+    /* border: 1px solid #435664; */
+    box-shadow: 0px 0px black;
+}
+
+.selectorbtn-selected, .selectorbtn-selected:hover, .selectorbtn:hover{
+    display: inline-block;
+    font-size: 18px;
+    border-radius: 6px;
+    padding: 10px;
+    /* border: 1px solid #435664; */
+    box-shadow: 0px 0px black;
+    color: white;
+    background-color: #199bff;
+}
+
+.buttons{
+    height: fit-content;    
+    position: absolute;
+
+    top:0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    
+    margin: auto;
+    margin-left: 50px;
+    margin-right: 50px;
+}
+
+.resultspage{
+    display: flex;
+    text-align: center;
+    margin-bottom: 0;
+}
+
+.searchresult{
+    font-size: 24px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: left;
+    border-collapse: collapse;
+}
+
+.rankresult{
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+}
+.rankresult, .rankresult td, .rankresult th{
+    font-size: 10px;
+    text-align: left;
+    border-collapse: collapse;
+    padding: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+.odd{
+    margin: 15px;
+    background-color: rgb(235, 235, 235)
+}
+
+.searchresult th, .searchresult td, .searchresult tr{
+    padding: 10px;
+    padding-left: 25px;
+    padding-right: 25px;
+}
+.searchresult td{
+    padding-top: 15px;
+}
+
+.toprow{
+    color:white;
+    font-weight: 400;
+    margin: 15px;
+    background-color: #435664;
+}
+.row-mid{
+    border-left: 1px solid #435664;
+    border-right: 1px solid #435664;
+}
+.row-left{
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+}
+.row-right{
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+.options {width: 35%; padding-bottom: 10px; border: 0px solid black; margin: 5px; border-radius: 6px;}
+.ranking {width: 65%; border: 0px solid black; margin: 5px; border-radius: 6px;}
+.ui-container{
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    padding-left: 25px;
+    padding-right: 25px;
+}
+
+.fixedfooter {
+    position: fixed;
+    left: 0;
+    bottom: 10;
+    width: 100%;
+  }
+
+  .footer {
+    padding-top: 65;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
