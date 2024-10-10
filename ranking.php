@@ -12,8 +12,11 @@ if (isset($_GET['d'])){
     asort($currDists);
     $currDists = array_values($currDists);
 }
+if (isset($_GET['g'])){
+    $currGender = $_GET['g'];
+}
 if (isset($_GET['aC'])){
-    $currAgeCat = $_GET["aC"]; 
+    $currCat = $_GET["aC"]; 
 }
 if (isset($_GET['t'])){
     $currTrack = $_GET["t"]; 
@@ -54,9 +57,22 @@ else {
                 if($count2 > 0){
                     while($rows2 = mysqli_fetch_assoc($result2)){
                         $season = $rows2['season'];
-                        ?>
-                        <a class = "bebas-neue darktext selectorbtn" href = "ranking.php?y=<?php echo $season; ?>"><?php echo ($season-1); ?>-<?php echo $season; ?></a>
-                        <?php 
+                        if ($season == $currSeason){
+                            $url = "y=&aC=".$currCat."&a=".$currAge."&g=".$currGender."&t=".$currTrack."&d=".implode("m", $currDists);
+                            ?>
+                            <a class = "bebas-neue darktext selectorbtn-selected" href = "ranking.php?<?php echo $url; ?>">
+                                <?php echo ($season-1); ?>-<?php echo $season; ?>
+                            </a>
+                            <?php 
+                        }
+                        else {
+                            $url = "y=".$season."&aC=".$currCat."&a=".$currAge."&g=".$currGender."&t=".$currTrack."&d=".implode("m", $currDists);
+                            ?>
+                            <a class = "bebas-neue darktext selectorbtn" href = "ranking.php?<?php echo $url;?>">
+                                <?php echo ($season-1); ?>-<?php echo $season; ?>
+                            </a>
+                            <?php 
+                        }
                     }
                 }
             }
@@ -64,18 +80,59 @@ else {
         <p class = "selector-label bebas-neue whitetext text-center smallsize">Select <span class = "whitetext">Age Category:</span></p>
         <?php
             foreach ($ageCats as $c){
-                ?>
-                <a class = "bebas-neue darktext selectorbtn" href = "ranking.php?aC=<?php echo $c; ?>"><?php echo $c; ?></a>
-                <?php 
+                if ($c == $currCat){
+                    $url = "y=".$currSeason."&aC=&a=".$currAge."&g=".$currGender."&t=".$currTrack."&d=".implode("m", $currDists);
+                    ?>
+                    <a class = "bebas-neue darktext selectorbtn-selected" href = "ranking.php?<?php echo $url; ?>"><?php echo $c; ?></a>                    <?php 
+                }
+                else {
+                    $url = "y=".$currSeason."&aC=".$c."&a=".$currAge."&g=".$currGender."&t=".$defaultTrack[$c]."&d=".$defaultRank[$c];
+                    ?>
+                    <a class = "bebas-neue darktext selectorbtn" href = "ranking.php?<?php echo $url; ?>"><?php echo $c; ?></a>
+                    <?php 
+                }
             }
         ?>
         <p class = "selector-label bebas-neue whitetext text-center smallsize">Select <span class = "whitetext">Age:</span></p>
         <?php
             if ($currCat != NULL){
-                foreach ($ages as $a){
-                    ?>
-                    <a class = "bebas-neue darktext selectorbtn" href = "ranking.php?a=<?php echo $a; ?>"><?php echo $a; ?></a>
-                    <?php 
+                foreach ($ageSort[$currCat] as $a){
+                    if (sizeof($ageSort[$currCat]) == 1 or $currAge == $a){
+                        $currAge = $a;
+                        $url = "y=".$currSeason."&aC=".$currCat."&a=&g=".$currGender."&t=".$currTrack."&d=".implode("m",$currDists);
+                        ?>
+                        <a class = "bebas-neue darktext selectorbtn-selected" href = "ranking.php?<?php echo $url; ?>"><?php echo $a; ?></a>
+                        <?php 
+                    }
+                    else {
+                        $url = "y=".$currSeason."&aC=".$currCat."&a=".$a."&g=".$currGender."&t=".$currTrack."&d=".implode("m",$currDists);
+                        ?>
+                        <a class = "bebas-neue darktext selectorbtn" href = "ranking.php?a=<?php echo $url; ?>"><?php echo $a; ?></a>
+                        <?php 
+                    }
+                }
+            }
+            else {
+                ?><p class = "arimo darktext text-center padded smallsize">Select an age category to see more</p><?php
+            }
+        ?>
+        <p class = "selector-label bebas-neue whitetext text-center smallsize">Select <span class = "whitetext">Gender:</span></p>
+        <?php
+            if ($currCat != NULL){
+                foreach ($genderSort[$currCat] as $g){
+                    if (sizeof($genderSort[$currCat]) == 1 or $currGender == $g){
+                        $currGender = $g;
+                        $url = "y=".$currSeason."&aC=".$currCat."&a=".$currAge."&g=&t=".$currTrack."&d=".implode("m",$currDists);
+                        ?>
+                        <a class = "bebas-neue darktext selectorbtn-selected" href = "ranking.php?<?php echo $url; ?>"><?php echo $g; ?></a>
+                        <?php 
+                    }
+                    else {
+                        $url = "y=".$currSeason."&aC=".$currCat."&a=".$currAge."&g=".$g."&t=".$currTrack."&d=".implode("m",$currDists);
+                        ?>
+                        <a class = "bebas-neue darktext selectorbtn" href = "ranking.php?<?php echo $url; ?>"><?php echo $g; ?></a>
+                        <?php 
+                    }
                 }
             }
             else {
@@ -87,12 +144,13 @@ else {
             foreach (array(100, 111) as $t){
                 if ($currTrack == $t){
                     ?>
-                    <a class = "bebas-neue whitetext selectorbtn-selected" href = "ranking.php?d=<?php echo implode("m", $currDists); ?>&t=<?php echo $t?>"><?php echo $t; ?></a>
+                    <a class = "bebas-neue whitetext selectorbtn-selected" href = ""><?php echo $t; ?></a>
                     <?php
                 }
                 else {
+                    $url = "y=".$currSeason."&aC=".$currCat."&a=".$currAge."&g=".$g."&t=".$currTrack."&d=".implode("m",$currDists);
                     ?>
-                    <a class = "bebas-neue darktext selectorbtn" href = "ranking.php?d=<?php echo implode("m", $currDists); ?>&t=<?php echo $t?>"><?php echo $t; ?></a>
+                    <a class = "bebas-neue darktext selectorbtn" href = "ranking.php?<?php echo $url; ?>"><?php echo $t; ?></a>
                     <?php
                 }
             }
@@ -102,13 +160,15 @@ else {
             if ($currTrack != NULL){
                 foreach ($avaldists as $d){
                     if (in_array($d, $currDists)){
+                        $url = "y=".$currSeason."&aC=".$currCat."&a=".$currAge."&g=".$currGender."&t=".$currTrack."&d=".implode("m", array_diff($currDists, array($d)));
                         ?>
-                        <a class = "bebas-neue whitetext selectorbtn-selected" href = "ranking.php?d=<?php echo implode("m", array_diff($currDists, array($d))); ?>&t=<?php echo $currTrack?>"><?php echo $d; ?></a>
+                        <a class = "bebas-neue whitetext selectorbtn-selected" href = "ranking.php?d=<?php echo $url; ?>"><?php echo $d; ?></a>
                         <?php 
                     }
                     else{
+                        $url = "y=".$currSeason."&aC=".$currCat."&a=".$currAge."&g=".$currGender."&t=".$currTrack."&d=".implode("m", array_merge($currDists, array($d)));
                         ?>
-                        <a class = "bebas-neue darktext selectorbtn" href = "ranking.php?d=<?php echo implode("m", array_merge($currDists, array($d))); ?>&t=<?php echo $currTrack?>"><?php echo $d; ?></a>
+                        <a class = "bebas-neue darktext selectorbtn" href = "ranking.php?<?php echo $url; ?>"><?php echo $d; ?></a>
                         <?php 
                     }
                 }

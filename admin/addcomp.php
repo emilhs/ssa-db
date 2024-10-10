@@ -1,7 +1,8 @@
 <?php include('navbar.php'); ?>
 
-<html>
-<body>
+<div class = "menuH">
+    <p class = "bebas-neue darktext pagetitle">Submit Results to SSA Database</p>
+
 <?php 
 if (isset($_POST["submit"]) ) {
     if (isset($_FILES["csv"])) {
@@ -12,29 +13,45 @@ if (isset($_POST["submit"]) ) {
             $filename = $_FILES["csv"]["tmp_name"];
             $file = fopen($filename, "r");
             ?>
-            <p>The following competition will be added to the database:</p>
+            <br>
+            <p class = "arimo darktext smallsize">The following competition will be added to the database:</p>
             <form action="addingcomp.php" method="post" enctype="multipart/form-data">
             
             <?php
             if (($getData = fgetcsv($file, 10000, ",")) !== FALSE){ ?>
-                <table>
-                    <tr>
-                        <th><p>Location:</p></th>
-                        <th><p>Competition Name:</p></th>
-                        <th><p>Discipline:</p></th>
+                <br>
+                <table class = "searchresult darktext arimo">
+                    <tr class = "toprow smallsize">
+                        <th class = "row-left"><p>Location:</p></th>
+                        <th class = "row-mid"><p>Competition Name:</p></th>
+                        <th class = "row-right"><p>Discipline:</p></th>
                     </tr>   
                     <tr>
-                        <th><input type = "text" name = "location"></input></th>
-                        <th><input type = "text" name = "compName" value = "<?php echo $getData[1]; ?>"></input></th>
-                        <th><input type = "text" name = "disc" value = "<?php echo $getData[2]; ?>"></input></th>
+                        <th><input class = "filltable login" type = "text" name = "location"></input></th>
+                        <th><input class = "filltable login" type = "text" name = "compName" value = "<?php echo $getData[1]; ?>"></input></th>
+                        <th><input class = "filltable login" type = "text" name = "disc" value = "<?php echo $getData[2]; ?>"></input></th>
                     </tr>   
                 </table>
                 <?php
                 rewind($file);
             }
             ?>
-            <p>The following data will be added to the database:</p>
-            <table>
+            <br>
+            <p class = "arimo darktext smallsize">The following data will be added to the database:</p>
+            <br>
+            <table class = "darktext rankresult arimo">
+                <tr class = "toprow">
+                    <td class = "row-left">Age</td>
+                    <td class = "row-mid">Age Category</td>
+                    <td class = "row-mid">Gender</td>
+                    <td class = "row-mid">Name</td>
+                    <td class = "row-mid">Surname</td>
+                    <td class = "row-mid">Club</td>
+                    <td class = "row-mid">Distance</td>
+                    <td class = "row-mid">Track</td>
+                    <td class = "row-right">Time</td>
+                </tr>
+
             <?php
             $olddate = "";
             $dates = array();
@@ -43,6 +60,7 @@ if (isset($_POST["submit"]) ) {
             $skaters = array();
             $counter = 0;
 
+            $displayNum = 1;
             while (($getData = fgetcsv($file, 10000, ",")) !== FALSE){
                 $date = date("Ymd", strtotime($getData[3]));
 
@@ -136,22 +154,25 @@ if (isset($_POST["submit"]) ) {
                     <?php
                 }
 
+            $displayNum++;
             }
             ?>
             </table>
             <input type = "hidden" value = "<?php echo $topass; ?>" name = "skaters">
             <input type = "hidden" value="<?php echo $season?>" name="season">
-            <input type = "submit" value="Upload Competition" name="upload"></input>
+            <input class = "filesubmission-wide darktext bebas-neue" type = "submit" value="Upload Competition" name="upload"></input>
             </form>
             <?php
         }
     }
 }
-else {
-    echo "No file";
+else { 
+    ?>
+    <p class = "bebas-neue dangertext pagetitle">File not found!</p>
+<?php 
 }
-
 ?>
+</div>
 
 </body>
 </html>

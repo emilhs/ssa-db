@@ -1,4 +1,4 @@
-<?php include('navbar.php');
+<?php include('navbar.php'); 
 
 $fValid = FALSE;
 $lValid = FALSE;
@@ -19,119 +19,89 @@ if (isset($_GET['l'])){
 ?>
 
 <body>
-<div>
-    <div><p>find a skater</p></div>
-    <p>first name begins with:</p>
+<div class = "menuH">
+    <p class = "bebas-neue darktext pagetitle">Skater Search</p>
+    <p class = "arimo desc darktext ">Only skaters that raced one of the <a class = "intextlink" href = "competitions.php">competitions</a> in the database can be found.</p>
+    <p class = "bebas-neue darktext text-center medsize">First Name:</p>
     <div><?php 
         foreach ($letters as $x){ 
-            if ($lValid){
                 if ($x == $flet){ 
                     ?>
-                    <a href="viewskaters.php?l=<?php echo $llet?>"><?php echo $x?></a>
+                    <a class = "letterbutton-selected bebas-neue darktext" href="viewskaters.php?l=<?php echo $llet?>"><?php echo $x?></a>
                     <?php 
                 }else{ 
                     ?>
-                    <a href="viewskaters.php?f=<?php echo $x?>&l=<?php echo $llet;?>"><?php echo $x?></a>
+                    <a class = "letterbutton bebas-neue darktext" href="viewskaters.php?f=<?php echo $x?>&l=<?php echo $llet;?>"><?php echo $x?></a>
                     <?php 
                 }
-            }
-            else {
-                if ($x == $flet){ 
-                    ?>
-                    <a href="viewskaters.php"><?php echo $x?></a>
-                    <?php 
-                }else{ 
-                    ?>
-                    <a href="viewskaters.php?f=<?php echo $x;?>"><?php echo $x?></a>
-                    <?php 
-                }
-            }
         } ?>
     </div>
-    <p class = "selector">last name begins with:</p>
-    <div class = "letterset text-center"><?php 
+    <p class = "bebas-neue darktext text-center medsize">Last Name:</p>
+    <div><?php 
         foreach ($letters as $x){
-            if ($fValid){
                 if ($x == $llet){ 
                     ?>
-                    <a href="viewskaters.php?f=<?php echo $flet?>"><?php echo $x?></a>
+                    <a class = "letterbutton-selected bebas-neue darktext" href="viewskaters.php?f=<?php echo $flet?>"><?php echo $x?></a>
                     <?php 
                 }else{ 
                     ?>
-                    <a href="viewskaters.php?f=<?php echo $flet?>&l=<?php echo $x;?>"><?php echo $x?></a>
+                    <a class = "letterbutton bebas-neue darktext" href="viewskaters.php?f=<?php echo $flet?>&l=<?php echo $x;?>"><?php echo $x?></a>
                     <?php 
                 }
-            }
-            else {
-                if ($x == $llet){ 
-                    ?>
-                    <a href="viewskaters.php"><?php echo $x?></a>
-                    <?php 
-                }else{ 
-                    ?>
-                    <a href="viewskaters.php?l=<?php echo $x;?>"><?php echo $x?></a>
-                    <?php 
-                }
-            }
         } ?>
     </div>
-</div>
-
+    <p class = "bebas-neue darktext text-center medsize">Skaters:</p>
+        <?php
+        if ($fValid or $lValid){
+                if ($fValid and $lValid){
+                    $sql = "SELECT * FROM skaters WHERE fName LIKE '$flet%' AND lName LIKE '$llet%' ORDER BY lName, fName;";
+                }
+                else if ($lValid){
+                    $sql = "SELECT * FROM skaters WHERE lName LIKE '$llet%' ORDER BY lName, fName;";
+                }
+                else if ($fValid){
+                    $sql = "SELECT * FROM skaters WHERE fName LIKE '$flet%' ORDER BY lName, fName;";
+                }
+                $result = mysqli_query($conn, $sql) or die(mysqli_error());
+                $count = mysqli_num_rows($result);
+                $displayNum = 1;
+                if($count > 0) {
+                            ?>
+                            <table class = "darktext searchresult arimo">
+                                <tr class = "toprow">
+                                    <th class = "row-left">First Name</th>
+                                    <th class = "row-mid">Last Name</th>
+                                    <th class = "row-right">Club</th>
+                                </tr>    
+                            <?php
+                            // For everything in the database, display
+                            while($rows = mysqli_fetch_assoc($result)){
+                                // Store database details in variables. 
+                                $fName = $rows['fName'];
+                                $lName = $rows['lName'];
+                                $club = $rows['club'];
+                                $skaterID = $rows['skaterID'];
+                                # $cumTime = $rows['cumTime'];
+                                ?>
+                                <tr <?php if($displayNum%2==0){?> class = "odd" <?php } ?> onclick="window.location='editskater.php?id=<?php echo $skaterID?>';">
+                                    <td class = "row-left"><?php echo $fName; ?></td>
+                                    <td><?php echo $lName; ?></td>
+                                    <td class = "row-right"><?php echo $club; ?></td>
+                                </tr>
+                            <?php
+                            $displayNum++;
+                            }?>
+                    </table></div><?php
+                }
+                else{?>
+                    <p class = "arimo darktext text-center medsize">No skaters found for the selected letter(s)</p>
+                <?php }
+        } 
+        else {
+        ?>
+    <p class = "arimo darktext text-center medsize">Search for a skater by their first name or last name</p>
     <?php
-    if ($fValid or $lValid){
-        if ($fValid and $lValid){
-            $sql = "SELECT * FROM skaters WHERE fName LIKE '$flet%' AND lName LIKE '$llet%';";
         }
-        else if ($lValid){
-            $sql = "SELECT * FROM skaters WHERE lName LIKE '$llet%';";
-        }
-        else if ($fValid){
-            $sql = "SELECT * FROM skaters WHERE fName LIKE '$flet%';";
-        }
-        $result = mysqli_query($conn, $sql) or die(mysqli_error());
-        $count = mysqli_num_rows($result);
-        $displayNum = 1;
-        if($count > 0) {
-                    ?>
-                    <br>
-                    <table>
-                        <tr>
-                            <td>First Name</td>
-                            <td>Last Name</td>
-                            <td>Club</td>
-                        </tr>    
-                    <?php
-                    // For everything in the database, display
-                    while($rows = mysqli_fetch_assoc($result)){
-                        // Store database details in variables. 
-                        $fName = $rows['fName'];
-                        $lName = $rows['lName'];
-                        $club = $rows['club'];
-                        $skaterID = $rows['skaterID'];
-                        # $cumTime = $rows['cumTime'];
-                        ?>
-                        <tr onclick="window.location='skaterprofile.php?id=<?php echo $skaterID?>';">
-                            <td><?php echo $fName; ?></td>
-                            <td><?php echo $lName; ?></td>
-                            <td><?php echo $club; ?></td>
-                        </tr>
-                    <?php
-                    }?>
-            </table></div><?php
-        }
-    }
-    ?>
-<a href ="index.php" class = "btn sm-splash text-center">go home</a>
-<script>
-    const advancedCheckbox = document.getElementById('advanced');
-    const advancedOptions = document.getElementById('advancedOptions');
-
-    advancedCheckbox.addEventListener('change', function() {
-        if (this.checked) {
-            advancedOptions.style.display = 'block';
-        } else {
-            advancedOptions.style.display = 'none';
-        }
-    });
-</script>
-</body>
+        ?>
+</div>
+<?php include('../footer.php');

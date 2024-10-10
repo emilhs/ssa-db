@@ -157,15 +157,19 @@ if (isset($_POST["upload"]) ) {
                         }
                     }
                 }
-                
-                echo "success";
-                echo "uploaded data can be viewed by users and edited by admins now";
 
                 ?>
-                
-                <a href = "index.php">return to add more competitions</a>
-                <a href = "viewcomps.php">view and edit existing competitions</a>
-                <a href = "viewskater.php">view and edit skater information</a>
+                    <div class = "menuH">
+                    <p class = "bebas-neue darktext pagetitle">Success!</p>
+                    <p class = "arimo darktext medsize">Uploaded data can now be viewed by users and edited by admins.</p>
+                    <div class = "buttons text-center">
+                    <a class = "bebas-neue filesubmission-long darktext" href = "submit.php">Add Another Competition</a>
+                    <br>
+                    <a class = "bebas-neue filesubmission-long darktext" href = "viewskaters.php">Edit Skaters</a>
+                    <br>
+                    <a class = "bebas-neue filesubmission-long darktext" href = "viewcomps.php">Edit Results</a>
+                    </div>
+                    </div>
                 <?php
                 # ROWS OF DATA
 
@@ -179,3 +183,5 @@ if (isset($_POST["upload"]) ) {
 else{
     echo "error";
 }
+
+include("../fixedfooter.php");

@@ -14,7 +14,19 @@ a, a:hover, a:visited{
     text-align: center;
 }
 
+input[type=file] {
+    display: none;
+}  
+
 .login {
+    margin: 0;
+    height: 50px;
+    background-color:  rgb(235, 235, 235);
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #435664;
+}
+.login-nogap {
     margin: 0;
     background-color:  rgb(235, 235, 235);
     padding: 8px;
@@ -120,11 +132,96 @@ a, a:hover, a:visited{
     text-align: center;
 }
 
-.filesubmission{
+
+.filesubmission, .filesubmission-long{
     display: block;
+    width: 130px;
+    background-color: white;
+    border: none;
+    font-size: 18px;
+    border-radius: 6px;
+    padding: 8px;
+    padding-left: 20px;
+    padding-right: 20px;
+    margin: 0;
     margin-left: auto;
     margin-right: auto;
+    border: 1px solid #435664;
+    box-shadow: 0px 0px black;
 }
+.filesubmission-selected, .filesubmission:not(:disabled):hover, .filesubmission:active, .filesubmission-long:hover{
+    display: block;
+    width: 130px;
+    background-color: #199bff;
+    color:white;
+    border: none;
+    font-size: 18px;
+    border-radius: 6px;
+    padding: 8px;
+    padding-left: 20px;
+    padding-right: 20px;
+    margin: 0;
+    margin-left: auto;
+    margin-right: auto;
+    border: 1px solid #435664;
+    box-shadow: 0px 0px black;
+}
+.filesubmission:disabled{
+    border: 1px solid rgb(235, 235, 235);
+    background-color: #97a4ae;
+    color: rgb(235, 235, 235)
+}
+.filesubmission-long, .filesubmission-long:hover{
+    width: 300px;
+}
+
+.fileout{
+display: block;
+padding-top: 15px;
+padding-bottom: 15px;
+border: 0px;
+box-shadow: 0px 0px black;
+}
+
+.filltable{
+    display: block;
+    max-width: 130px;
+    max-height: 40px;
+    background-color:  rgb(235, 235, 235);
+    border: none;
+    font-size: 12px;
+    border-radius: 6px;
+    padding: 10px;
+    border: 1px solid #435664;
+    box-shadow: 0px 0px black;
+}
+
+.filltable-wide{
+    display: block;
+    width: 100%;
+    max-height: 40px;
+    background-color:  rgb(235, 235, 235);
+    border: none;
+    font-size: 12px;
+    border-radius: 6px;
+    padding: 10px;
+    border: 1px solid #435664;
+    box-shadow: 0px 0px black;
+}
+
+.subtable{
+    display: inline-block;
+    max-width: 75px;
+    max-height: 40px;
+    background-color:  rgb(235, 235, 235);
+    border: none;
+    font-size: 12px;
+    border-radius: 6px;
+    padding: 10px;
+    border: 1px solid #435664;
+    box-shadow: 0px 0px black;
+}
+
 
 .pagetitle{
     margin: 10;
@@ -280,7 +377,13 @@ a, a:hover, a:visited{
     text-align: left;
     border-collapse: collapse;
 }
-
+.searchresult-nogap{
+    font-size: 14px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    border-collapse: collapse;
+}
 .rankresult{
     width: 90%;
     margin-left: auto;
@@ -297,6 +400,14 @@ a, a:hover, a:visited{
 .odd{
     margin: 15px;
     background-color: rgb(235, 235, 235)
+}
+
+.searchresult-nogap{
+    margin-left: auto;
+    margin-right: auto;
+}
+.searchresult-nogap th, .searchresult-nogap td, .searchresult-nogap tr{
+    padding: 5px;
 }
 
 .searchresult th, .searchresult td, .searchresult tr{

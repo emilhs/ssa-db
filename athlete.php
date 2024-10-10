@@ -3,7 +3,7 @@ if (isset($_GET['id'])){
     $skaterID = $_GET["id"]; 
 }
 
-$sql = "SELECT fName, lName, age, agecat, club, gender, season FROM skaters WHERE skaterID = '$skaterID';";
+$sql = "SELECT fName, lName, age, agecat, club, gender, season FROM skaters WHERE skaterID = '$skaterID' ORDER BY season DESC LIMIT 1";
 // Executing the sql query
 $result = mysqli_query($conn, $sql);
 // Verify that SQL Query is executed or not
@@ -28,7 +28,21 @@ if($result == TRUE) {
 ?>
 <div class = "title">
 <p class = "bebas-neue darktext pagetitle"><span class = "darktext"><?php echo $fName?></span> <span class = "bluetext"><?php echo $lName?></span></p>
-<p class = "text-center arimo darktext medsize"><span class = "darktext">Last Active: <?php echo ($season-1)?>-<?php echo ($season)?> Age: <?php echo $age?> Gender: <?php echo $gender?> Club: <?php echo $club; ?></span></p>
+<table class = "darktext searchresult arimo">
+    <tr class = "toprow">
+        <th class = "row-left">Last Active</th>
+        <th class = "row-mid">Age</th>
+        <th class = "row-mid">Gender</th>
+        <th class = "row-right">Club</th>
+    </tr>
+    <tr>
+        <td class = "row-left"><?php echo ($season-1)?>-<?php echo ($season)?></td>
+        <td><?php echo $age?></td>
+        <td><?php echo $gender?></td>
+        <td class = "row-right"><?php echo $club; ?></td>
+    </tr>
+</table>
+<p class = "arimo darktext text-center tinysize">Note: skater information (age, club) is not updated until a race is done.</p>
 </div>
 <p class = "bebas-neue darktext text-center medsize">Personal Bests:</p>
 <?php

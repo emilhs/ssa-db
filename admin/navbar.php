@@ -12,9 +12,12 @@
             <p class = "bebas-neue" id = "title"><span class = "darktext">Speed Skating</span> <span class = "bluetext">Alberta</span> <span class = "darktext">Results Database</span></p>
         </a>
         <div class = "right">
-            <a class = "darktext bebas-neue" href = "../about.php">Signed in as <span class = "bluetext"><?php echo $username;?></span></a>
+            <a class = "darktext bebas-neue" href = "">Signed in as <span class = "bluetext"><?php echo $username;?></span></a>
+            <br>
+            <a class = "blacktext bebas-neue" href = "addadmin.php">Add another Admin</a>
             <br>
             <a class = "dangertext bebas-neue" href = "../signout.php">Sign Out</a>
+            <br>
         </div>  
     </div>
 </html>
