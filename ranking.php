@@ -45,7 +45,7 @@ else {
         <br> -->
         <p class = "selector-label top-selector-label bebas-neue whitetext text-center smallsize">Select <span class = "whitetext">Season:</span></p>
         <?php
-        $sql2 = "SELECT DISTINCT season FROM comps;";
+        $sql2 = "SELECT DISTINCT season FROM comps ORDER BY season ASC;";
             #$sql = "SELECT fName, lName, country FROM athletes WHERE athleteID = '$athleteID';";
             // Executing the sql query
             $result2 = mysqli_query($conn, $sql2);
@@ -257,7 +257,21 @@ else {
                     $Btime = $rows['Btime'];
                     $rankTime = $rows['rankTime'];
 
-                    $skatersql = "SELECT fName, lName, age, agecat, club, gender, season FROM skaters WHERE skaterID = '$skaterID';";
+                    $addQuery = "";
+                    if ($currCat != NULL){
+                        if ($currAge == NULL){
+                            $addQuery = $addQuery." AND (age = '".implode("' OR age = '",$ageSort[$currCat])."')";
+                        }
+                        else {
+                            $addQuery = $addQuery." AND age = '".$currAge."'";
+                        }
+                    }
+                    if ($currGender != NULL AND in_array($currGender, array("M", "F"))){
+                        $addQuery = $addQuery." AND gender = '".$currGender."'";
+                    }
+
+                    $skatersql = "SELECT * FROM skaters WHERE skaterID = '$skaterID'".$addQuery.";";
+
                     // Executing the sql query
                     $result2 = mysqli_query($conn, $skatersql);
                     // Verify that SQL Query is executed or not
@@ -275,31 +289,33 @@ else {
                             $gender = $rows2['gender'];
                             $age = $rows2['age'];
                             $club = $rows2['club'];
+
+                        # PRINT ROW STATEMENTS
+                        ?>
+                        <tr <?php if($displayNum%2==0){?> class = "odd" <?php } ?> onclick="window.location='athlete.php?id=<?php echo $skaterID?>';">
+                            <td class = "row-left"><?php echo $displayNum; ?></td>
+                            <td class = ""><?php echo $fName; ?></td>
+                            <td class = ""><?php echo $lName; ?></td>
+                            <td class = ""><?php echo $club; ?></td>
+                            <?php 
+                            $counter = 0;
+                            foreach ($currDists as $d){
+                                $showtime = $rows["".$letters[$counter]."time"];
+                                ?>
+                                <td <?php if($d == end($currDists) and sizeof($currDists) == 1){?> class = "row-right" <?php } else { ?> class = "" <?php } ?> ><?php echo gmdate("i:s", $showtime); ?>.<?php echo end(explode(".", $showtime));?></td>
+                                <?php
+                                $counter++;
+                            }
+                            if (sizeof($currDists) > 1){ ?>
+                                <td class = "row-right"><?php echo round($rankTime,3); ?></td>
+                            <?php 
+                            }?>
+                        </tr>
+                        <?php
+                        $displayNum++;
+
                         }
                     }
-
-                    ?>
-                    <tr <?php if($displayNum%2==0){?> class = "odd" <?php } ?> onclick="window.location='athlete.php?id=<?php echo $skaterID?>';">
-                        <td class = "row-left"><?php echo $displayNum; ?></td>
-                        <td class = ""><?php echo $fName; ?></td>
-                        <td class = ""><?php echo $lName; ?></td>
-                        <td class = ""><?php echo $club; ?></td>
-                        <?php 
-                        $counter = 0;
-                        foreach ($currDists as $d){
-                            $showtime = $rows["".$letters[$counter]."time"];
-                            ?>
-                            <td <?php if($d == end($currDists) and sizeof($currDists) == 1){?> class = "row-right" <?php } else { ?> class = "" <?php } ?> ><?php echo gmdate("i:s", $showtime); ?>.<?php echo end(explode(".", $showtime));?></td>
-                            <?php
-                            $counter++;
-                        }
-                        if (sizeof($currDists) > 1){ ?>
-                            <td class = "row-right"><?php echo round($rankTime,3); ?></td>
-                        <?php 
-                        }?>
-                    </tr>
-                    <?php
-                    $displayNum++;
                 }
                 ?>
                 </table>

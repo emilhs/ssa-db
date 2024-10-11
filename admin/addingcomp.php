@@ -165,9 +165,9 @@ if (isset($_POST["upload"]) ) {
                     <div class = "buttons text-center">
                     <a class = "bebas-neue filesubmission-long darktext" href = "submit.php">Add Another Competition</a>
                     <br>
-                    <a class = "bebas-neue filesubmission-long darktext" href = "viewskaters.php">Edit Skaters</a>
+                    <a class = "bebas-neue filesubmission-long darktext" href = "viewskaters.php">Edit Skaters and Times</a>
                     <br>
-                    <a class = "bebas-neue filesubmission-long darktext" href = "viewcomps.php">Edit Results</a>
+                    <a class = "bebas-neue filesubmission-long darktext" href = "viewcomps.php">Edit Competitions</a>
                     </div>
                     </div>
                 <?php

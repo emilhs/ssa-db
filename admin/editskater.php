@@ -28,6 +28,24 @@ if (isset($_POST["updateinfo"]) ) {
     $result1 = mysqli_query($conn, $sql) or die(mysqli_error());
 }
 
+if (isset($_POST["updatetime"]) ) {
+    print_r($_POST);
+    $raceID = $_POST["raceID"];
+    $mins = $_POST["mins"];
+    $secs = $_POST["secs"];
+    $msecs = $_POST["msecs"];
+    $dist = $_POST["dist"];
+    $track = $_POST["track"];
+
+    $secs = ($mins*60)+$secs;
+    $fulltime = $secs.".".$msecs;
+
+    $sql = "UPDATE results SET time = '$fulltime', dist = '$dist', track = '$track'
+    WHERE raceID = '$raceID';";
+
+    $result1 = mysqli_query($conn, $sql) or die(mysqli_error());
+}
+
 ?>
 <div class = "menuH">
     <?php
@@ -52,8 +70,6 @@ if (isset($_POST["updateinfo"]) ) {
             </div>
 
             <?php
-        } else {
-            header('location:'.SITEURL.'viewskaters.php');
         }
     }
     $sql2 = "SELECT * FROM skaters WHERE skaterID = '$skaterID';";
@@ -150,42 +166,43 @@ $sql2 = "SELECT *
                 $date = $rows2['date'];
                 $compID = $rows2['compID'];
                 $dayID = $rows2['dayID'];
+                $raceID = $rows2['raceID'];
                 ?>
                     <form action="" method="post" enctype="multipart/form-data" name = "result">
                         <tr <?php if($displayNum%2==0){?> class = "odd" <?php } ?>>
-                        <input type = "hidden" value ="<?php echo $compID; ?>" name = "season">
+                        <input type = "hidden" value ="<?php echo $raceID; ?>" name = "raceID">
                             <td class = "row-left">
                                 <input class = "subtable" type = "number" name = "mins" step = "1" value = <?php echo round(gmdate("i", $time)); ?>>
                                 <input class = "subtable" type = "number" name = "secs" step = "1" value = <?php echo round(gmdate("s", $time)); ?>>
                                 <input class = "subtable" type = "number" name = "msecs" step = "1" value = <?php echo end(explode(".", $time)); ?>>
                             </td>
-                        <td>
-                            <select class = "filltable" name = "track" form = "result">
-                            <?php
-                                foreach ($Alltracks as $t){
-                                    ?>
-                                    <option <?php if ($t == $track){ ?> selected <?php } ?>value="<?php echo $t; ?>"><?php echo $t; ?></option>
-                                    <?php
-                                }
-                            ?>
-                            </select>
-                        </td>
-                        <td>
-                            <select class = "filltable" name = "distance" form = "result">
-                            <?php
-                                foreach ($alldistances as $d){
-                                    ?>
-                                    <option <?php if ($d == $dist){ ?> selected <?php } ?>value="<?php echo $d; ?>"><?php echo $d; ?></option>
-                                    <?php
-                                }
-                            ?>
-                            </select>
-                        </td>
-                        <td><?php echo $compName; ?></td>
-                        <td><?php echo ($season-1)?>-<?php echo $season; ?></td>
-                        <td><?php echo $date; ?></td>
-                        <td class = "row-right"><input class = "filesubmission bebas-neue darktext" type = "submit" value="Update Result" name="updatetime"></input></td>
-                    </tr>
+                            <td>
+                                <select class = "filltable" name = "track">
+                                <?php
+                                    foreach ($Alltracks as $t){
+                                        ?>
+                                        <option <?php if ($t == $track){ ?> selected <?php } ?>value="<?php echo $t; ?>"><?php echo $t; ?></option>
+                                        <?php
+                                    }
+                                ?>
+                                </select>
+                            </td>
+                            <td>
+                                <select class = "filltable" name = "dist">
+                                <?php
+                                    foreach ($alldistances as $d){
+                                        ?>
+                                        <option <?php if ($d == $dist){ ?> selected <?php } ?>value="<?php echo $d; ?>"><?php echo $d; ?></option>
+                                        <?php
+                                    }
+                                ?>
+                                </select>
+                            </td>
+                            <td><?php echo $compName; ?></td>
+                            <td><?php echo ($season-1)?>-<?php echo $season; ?></td>
+                            <td><?php echo $date; ?></td>
+                            <td class = "row-right"><input class = "filesubmission bebas-neue darktext" type = "submit" value="Update Result" name="updatetime"></input></td>
+                        </tr>
                     </form>
                 </tr>
                 <?php

@@ -1,5 +1,33 @@
 <?php include('navbar.php');
 
+if (isset($_POST["updatecomp"]) ) {
+    $compID = $_POST["compID"];
+    $disc = $_POST["disc"];
+    $compName = $_POST["compName"];
+    $location = $_POST["location"];
+    $date = $_POST["date"];
+
+    $date = date("Ymd", strtotime($date));
+    $year = $date[0].$date[1].$date[2].$date[3];
+    $month = $date[4].$date[5];
+
+    if ($month > 6){
+        $season = $year + 1;
+    }
+    else{
+        $season = $year;
+    }
+
+    $sql1 = "UPDATE comps SET compName = '$compName', disc = '$disc', location = '$location', season = '$season'
+    WHERE compID = '$compID';";
+    $result1 = mysqli_query($conn, $sql1) or die(mysqli_error());
+
+    $sql2 = "UPDATE dates SET date = '$date'
+            WHERE compID = '$compID';";
+    $result2 = mysqli_query($conn, $sql2) or die(mysqli_error());
+}
+
+
 if (isset($_GET['y'])){
     $currSeason = $_GET["y"]; 
 }
@@ -8,7 +36,7 @@ if (isset($_GET['y'])){
 <div class = "menuH">
     <p class = "bebas-neue darktext padded text-center medsize">Select a Season:</p>
     <?php
-        $sql = "SELECT DISTINCT season FROM comps;";
+        $sql = "SELECT DISTINCT season FROM comps ORDER BY season ASC;";
         #$sql = "SELECT fName, lName, country FROM athletes WHERE athleteID = '$athleteID';";
         // Executing the sql query
         $result = mysqli_query($conn, $sql);
@@ -71,9 +99,9 @@ if (isset($_GET['y'])){
                 ?>
                 <form action="" method="post" enctype="multipart/form-data">
                     <tr <?php if($displayNum%2==0){?> class = "odd" <?php } ?>>    
-                        <td class = "row-left"><input class = "filltable-wide" type = "text" name = "fName" value="<?php echo $compName; ?>"></input></td>
+                        <td class = "row-left"><input class = "filltable-wide" type = "text" name = "compName" value="<?php echo $compName; ?>"></input></td>
                         <td>
-                            <select class = "filltable" name = "track" form = "result">
+                            <select class = "filltable" name = "disc">
                             <?php
                                 foreach ($alldiscs as $d){
                                     ?>
@@ -84,9 +112,10 @@ if (isset($_GET['y'])){
                             </select>
                         </td>
                         <td><input class = "filltable-wide" type = "text" name = "location" value ="<?php echo $location; ?>"></input></td>
-                        <td><input class = "filltable-wide" type = "date" value = "<?php echo $date; ?>"></input></td>
+                        <td><input class = "filltable-wide" type = "date" name = "date" value = "<?php echo $date; ?>"></input></td>
                         <td class = "row-right"><input class = "filesubmission-long bebas-neue darktext" type = "submit" value="Update Competition" name="updatecomp"></input></td>
                     </tr>
+                    <input type = "hidden" name = "compID" value = <?php echo $compID; ?>>
                 </form>
                 <?php 
                 $sql3 = "SELECT * FROM dates NATURAL JOIN comps WHERE compID = '$compID';";
