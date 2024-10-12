@@ -54,13 +54,13 @@ if (isset($_GET['l'])){
         <?php
         if ($fValid or $lValid){
                 if ($fValid and $lValid){
-                    $sql = "SELECT * FROM skaters WHERE fName LIKE '$flet%' AND lName LIKE '$llet%' ORDER BY lName, fName;";
+                    $sql = "SELECT * FROM skaters WHERE fName LIKE '$flet%' AND lName LIKE '$llet%' GROUP BY skaterID ORDER BY lName, fName;";
                 }
                 else if ($lValid){
-                    $sql = "SELECT * FROM skaters WHERE lName LIKE '$llet%' ORDER BY lName, fName;";
+                    $sql = "SELECT * FROM skaters WHERE lName LIKE '$llet%' GROUP BY skaterID ORDER BY lName, fName;";
                 }
                 else if ($fValid){
-                    $sql = "SELECT * FROM skaters WHERE fName LIKE '$flet%' ORDER BY lName, fName;";
+                    $sql = "SELECT * FROM skaters WHERE fName LIKE '$flet%' GROUP BY skaterID ORDER BY lName, fName;";
                 }
                 $result = mysqli_query($conn, $sql) or die(mysqli_error());
                 $count = mysqli_num_rows($result);

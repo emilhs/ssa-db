@@ -90,9 +90,10 @@ if (isset($_POST["upload"]) ) {
                                 # check existence in previous seasons DB, ignore season and age and gender.
                                 $sql = "SELECT * FROM skaters WHERE fName = '$fName' AND lName = '$lName';";
                                 $result1 = mysqli_query($conn, $sql) or die(mysqli_error());
-                                $count1 = mysqli_num_rows($result1);
+                                $count2 = mysqli_num_rows($result1);
+
                                 # if not in previous seasons - create.
-                                if ($count1 == 0){
+                                if ($count2 == 0){
                                     $skater = "INSERT INTO skaters SET age = '$age', ageCat = '$agecat', gender = '$gender', fName = '$fName', lName = '$lName', club = '$club', season = '$season';";
                                     $result2 = mysqli_query($conn, $skater) or die(mysqli_error());
 
@@ -107,15 +108,33 @@ if (isset($_POST["upload"]) ) {
                                     }
                                 }
                                 # if in previous seasons - get skaterID
-                                if ($count1 > 0){
+                                if ($count2 > 0){
                                     # use info for each skater from most recent season
-                                    $getskaterID = "SELECT skaterID, gender, club, age, ageCat, MAX(season) as season from skaters WHERE fName = '$fName' AND lName = '$lName' GROUP BY fName, lName ORDER BY season ASC;";
+                                    $getskaterID = "SELECT skaterID, gender, club, age, ageCat, MAX(season) AS season FROM skaters WHERE fName = '$fName' AND lName = '$lName' GROUP BY fName, lName ORDER BY season ASC;";
                                     $result3 = mysqli_query($conn, $getskaterID) or die(mysqli_error());
                                     $count3 = mysqli_num_rows($result3);
+
                                     # there is just one skater, get ID right away
                                     if ($count3 == 1){
                                         $rows = mysqli_fetch_assoc($result3);
                                         $skaterID = $rows['skaterID'];
+                                        $oldseason = $rows['season'];
+                                        $oldclub = $rows['season'];
+                                        $oldage = $rows['age'];
+                                        $oldageCat = $rows['ageCat'];
+
+                                        $FLAG = FALSE;
+                                        if ($club != $oldclub or $age != $oldage or $ageCat != $oldageCat){
+                                            $FLAG = TRUE;
+                                        }
+                                        if ($season != $oldseason){
+                                            $skater = "INSERT INTO skaters SET fname = '$fName', lname = '$lName', age = '$age', ageCat = '$agecat', gender = '$gender', club = '$club', skaterID = '$skaterID', season = '$season', checkInfo = '$FLAG';";
+                                            $result2 = mysqli_query($conn, $skater) or die(mysqli_error());
+                                        }
+                                        else if ($FLAG == TRUE){
+                                            $skater = "UPDATE skaters SET checkInfo = '$FLAG' WHERE skaterID = '$skaterID' AND season = '$season';";
+                                            $result2 = mysqli_query($conn, $skater) or die(mysqli_error());
+                                        }
                                     }
                                     # there are multiple skaters with the same name, choose the one that is most similar
                                     # /* WORK IN PROGRESS -- I DON"T THINK THIS IS A CURRENT ISSUE */
@@ -140,10 +159,7 @@ if (isset($_POST["upload"]) ) {
                             }
                             # if in current season DB
                             else if ($count1 == 1){
-                                # GET ID NOW
-                                $getskaterID = "SELECT * from skaters WHERE age = '$age' AND ageCat = '$agecat' AND gender = '$gender' AND fName = '$fName' AND lName = '$lName' AND club = '$club';";
-                                $result3 = mysqli_query($conn, $getskaterID) or die(mysqli_error());
-                                $count3 = mysqli_num_rows($result3);
+                                $count1 = mysqli_num_rows($result1);
                                 if ($count3 == 1){
                                     while($rows = mysqli_fetch_assoc($result3)){
                                         $skaterID = $rows['skaterID'];

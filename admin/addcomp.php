@@ -147,6 +147,9 @@ if (isset($_POST["submit"]) ) {
                     if ($month > 6){
                         $season = $year + 1;
                     }
+                    else {
+                        $season = $year;
+                    }
 
                     $olddate = $date;
                     ?>

@@ -10,7 +10,7 @@ if (isset($_GET['y'])){
 
 <p class = "bebas-neue darktext padded text-center medsize">Select a Season:</p>
 <?php
-$sql = "SELECT DISTINCT season FROM comps;";
+$sql = "SELECT DISTINCT season FROM comps ORDER BY season ASC;";
     #$sql = "SELECT fName, lName, country FROM athletes WHERE athleteID = '$athleteID';";
     // Executing the sql query
     $result = mysqli_query($conn, $sql);

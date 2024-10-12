@@ -72,7 +72,7 @@ if (isset($_POST["updatetime"]) ) {
             <?php
         }
     }
-    $sql2 = "SELECT * FROM skaters WHERE skaterID = '$skaterID';";
+    $sql2 = "SELECT * FROM skaters WHERE skaterID = '$skaterID' ORDER BY season DESC;";
         #$sql = "SELECT fName, lName, country FROM athletes WHERE athleteID = '$athleteID';";
         // Executing the sql query
         $result2 = mysqli_query($conn, $sql2);
