@@ -29,7 +29,6 @@ if (isset($_POST["updateinfo"]) ) {
 }
 
 if (isset($_POST["updatetime"]) ) {
-    print_r($_POST);
     $raceID = $_POST["raceID"];
     $mins = $_POST["mins"];
     $secs = $_POST["secs"];
@@ -42,6 +41,15 @@ if (isset($_POST["updatetime"]) ) {
 
     $sql = "UPDATE results SET time = '$fulltime', dist = '$dist', track = '$track'
     WHERE raceID = '$raceID';";
+
+    $result1 = mysqli_query($conn, $sql) or die(mysqli_error());
+}
+
+if (isset($_POST["clearflag"]) ) {
+    $skaterID = $_POST["skaterID"];
+
+    $sql = "UPDATE skaters SET checkInfo = FALSE
+    WHERE skaterID = '$skaterID';";
 
     $result1 = mysqli_query($conn, $sql) or die(mysqli_error());
 }
@@ -97,6 +105,7 @@ if (isset($_POST["updatetime"]) ) {
                         <th class = "row-right"></th>
                     </tr>
                 <?php
+                $FLAG = FALSE;
                 while($rows2 = mysqli_fetch_assoc($result2)){
                     $fName = $rows2['fName'];
                     $lName = $rows2['lName'];
@@ -106,6 +115,10 @@ if (isset($_POST["updatetime"]) ) {
                     $club = $rows2['club'];
                     $dob = $rows2['dob'];
                     $season = $rows2['season'];
+                    $checkInfo = $rows2['checkInfo'];
+                    if ($checkInfo){
+                        $FLAG = TRUE;
+                    }
                     ?>
                     <form action="" method="post" enctype="multipart/form-data">
                     <tr>
@@ -125,7 +138,16 @@ if (isset($_POST["updatetime"]) ) {
                 }
                 ?>
                 </table>
+                <br>
                 <?php
+                if ($FLAG){ 
+                    ?>
+                    <form action="" method="post" enctype="multipart/form-data">
+                        <input type = "hidden" name = "skaterID" value = <?php echo $skaterID; ?>>
+                        <input class = "filesubmission-opp bebas-neue danger" type = "submit" value="Approve Info" name="clearflag"></input>
+                    </form>
+                    <?php
+                }
             }
         }
     ?>

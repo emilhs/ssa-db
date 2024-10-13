@@ -54,13 +54,13 @@ if (isset($_GET['l'])){
         <?php
         if ($fValid or $lValid){
                 if ($fValid and $lValid){
-                    $sql = "SELECT * FROM skaters WHERE fName LIKE '$flet%' AND lName LIKE '$llet%' GROUP BY skaterID ORDER BY lName, fName;";
+                    $sql = "SELECT fName, lName, skaterID, club, MAX(checkInfo) AS checkInfo FROM skaters WHERE fName LIKE '$flet%' AND lName LIKE '$llet%' GROUP BY skaterID ORDER BY lName, fName;";
                 }
                 else if ($lValid){
-                    $sql = "SELECT * FROM skaters WHERE lName LIKE '$llet%' GROUP BY skaterID ORDER BY lName, fName;";
+                    $sql = "SELECT fName, lName, skaterID, club, MAX(checkInfo) AS checkInfo FROM skaters WHERE lName LIKE '$llet%' GROUP BY skaterID ORDER BY lName, fName;";
                 }
                 else if ($fValid){
-                    $sql = "SELECT * FROM skaters WHERE fName LIKE '$flet%' GROUP BY skaterID ORDER BY lName, fName;";
+                    $sql = "SELECT fName, lName, skaterID, club, MAX(checkInfo) AS checkInfo FROM skaters WHERE fName LIKE '$flet%' GROUP BY skaterID ORDER BY lName, fName;";
                 }
                 $result = mysqli_query($conn, $sql) or die(mysqli_error());
                 $count = mysqli_num_rows($result);
@@ -71,7 +71,8 @@ if (isset($_GET['l'])){
                                 <tr class = "toprow">
                                     <th class = "row-left">First Name</th>
                                     <th class = "row-mid">Last Name</th>
-                                    <th class = "row-right">Club</th>
+                                    <th class = "row-mid">Club</th>
+                                    <th class = "row-right"></th>
                                 </tr>    
                             <?php
                             // For everything in the database, display
@@ -81,12 +82,24 @@ if (isset($_GET['l'])){
                                 $lName = $rows['lName'];
                                 $club = $rows['club'];
                                 $skaterID = $rows['skaterID'];
-                                # $cumTime = $rows['cumTime'];
+                                $FLAG = $rows['checkInfo'];
                                 ?>
                                 <tr <?php if($displayNum%2==0){?> class = "odd" <?php } ?> onclick="window.location='editskater.php?id=<?php echo $skaterID?>';">
                                     <td class = "row-left"><?php echo $fName; ?></td>
                                     <td><?php echo $lName; ?></td>
-                                    <td class = "row-right"><?php echo $club; ?></td>
+                                    <td><?php echo $club; ?></td>
+                                    <?php
+                                    if ($FLAG != NULL and $FLAG == 1){
+                                        ?>
+                                        <td class = "row-right"><p class = "dangertext">CHECK INFO</p></td>
+                                        <?php
+                                    }
+                                    else{ 
+                                        ?>
+                                        <td class = "row-right"></td>
+                                        <?php
+                                    }
+                                    ?>
                                 </tr>
                             <?php
                             $displayNum++;

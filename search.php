@@ -82,25 +82,12 @@ if (isset($_GET['l'])){
                                 $lName = $rows['lName'];
                                 $club = $rows['club'];
                                 $skaterID = $rows['skaterID'];
-                                $checkInfo = $rows['checkInfo'];
                                 # $cumTime = $rows['cumTime'];
                                 ?>
                                 <tr <?php if($displayNum%2==0){?> class = "odd" <?php } ?> onclick="window.location='athlete.php?id=<?php echo $skaterID?>';">
                                     <td class = "row-left"><?php echo $fName; ?></td>
                                     <td><?php echo $lName; ?></td>
-                                    <td class = "row-mid"><?php echo $club; ?></td>
-                                    <?php
-                                    if ($checkInfo){ 
-                                        ?>
-                                        <td class = "row-right dangertext">POSSIBLE ERROR</td>
-                                        <?php
-                                    }
-                                    else {
-                                        ?>
-                                        <td class = "row-right"></td>
-                                        <?php
-                                    }
-                                    ?>
+                                    <td class = "row-right"><?php echo $club; ?></td>
                                 </tr>
                             <?php
                             $displayNum++;

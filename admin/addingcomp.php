@@ -191,8 +191,13 @@ if (isset($_POST["upload"]) ) {
 
             }
         }
-        else {
-            echo "There was an error";
+        else { 
+            ?>
+            <p class = "arimo darktext medsize">There was an error - try again!</p>
+            <div class = "buttons text-center">
+                    <a class = "bebas-neue filesubmission-long darktext" href = "submit.php">Add Another Competition</a>
+            </div>
+            <?php
         }
     }
 }
