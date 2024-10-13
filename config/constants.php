@@ -4,16 +4,33 @@
     
 
     //Get Heroku ClearDB connection information
+    // define('SITEURL', 'http://localhost/ssa-db/');
+    // define('LOCALHOST', 'localhost');
+    #$cleardb_url = parse_url(getenv("JAWSDB_URL"));
     $cleardb_url = parse_url(getenv("JAWSDB_URL"));
-    $cleardb_server = $cleardb_url["host"];
-    $cleardb_username = $cleardb_url["user"];
-    $cleardb_password = $cleardb_url["pass"];
-    $cleardb_db = substr($cleardb_url["path"],1);
-    $active_group = 'default';
-    $query_builder = TRUE;
+    $hostname = $dbparts['host'];
+    $username = $dbparts['user'];
+    $password = $dbparts['pass'];
+    $database = ltrim($dbparts['path'],'/');
     // // Connect to DB
-    $conn = mysqli_connect($cleardb_server, $cleardb_username, $cleardb_password, $cleardb_db, 3306);
+    $conn = new mysqli($hostname, $username, $password, $database);
+
+    // Check connection
+    if ($conn->connect_error) {
+        die("Connection failed: " . $conn->connect_error);
+    }
+    echo "Connection was successfully established!";
     
+    #$db_select = mysqli_select_db($conn, $cleardb_url["path"]) or die(mysqli_error());
+    
+    $result = $conn->query("SHOW DATABASES;");
+    if ($result) {
+        while ($row = $result->fetch_assoc()) {
+            echo $row['Database'] . "<br>";
+        }
+    } else {
+        die("Query failed: " . $conn->error);
+    }
     // Create constants to store non-repeating values
     //Get Heroku ClearDB connection information
     // define('SITEURL', 'http://localhost/ssa-db/');
