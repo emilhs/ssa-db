@@ -4,24 +4,24 @@
     
 
     //Get Heroku ClearDB connection information
-    // $cleardb_url = parse_url(getenv("JAWSDB_URL"));
-    // $cleardb_server = $cleardb_url["host"];
-    // $cleardb_username = $cleardb_url["user"];
-    // $cleardb_password = $cleardb_url["pass"];
-    // $cleardb_db = substr($cleardb_url["path"],1);
-    // $active_group = 'default';
-    // $query_builder = TRUE;
+    $cleardb_url = parse_url(getenv("JAWSDB_URL"));
+    $cleardb_server = $cleardb_url["host"];
+    $cleardb_username = $cleardb_url["user"];
+    $cleardb_password = $cleardb_url["pass"];
+    $cleardb_db = substr($cleardb_url["path"],1);
+    $active_group = 'default';
+    $query_builder = TRUE;
     // // Connect to DB
     // $conn = mysqli_connect($cleardb_server, $cleardb_username, $cleardb_password, $cleardb_db, 3306);
     // Create constants to store non-repeating values
     //Get Heroku ClearDB connection information
-    define('SITEURL', 'http://localhost/ssa-db/');
-    define('LOCALHOST', 'localhost');
-    define('DB_USERNAME', 'root');
-    define('DB_PASSWORD', '');
-    define('DB_NAME', 'new_ssa_db');
-    $active_group = 'default';
-    $query_builder = TRUE;
+    // define('SITEURL', 'http://localhost/ssa-db/');
+    // define('LOCALHOST', 'localhost');
+    // define('DB_USERNAME', 'root');
+    // define('DB_PASSWORD', '');
+    // define('DB_NAME', 'new_ssa_db');
+    // $active_group = 'default';
+    // $query_builder = TRUE;
     // Connect to DB
     $conn = mysqli_connect(LOCALHOST, DB_USERNAME, DB_PASSWORD);
     $db_select = mysqli_select_db($conn, DB_NAME) or die(mysqli_error()); //Selecting Database
