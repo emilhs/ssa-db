@@ -8,19 +8,19 @@
     // define('LOCALHOST', 'localhost');
     #$cleardb_url = parse_url(getenv("JAWSDB_URL"));
     $cleardb_url = parse_url(getenv("JAWSDB_URL"));
-    $hostname = $dbparts['host'];
-    $username = $dbparts['user'];
-    $password = $dbparts['pass'];
-    $database = ltrim($dbparts['path'],'/');
-    // // Connect to DB
-    $conn = new mysqli($hostname, $username, $password, $database);
+    $hostname = "jj820qt5lpu6krut.cbetxkdyhwsb.us-east-1.rds.amazonaws.com";
+    $username = "g5epois4jr3fvwjm";
+    $password = "fknimuhilplydf54";
+    $database = "i4zt2ijecbj7ykgu";
+
+    $conn = new mysqli($hostname, $username, $password, $database, 3306);
 
     // Check connection
     if ($conn->connect_error) {
         die("Connection failed: " . $conn->connect_error);
     }
     echo "Connection was successfully established!";
-    
+
     #$db_select = mysqli_select_db($conn, $cleardb_url["path"]) or die(mysqli_error());
     
     $result = $conn->query("SHOW DATABASES;");
