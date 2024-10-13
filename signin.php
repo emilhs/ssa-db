@@ -1,12 +1,5 @@
 <?php include('navbar.php'); 
 
-      // Run a SQL statement to check if username and password exists within the admin table
-      $sql = "SELECT * FROM admin_table;";
-      echo $sql;
-      // Execute SQL Query
-      $result = mysqli_query($conn, $sql);
-      echo $result;
-
 //Check whether the submit button on the form is clicked
 if(isset($_POST['submit'])) {
       // Gather all of the login form inputs
@@ -15,10 +8,8 @@ if(isset($_POST['submit'])) {
 
       // Run a SQL statement to check if username and password exists within the admin table
       $sql = "SELECT * FROM admin_table WHERE username = '$username' AND password = '$password';";
-      echo $sql;
       // Execute SQL Query
       $result = mysqli_query($conn, $sql);
-      echo $result;
       // Count the number of rows to see if entry exists
       $count = mysqli_num_rows($result);
       echo $count;
@@ -28,7 +19,7 @@ if(isset($_POST['submit'])) {
         // User available and Login Successful
         $_SESSION['user-admin'] = $adminID; // To check whether the user is logging in or not and logout will unset it. 
         // Redirect to Admin Home
-        header('location:'.SITEURL.'admin/');
+        header('Location: admin/index.php');
         die();
       }
 }
