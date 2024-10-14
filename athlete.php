@@ -3,7 +3,7 @@ if (isset($_GET['id'])){
     $skaterID = $_GET["id"]; 
 }
 
-$sql = "SELECT fName, lName, age, agecat, club, gender, season FROM skaters WHERE skaterID = '$skaterID' ORDER BY season DESC LIMIT 1";
+$sql = "SELECT fName, lName, age, club, gender, season FROM skaters WHERE skaterID = '$skaterID' ORDER BY season DESC LIMIT 1";
 // Executing the sql query
 $result = mysqli_query($conn, $sql);
 // Verify that SQL Query is executed or not

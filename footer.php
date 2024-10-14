@@ -6,3 +6,4 @@
         </div>
     </div>
 </html>
+<?php mysql_close($conn);

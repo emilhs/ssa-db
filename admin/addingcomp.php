@@ -58,14 +58,13 @@ if (isset($_POST["upload"]) ) {
                     $splitinfo = $s;
                     $date = $splitinfo[0];
                     $age = $splitinfo[1];
-                    $agecat = $splitinfo[2];
-                    $gender = $splitinfo[3];
-                    $fName = $splitinfo[4];
-                    $lName = $splitinfo[5];
-                    $club = $splitinfo[6];
-                    $dist = $splitinfo[7];
-                    $track = $splitinfo[8];
-                    $time = $splitinfo[9];
+                    $gender = $splitinfo[2];
+                    $fName = $splitinfo[3];
+                    $lName = $splitinfo[4];
+                    $club = $splitinfo[5];
+                    $dist = $splitinfo[6];
+                    $track = $splitinfo[7];
+                    $time = $splitinfo[8];
 
                     if ($time == "NULL"){
                          $time = 0;
@@ -77,7 +76,7 @@ if (isset($_POST["upload"]) ) {
                     if ($count == 1){
                         $rows = mysqli_fetch_assoc($result);
                         $dayID = $rows['dayID'];
-                        $newskater = array($age, $agecat, $gender, $fName, $lName, $club);
+                        $newskater = array($age, $gender, $fName, $lName, $club);
                         if ($newskater != $oldskater){
                             $oldskater = $newskater;
                             # check existence in current season DB - based on gender, fName, lName, club, age, season
@@ -85,6 +84,7 @@ if (isset($_POST["upload"]) ) {
                             $result1 = mysqli_query($conn, $sql) or die(mysqli_error());
                             $count1 = mysqli_num_rows($result1);
     
+                            #echo $count1;
                             # if not in current season DB
                             if ($count1 == 0){
                                 # check existence in previous seasons DB, ignore season and age and gender.
@@ -94,11 +94,11 @@ if (isset($_POST["upload"]) ) {
 
                                 # if not in previous seasons - create.
                                 if ($count2 == 0){
-                                    $skater = "INSERT INTO skaters SET age = '$age', ageCat = '$agecat', gender = '$gender', fName = '$fName', lName = '$lName', club = '$club', season = '$season';";
+                                    $skater = "INSERT INTO skaters SET age = '$age', gender = '$gender', fName = '$fName', lName = '$lName', club = '$club', season = '$season';";
                                     $result2 = mysqli_query($conn, $skater) or die(mysqli_error());
 
                                     # GET ID NOW
-                                    $getskaterID = "SELECT * from skaters WHERE age = '$age' AND ageCat = '$agecat' AND gender = '$gender' AND fName = '$fName' AND lName = '$lName' AND club = '$club' AND season = '$season';";
+                                    $getskaterID = "SELECT * from skaters WHERE age = '$age' AND gender = '$gender' AND fName = '$fName' AND lName = '$lName' AND club = '$club' AND season = '$season';";
                                     $result3 = mysqli_query($conn, $getskaterID) or die(mysqli_error());
                                     $count3 = mysqli_num_rows($result3);
                                     if ($count3 == 1){
@@ -110,7 +110,7 @@ if (isset($_POST["upload"]) ) {
                                 # if in previous seasons - get skaterID
                                 if ($count2 > 0){
                                     # use info for each skater from most recent season
-                                    $getskaterID = "SELECT skaterID, gender, club, age, ageCat, MAX(season) AS season FROM skaters WHERE fName = '$fName' AND lName = '$lName' GROUP BY fName, lName ORDER BY season ASC;";
+                                    $getskaterID = "SELECT skaterID, gender, club, age, MAX(season) AS season FROM skaters WHERE fName = '$fName' AND lName = '$lName' GROUP BY fName, lName ORDER BY season ASC;";
                                     $result3 = mysqli_query($conn, $getskaterID) or die(mysqli_error());
                                     $count3 = mysqli_num_rows($result3);
 
@@ -121,14 +121,13 @@ if (isset($_POST["upload"]) ) {
                                         $oldseason = $rows['season'];
                                         $oldclub = $rows['season'];
                                         $oldage = $rows['age'];
-                                        $oldageCat = $rows['ageCat'];
 
                                         $FLAG = FALSE;
-                                        if ($club != $oldclub or $age != $oldage or $ageCat != $oldageCat){
+                                        if ($club != $oldclub or $age != $oldage){
                                             $FLAG = TRUE;
                                         }
                                         if ($season != $oldseason){
-                                            $skater = "INSERT INTO skaters SET fname = '$fName', lname = '$lName', age = '$age', ageCat = '$agecat', gender = '$gender', club = '$club', skaterID = '$skaterID', season = '$season', checkInfo = '$FLAG';";
+                                            $skater = "INSERT INTO skaters SET fname = '$fName', lname = '$lName', age = '$age', gender = '$gender', club = '$club', skaterID = '$skaterID', season = '$season', checkInfo = '$FLAG';";
                                             $result2 = mysqli_query($conn, $skater) or die(mysqli_error());
                                         }
                                         else if ($FLAG == TRUE){
@@ -150,7 +149,6 @@ if (isset($_POST["upload"]) ) {
                                         //     $currentgender = $rows['skaterID'];
                                         //     $currentclub = $rows['skaterID'];
                                         //     $currentage = $rows['age'];
-                                        //     $currentagecat = $rows['agecat'];
 
                                         //     $counter++;
                                         // }
@@ -159,12 +157,8 @@ if (isset($_POST["upload"]) ) {
                             }
                             # if in current season DB
                             else if ($count1 == 1){
-                                $count1 = mysqli_num_rows($result1);
-                                if ($count3 == 1){
-                                    while($rows = mysqli_fetch_assoc($result3)){
-                                        $skaterID = $rows['skaterID'];
-                                    }
-                                }
+                                $rows = mysqli_fetch_assoc($result1);
+                                $skaterID = $rows['skaterID'];
                             }
                         }
                         if ($skaterID >= 0){

@@ -1,4 +1,6 @@
-<?php include('navbar.php'); ?>
+<?php include('navbar.php'); 
+#ini_set('display_errors', 1); ini_set('display_startup_errors', 1); error_reporting(E_ALL);
+?>
 
 <div class = "menuH">
     <p class = "bebas-neue darktext pagetitle">Submit Results to SSA Database</p>
@@ -42,7 +44,6 @@ if (isset($_POST["submit"]) ) {
             <table class = "darktext rankresult arimo">
                 <tr class = "toprow">
                     <td class = "row-left">Age</td>
-                    <td class = "row-mid">Age Category</td>
                     <td class = "row-mid">Gender</td>
                     <td class = "row-mid">Name</td>
                     <td class = "row-mid">Surname</td>
@@ -61,6 +62,7 @@ if (isset($_POST["submit"]) ) {
             $counter = 0;
 
             $displayNum = 1;
+
             while (($getData = fgetcsv($file, 10000, ",")) !== FALSE){
                 $date = date("Ymd", strtotime($getData[3]));
 
@@ -72,22 +74,17 @@ if (isset($_POST["submit"]) ) {
                 if (sizeof($possible_fNames) == 2){
                     $fName = trim(str_replace("'", "", $possible_fNames[0]));
                     $rawCat = explode("(", $names[1])[1];
-                    $age = explode(")", explode(" ", $rawCat)[1])[0];
-                    $agecat = explode(" ", $rawCat)[0];
-                    $gender = explode(")",end(explode(" ", $rawCat)))[0];
+                    $age = explode(")", (explode(" ", $rawCat)[1]))[0];
+                    $gender = explode(")", (end(explode(" ", $rawCat))))[0];
                 }
                 else {
                     $fName = trim(str_replace("'", "", $possible_fNames[0]."(".$possible_fNames[1]));
                     $rawCat = $possible_fNames[2];
                     #$age = ($possible_fNames[2]);
                     $age = explode("(",explode(" ", $rawCat)[1])[0];
-                    $agecat = explode(" ", $rawCat)[0];
                     $gender = explode(")",end(explode(" ", $rawCat)))[0];
                 }
 
-                if ($agecat == "Active"){
-                    $agecat = "Active Start";
-                }
                 if ($age == "Start"){
                     $age = "Active Start";
                 }
@@ -102,15 +99,40 @@ if (isset($_POST["submit"]) ) {
                 $rawDist = $getData[10];
                 $dists = explode(" ", $rawDist);
 
+                $track1 = 0;
+                $track2 = 0;
                 $i = 0;
-                while (!is_numeric($dists[$i])){
+                while (!is_numeric($dists[$i]) and ($i < sizeof($dists))){
                     $i++;
                 }
 
-                $dist = $dists[$i];
-                $track1 = explode(")",explode("(", $dists[$i+1])[1])[0];
-                $track2 = explode(")",explode("(", $dists[$i+3])[1])[0];
+                if ($i == 0){
+                    $dist = $dists[$i];
+                    if (sizeof($dists) > ($i+1)){
+                        $track1 = explode(")",explode("(", $dists[$i+1])[1])[0];
+                        if (sizeof($dists) > ($i+3)){
+                            $track2 = explode(")",explode("(", $dists[$i+3])[1])[0];
+                        }
+                    }
+                }
+                else {
+                    if (str_contains($dist, "m")){
+                        $dist = explode("m", $dist)[0];
+                    }
+                    if (str_contains($dist, "-")){
+                        $dist = explode("-", $dist)[0];
+                    }
+                }
+
                 $track = max(array($track1, $track2));    
+                if ($track == 0){
+                    if ($age == "Senior" or $age == "Junior"){
+                        $track = 111;
+                    }
+                    else {
+                        $track = 100;
+                    }
+                }
 
                 $rawtime = $getData[13];
                 $mins = explode(":",$rawtime)[0];
@@ -126,7 +148,6 @@ if (isset($_POST["submit"]) ) {
                 ?>
                 <tr>
                     <td><?php echo $age?></td>
-                    <td><?php echo $agecat?></td>
                     <td><?php echo $gender?></td>
                     <td><?php echo $fName?></td>
                     <td><?php echo $lName?></td>
@@ -137,8 +158,7 @@ if (isset($_POST["submit"]) ) {
                 </tr>
                 <?php
                 
-                $topass = $topass."!~!".$date."!~!".$age."!~!".$agecat."!~!".$gender."!~!".$fName."!~!".$lName."!~!".$club."!~!".$dist."!~!".$track."!~!".$time;
-            
+                $topass = $topass."!~!".$date."!~!".$age."!~!".$gender."!~!".$fName."!~!".$lName."!~!".$club."!~!".$dist."!~!".$track."!~!".$time;
                 if ($date != $olddate){
 
                     $year = $date[0].$date[1].$date[2].$date[3];
@@ -156,8 +176,6 @@ if (isset($_POST["submit"]) ) {
                     <input type="hidden" name="dates[]" value="<?php echo $date; ?>">
                     <?php
                 }
-
-            $displayNum++;
             }
             ?>
             </table>

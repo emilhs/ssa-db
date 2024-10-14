@@ -7,21 +7,18 @@ if (isset($_POST["updateinfo"]) ) {
     $fName = $_POST["fName"];
     $lName = $_POST["lName"];
     $age = $_POST["age"];
-    $ageCat = $_POST["ageCat"];
     $gender = $_POST["gender"];
     $club = $_POST["club"];
     $dob = $_POST["dob"];
     $season = $_POST["season"];
 
     if ($dob != NULL){
-        $sql = "UPDATE skaters SET fName = '$fName', lName = '$lName',age = '$age',
-        ageCat = '$ageCat', gender = '$gender',
+        $sql = "UPDATE skaters SET fName = '$fName', lName = '$lName',age = '$age', gender = '$gender',
         club = '$club', dob = '$dob'
         WHERE skaterID = '$skaterID' AND season = '$season';";
     }
     else {
-        $sql = "UPDATE skaters SET fName = '$fName', lName = '$lName', age = '$age',
-        ageCat = '$ageCat', gender = '$gender',
+        $sql = "UPDATE skaters SET fName = '$fName', lName = '$lName', age = '$age', gender = '$gender',
         club = '$club'
         WHERE skaterID = '$skaterID' AND season = '$season';";
     }
@@ -110,7 +107,6 @@ if (isset($_POST["clearflag"]) ) {
                     $fName = $rows2['fName'];
                     $lName = $rows2['lName'];
                     $age = $rows2['age'];
-                    $ageCat = $rows2['ageCat'];
                     $gender = $rows2['gender'];
                     $club = $rows2['club'];
                     $dob = $rows2['dob'];
@@ -127,7 +123,6 @@ if (isset($_POST["clearflag"]) ) {
                         <td><input class = "filltable" type = "text" name = "fName" value = "<?php echo $fName; ?>"></input></td>
                         <td><input class = "filltable" type = "text" name = "lName" value = "<?php echo $lName; ?>"></input></td>
                         <td><input class = "filltable" type = "text" name = "age" value = "<?php echo $age; ?>"></input></td>
-                        <td><input class = "filltable" type = "text" name = "ageCat" value = "<?php echo $ageCat; ?>"></input></td>
                         <td><input class = "filltable" type = "text" name = "gender" value = "<?php echo $gender; ?>"></input></td>
                         <td><input class = "filltable" type = "text" name = "club" value = "<?php echo $club; ?>"></input></td>
                         <td><input class = "filltable" type = "date" name = "dob" value = "<?php echo $dob; ?>"></input></td>
