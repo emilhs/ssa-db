@@ -6,5 +6,5 @@
     session_destroy();
 
     // Redirect to login page. 
-    header('location:'.SITEURL.'signin.php');
+    header('location: signin.php');
 ?>

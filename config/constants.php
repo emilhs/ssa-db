@@ -13,7 +13,7 @@
     $password = "fknimuhilplydf54";
     $database = "i4zt2ijecbj7ykgu";
 
-    $conn = new mysqli($hostname, $username, $password, $database, 3306) or die(mysqli_error());
+    $conn = mysqli_connect($hostname, $username, $password, $database, 3306) or die(mysqli_error());
     #$conn = mysqli_connect(LOCALHOST, DB_USERNAME, DB_PASSWORD);
     #$db_select = mysqli_select_db($conn, DB_NAME) or die(mysqli_error()); //Selecting Database
     // Check connection

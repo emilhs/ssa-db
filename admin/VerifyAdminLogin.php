@@ -2,7 +2,7 @@
     // Check Authorization
     if(!isset($_SESSION['user-admin'])) {
         // Set the error message indicating that the user is not logged in and redirect to login page. 
-        header('location:'.SITEURL.'signin.php');
+        header('location: signin.php');
     }
     else {
         $userID = $_SESSION['user-admin'];
@@ -16,7 +16,7 @@
             $username = $rows['username'];
         }
         else{
-            header('location:'.SITEURL.'signin.php');
+            header('location: signin.php');
         }
     }
 ?>

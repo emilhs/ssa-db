@@ -22,7 +22,7 @@ if($result == TRUE) {
         $age = $rows['age'];
         $club = $rows['club'];
     } else {
-        header('location:'.SITEURL.'search.php');
+        header('location: search.php');
     }
 }
 ?>
