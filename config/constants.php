@@ -13,7 +13,7 @@
     $password = "fknimuhilplydf54";
     $database = "i4zt2ijecbj7ykgu";
 
-    // $conn = new mysqli($hostname, $username, $password, $database, 3306) or die(mysqli_error());
+    $conn = new mysqli($hostname, $username, $password, $database, 3306) or die(mysqli_error());
     #$conn = mysqli_connect(LOCALHOST, DB_USERNAME, DB_PASSWORD);
     #$db_select = mysqli_select_db($conn, DB_NAME) or die(mysqli_error()); //Selecting Database
     // Check connection
@@ -33,8 +33,8 @@
     // $active_group = 'default';
     // $query_builder = TRUE;
     // Connect to DB
-    $conn = mysqli_connect(LOCALHOST, DB_USERNAME, DB_PASSWORD);
-    $db_select = mysqli_select_db($conn, DB_NAME) or die(mysqli_error()); //Selecting Database
+    // $conn = mysqli_connect(LOCALHOST, DB_USERNAME, DB_PASSWORD);
+    // $db_select = mysqli_select_db($conn, DB_NAME) or die(mysqli_error()); //Selecting Database
     
     $letters = array("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z");
     $ages = array("Active Start", "6-8", "9-10", "11", "12", "13", "B1", "B2", "A1", "A2", "M", "F");
