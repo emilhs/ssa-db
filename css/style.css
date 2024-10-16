@@ -128,6 +128,8 @@ input[type=file] {
 }
 
 .menuH{
+    margin-left: 5%;
+    margin-right: 5%;
     border: 0px solid black;
     text-align: center;
 }
@@ -479,3 +481,50 @@ box-shadow: 0px 0px black;
     margin-right: auto;
   }
 
+/* adjust content for small screens */
+@media (max-width: 1150px) {
+    .letterbutton, .letterbutton-selected, .letterbutton:hover, .letterbutton-selected:hover{
+        font-weight: 300;
+    }
+    .header{
+        margin: 0;
+        display: block;
+        text-align: center;
+    }
+    .buttons, .ui-container{
+        position: relative;
+        display: block;
+    }
+    .options{
+        width: 100%;
+    }
+    .ranking{
+        width: 100%;
+    }
+    .rankresult, .searchresult, .searchresult-nogap{
+        width: 100%;
+        padding: 0;
+        margin: 0;
+    }
+    .searchresult{
+        font-size: 20px;
+    }
+    .footer{
+        padding-top: 35px;
+    }
+    .left {
+        min-width: 400px;
+    }
+    .right{
+        display: flex;
+    }
+    .left, .right{
+        text-align: center;
+        justify-content: center;
+    }
+    #title{
+        font-size: 38px;
+    }
+}
+  
+  

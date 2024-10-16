@@ -7,6 +7,9 @@
     // define('SITEURL', 'http://localhost/ssa-db/');
     // define('LOCALHOST', 'localhost');
     #$cleardb_url = parse_url(getenv("JAWSDB_URL"));
+
+    # FOR LIVE SERVER
+
     $cleardb_url = parse_url(getenv("JAWSDB_URL"));
     $hostname = "jj820qt5lpu6krut.cbetxkdyhwsb.us-east-1.rds.amazonaws.com";
     $username = "g5epois4jr3fvwjm";
@@ -14,6 +17,9 @@
     $database = "i4zt2ijecbj7ykgu";
 
     $conn = mysqli_connect($hostname, $username, $password, $database, 3306) or die(mysqli_error());
+
+    # ---------
+
     #$conn = mysqli_connect(LOCALHOST, DB_USERNAME, DB_PASSWORD);
     #$db_select = mysqli_select_db($conn, DB_NAME) or die(mysqli_error()); //Selecting Database
     // Check connection
@@ -24,7 +30,11 @@
 
     // #$db_select = mysqli_select_db($conn, $cleardb_url["path"]) or die(mysqli_error());
     // Create constants to store non-repeating values
+    
     //Get Heroku ClearDB connection information
+
+    # FOR LOCAL SERVER
+
     // define('SITEURL', 'http://localhost/ssa-db/');
     // define('LOCALHOST', 'localhost');
     // define('DB_USERNAME', 'root');
@@ -32,10 +42,12 @@
     // define('DB_NAME', 'new_ssa_db');
     // $active_group = 'default';
     // $query_builder = TRUE;
-    // Connect to DB
+    // // Connect to DB
     // $conn = mysqli_connect(LOCALHOST, DB_USERNAME, DB_PASSWORD);
     // $db_select = mysqli_select_db($conn, DB_NAME) or die(mysqli_error()); //Selecting Database
     
+    # --------------
+
     $letters = array("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z");
     $ages = array("Active Start", "6-8", "9-10", "11", "12", "13", "B1", "B2", "A1", "A2", "M", "F");
     $ageCats = array("Active Start", "Child", "Youth", "Neo-Junior", "Junior", "Senior");

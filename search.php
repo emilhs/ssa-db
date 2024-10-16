@@ -73,7 +73,6 @@ if (isset($_GET['l'])){
                                     <th class = "row-left">First Name</th>
                                     <th class = "row-mid">Last Name</th>
                                     <th class = "row-right">Club</th>
-                                    <th class = "row-right"></th>
                                 </tr>    
                             <?php
                             // For everything in the database, display
