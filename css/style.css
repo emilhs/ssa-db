@@ -527,4 +527,10 @@ box-shadow: 0px 0px black;
     }
 }
   
+@media(max-height: 720px) {
+    .buttons, .ui-container{
+        position: relative;
+        display: block;
+    }
+}
   
