@@ -134,12 +134,17 @@ if (isset($_POST["submit"]) ) {
                     #echo $dist;
                 }
                 else if ($i == sizeof($dists)){
-                    if (!is_numeric($dist)){
-                        if (str_contains($rawDist, "m")){
-                            $dist = explode("m", $rawDist)[0];
+                    $dist = "NULL";
+                    if (str_contains($rawDist, "m")){
+                        $dist = explode("m", $rawDist)[0];
+                        if (str_contains($dist, " ")){
+                            $dist = end(explode(" ", $dist));
                         }
-                        if (str_contains($rawDist, "-")){
-                            $dist = explode("-", $rawDist)[0];
+                    }
+                    if (str_contains($rawDist, "-")){
+                        $dist = explode("-", $rawDist)[0];
+                        if (str_contains($dist, " ")){
+                            $dist = end(explode(" ", $dist));
                         }
                     }
                 }

@@ -195,7 +195,7 @@ else {
                 else{
                     $selectQ2[] = $currLetter.".".$currLetter."time";
                 }
-                $whereQ[] = $currLetter."time > 0 AND ".$currLetter."time < 600";
+                $whereQ[] = $currLetter."time > 0 AND ".$currLetter."time < 2000000";
                 if ($d != end($currDists)){
                     $onQ[] = $currLetter.".skaterID"."=".$nextLetter.".skaterID";
                 }
