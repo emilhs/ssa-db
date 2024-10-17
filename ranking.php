@@ -300,14 +300,14 @@ else {
                             <?php 
                             $counter = 0;
                             foreach ($currDists as $d){
-                                $showtime = $rows["".$letters[$counter]."time"];
+                                $showtime = $rows["".$letters[$counter]."time"]/1000;
                                 ?>
                                 <td <?php if($d == end($currDists) and sizeof($currDists) == 1){?> class = "row-right" <?php } else { ?> class = "" <?php } ?> ><?php echo gmdate("i:s", $showtime); ?>.<?php echo end(explode(".", $showtime));?></td>
                                 <?php
                                 $counter++;
                             }
                             if (sizeof($currDists) > 1){ ?>
-                                <td class = "row-right"><?php echo round($rankTime,3); ?></td>
+                                <td class = "row-right"><?php echo round($rankTime/1000,3); ?></td>
                             <?php 
                             }?>
                         </tr>

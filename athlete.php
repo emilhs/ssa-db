@@ -48,7 +48,7 @@ if($result == TRUE) {
 <?php
 $sql2 = "SELECT dist, track, compName, season, date, MIN(time) AS best
             FROM results NATURAL JOIN dates NATURAL JOIN comps
-            WHERE skaterID = '$skaterID' AND time > 0 AND time < 600
+            WHERE skaterID = '$skaterID' AND time > 0 AND time < 2000000
             GROUP BY dist
             ORDER BY dist ASC;";
     #$sql = "SELECT fName, lName, country FROM athletes WHERE athleteID = '$athleteID';";
@@ -71,7 +71,7 @@ $sql2 = "SELECT dist, track, compName, season, date, MIN(time) AS best
                 </tr>
             <?php
             while($rows2 = mysqli_fetch_assoc($result2)){
-                $time = $rows2['best'];
+                $time = $rows2['best']/1000;
                 $dist = $rows2['dist'];
                 $track = $rows2['track'];
                 $comp = $rows2['compName'];
@@ -119,7 +119,7 @@ $sql2 = "SELECT *
                 </tr>
             <?php
             while($rows2 = mysqli_fetch_assoc($result2)){
-                $time = $rows2['time'];
+                $time = $rows2['time']/1000;
                 $dist = $rows2['dist'];
                 $track = $rows2['track'];
                 $compName = $rows2['compName'];

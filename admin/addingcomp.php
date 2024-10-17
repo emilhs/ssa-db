@@ -2,7 +2,6 @@
 
 if (isset($_POST["upload"]) ) {
     $location = $_POST["location"];
-    $compDisc = $_POST["disc"];
     $season = $_POST["season"];
     $compName = $_POST["compName"];
     $skaters = $_POST["skaters"];
@@ -176,6 +175,7 @@ if (isset($_POST["upload"]) ) {
                             }
                         }
                         if ($skaterID > 0){
+                            $time = $time * 1000;
                             $resultsql = "INSERT INTO results SET compID = '$compID', dayID = '$dayID', skaterID = '$skaterID', dist = '$dist', track = '$track', time = '$time', disc = '$rVal';";
                             $result = mysqli_query($conn, $resultsql) or die(mysqli_error());
                         }

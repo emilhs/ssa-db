@@ -36,6 +36,7 @@ if (isset($_POST["updatetime"]) ) {
 
     $secs = ($mins*60)+$secs;
     $fulltime = $secs.".".$msecs;
+    $fulltime = $fulltime * 1000;
 
     $sql = "UPDATE results SET time = '$fulltime', dist = '$dist', disc = '$disc', track = '$track'
     WHERE raceID = '$raceID';";
@@ -177,7 +178,7 @@ $sql2 = "SELECT *
                 </tr>
             <?php
             while($rows2 = mysqli_fetch_assoc($result2)){
-                $time = $rows2['time'];
+                $time = $rows2['time']/1000;
                 $dist = $rows2['dist'];
                 $track = $rows2['track'];
                 $compName = $rows2['compName'];

@@ -103,36 +103,54 @@ if (isset($_POST["submit"]) ) {
                 $dists = explode(" ", $rawDist);
 
                 $track1 = 0;
-                $track2 = 0;
-                $track3 = 0;
-                $track4 = 0;
                 $i = 0;
                 while (!is_numeric($dists[$i]) and ($i < sizeof($dists))){
                     $i++;
                 }
 
+                // echo $i;
                 if ($i == 0){
                     $dist = $dists[$i];
-                    if (sizeof($dists) > ($i+1)){
-                        $track1 = explode(")",explode("(", $dists[$i+1])[1])[0];
-                        if (sizeof($dists) > ($i+3)){
-                            $track2 = explode(")",explode("(", $dists[$i+3])[1])[0];
-                            if (sizeof($dists) > ($i+4)){
-                                $track3 = explode(")",explode("(", $dists[$i+4])[1])[0];
-                                if (sizeof($dists) > ($i+5)){
-                                    $track4 = explode(")",explode("(", $dists[$i+5])[1])[0];
-                                }
-                            }
+                    $i = $i+1;
+                    while (sizeof($dists) > $i){
+                        $poss = explode(")",explode("(", $dists[$i])[1])[0];
+                        if ($poss != NULL and $poss > $track1){
+                            $track1 = $poss;
                         }
+                        $i = $i+1;
                     }
+                    // if (sizeof($dists) > ($i+1)){
+                    //     $track1 = explode(")",explode("(", $dists[$i+1])[1])[0];
+                    //     if (sizeof($dists) > ($i+3)){
+                    //         $track2 = explode(")",explode("(", $dists[$i+3])[1])[0];
+                    //         if (sizeof($dists) > ($i+4)){
+                    //             $track3 = explode(")",explode("(", $dists[$i+4])[1])[0];
+                    //             if (sizeof($dists) > ($i+5)){
+                    //                 $track4 = explode(")",explode("(", $dists[$i+5])[1])[0];
+                    //             }
+                    //         }
+                    //     }
+                    // }
                     #echo $dist;
                 }
-                else {
-                    if (str_contains($dist, "m")){
-                        $dist = explode("m", $dist)[0];
+                else if ($i == sizeof($dists)){
+                    if (!is_numeric($dist)){
+                        if (str_contains($rawDist, "m")){
+                            $dist = explode("m", $rawDist)[0];
+                        }
+                        if (str_contains($rawDist, "-")){
+                            $dist = explode("-", $rawDist)[0];
+                        }
                     }
-                    if (str_contains($dist, "-")){
-                        $dist = explode("-", $dist)[0];
+                }
+                else {
+                    $dist = $dists[$i];
+                    while (sizeof($dists) > $i){
+                        $poss = explode(")",explode("(", $dists[$i])[1])[0];
+                        if ($poss > $track1){
+                            $track1 = $poss;
+                        }
+                        $i = $i+1;
                     }
                 }
 
@@ -140,10 +158,10 @@ if (isset($_POST["submit"]) ) {
                     $dist = $dist * 400;
                 }
 
-                $track = max(array($track1, $track2, $track3, $track4));    
+                $track = $track1;
                 if ($track == 0){
                     if ($age == "Senior" or $age == "Junior"){
-                        $track = 111;
+                        $track = 100;
                     }
                     else {
                         $track = 100;
