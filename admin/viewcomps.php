@@ -2,7 +2,6 @@
 
 if (isset($_POST["updatecomp"]) ) {
     $compID = $_POST["compID"];
-    $disc = $_POST["disc"];
     $compName = $_POST["compName"];
     $location = $_POST["location"];
     $date = $_POST["date"];
@@ -18,7 +17,7 @@ if (isset($_POST["updatecomp"]) ) {
         $season = $year;
     }
 
-    $sql1 = "UPDATE comps SET compName = '$compName', disc = '$disc', location = '$location', season = '$season'
+    $sql1 = "UPDATE comps SET compName = '$compName', location = '$location', season = '$season'
     WHERE compID = '$compID';";
     $result1 = mysqli_query($conn, $sql1) or die(mysqli_error());
 
@@ -94,22 +93,31 @@ if (isset($_GET['y'])){
                 $compID = $rows2['compID'];
                 $compName = $rows2['compName'];
                 $location = $rows2['location'];
-                $disc = $rows2['disc'];
                 $date = $rows2['date'];
                 ?>
                 <form action="" method="post" enctype="multipart/form-data">
                     <tr <?php if($displayNum%2==0){?> class = "odd" <?php } ?>>    
                         <td class = "row-left"><input class = "filltable-wide" type = "text" name = "compName" value="<?php echo $compName; ?>"></input></td>
                         <td>
-                            <select class = "filltable" name = "disc">
-                            <?php
-                                foreach ($alldiscs as $d){
-                                    ?>
-                                    <option <?php if ($d == $disc){ ?> selected <?php } ?>value="<?php echo $d; ?>"><?php echo $d; ?></option>
-                                    <?php
+                        <?php
+                            $sql5 = "SELECT DISTINCT disc FROM comps NATURAL JOIN results WHERE compID = '$compID';";
+                            $result5 = mysqli_query($conn, $sql5);
+                            
+                            // Verify that SQL Query is executed or not
+                            if($result5 == TRUE) {
+                                // Count the number of rows which will be a way to verify if there is data in the database
+                                $count5 = mysqli_num_rows($result5);
+                                if ($count5 > 0){
+                                    $discs = array();
+                                    while($rows5 = mysqli_fetch_assoc($result5)){
+                                        $disc = $rows5['disc'];
+                                        $disc = strval($disc);
+                                        $discs[] = $discSort[$disc];
+                                    }
                                 }
-                            ?>
-                            </select>
+                            }
+                            echo implode(', ',$discs); 
+                        ?>
                         </td>
                         <td><input class = "filltable-wide" type = "text" name = "location" value ="<?php echo $location; ?>"></input></td>
                         <td><input class = "filltable-wide" type = "date" name = "date" value = "<?php echo $date; ?>"></input></td>

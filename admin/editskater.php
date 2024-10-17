@@ -31,14 +31,15 @@ if (isset($_POST["updatetime"]) ) {
     $secs = $_POST["secs"];
     $msecs = $_POST["msecs"];
     $dist = $_POST["dist"];
+    $disc = $_POST["disc"];
     $track = $_POST["track"];
 
     $secs = ($mins*60)+$secs;
     $fulltime = $secs.".".$msecs;
 
-    $sql = "UPDATE results SET time = '$fulltime', dist = '$dist', track = '$track'
+    $sql = "UPDATE results SET time = '$fulltime', dist = '$dist', disc = '$disc', track = '$track'
     WHERE raceID = '$raceID';";
-
+    
     $result1 = mysqli_query($conn, $sql) or die(mysqli_error());
 }
 
@@ -171,6 +172,7 @@ $sql2 = "SELECT *
                     <th class = "row-mid">Competition</td>
                     <th class = "row-mid">Season</td>
                     <th class = "row-mid">Date(s)</td>
+                    <th class = "row-mid">Discipline</td>
                     <th class = "row-right"></td>
                 </tr>
             <?php
@@ -183,6 +185,7 @@ $sql2 = "SELECT *
                 $date = $rows2['date'];
                 $compID = $rows2['compID'];
                 $dayID = $rows2['dayID'];
+                $disc = $rows2['disc'];
                 $raceID = $rows2['raceID'];
                 ?>
                     <form action="" method="post" enctype="multipart/form-data" name = "result">
@@ -218,6 +221,17 @@ $sql2 = "SELECT *
                             <td><?php echo $compName; ?></td>
                             <td><?php echo ($season-1)?>-<?php echo $season; ?></td>
                             <td><?php echo $date; ?></td>
+                            <td>
+                                <select class = "filltable" name = "disc">
+                                <?php
+                                    foreach (array_keys($discSort) as $d){
+                                        ?>
+                                        <option <?php if ($d == $disc){ ?> selected <?php } ?>value="<?php echo $d; ?>"><?php echo $discSort[$d]; ?></option>
+                                        <?php
+                                    }
+                                ?>
+                                </select>
+                            </td>
                             <td class = "row-right"><input class = "filesubmission bebas-neue darktext" type = "submit" value="Update Result" name="updatetime"></input></td>
                         </tr>
                     </form>

@@ -67,12 +67,31 @@ else {
                 $compID = $rows2['compID'];
                 $compName = $rows2['compName'];
                 $location = $rows2['location'];
-                $disc = $rows2['disc'];
                 $date = $rows2['date'];
                 ?>
                 <tr <?php if($displayNum%2==0){?> class = "odd" <?php } ?>>    
                     <td class = "row-left"><?php echo $compName; ?></td>
-                    <td><?php echo $disc; ?></td>
+                    <td>
+                    <?php
+                            $sql5 = "SELECT DISTINCT disc FROM comps NATURAL JOIN results WHERE compID = '$compID';";
+                            $result5 = mysqli_query($conn, $sql5);
+                            
+                            // Verify that SQL Query is executed or not
+                            if($result5 == TRUE) {
+                                // Count the number of rows which will be a way to verify if there is data in the database
+                                $count5 = mysqli_num_rows($result5);
+                                if ($count5 > 0){
+                                    $discs = array();
+                                    while($rows5 = mysqli_fetch_assoc($result5)){
+                                        $disc = $rows5['disc'];
+                                        $disc = strval($disc);
+                                        $discs[] = $discSort[$disc];
+                                    }
+                                }
+                            }
+                            echo implode(', ',$discs); 
+                    ?>    
+                    </td>
                     <td><?php echo $location; ?></td>
                     <td class = "row-right"><?php echo $date; ?></td>
                 </tr>

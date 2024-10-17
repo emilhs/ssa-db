@@ -25,13 +25,12 @@ if (isset($_POST["submit"]) ) {
                 <table class = "searchresult darktext arimo">
                     <tr class = "toprow smallsize">
                         <th class = "row-left"><p>Location:</p></th>
-                        <th class = "row-mid"><p>Competition Name:</p></th>
-                        <th class = "row-right"><p>Discipline:</p></th>
+                        <th class = "row-right"><p>Competition Name:</p></th>
                     </tr>   
                     <tr>
                         <th><input class = "filltable login" type = "text" name = "location"></input></th>
                         <th><input class = "filltable login" type = "text" name = "compName" value = "<?php echo $getData[1]; ?>"></input></th>
-                        <th><input class = "filltable login" type = "text" name = "disc" value = "<?php echo $getData[2]; ?>"></input></th>
+                        </th>
                     </tr>   
                 </table>
                 <?php
@@ -50,6 +49,7 @@ if (isset($_POST["submit"]) ) {
                     <td class = "row-mid">Club</td>
                     <td class = "row-mid">Distance</td>
                     <td class = "row-mid">Track</td>
+                    <td class = "row-mid">Type</td>
                     <td class = "row-right">Time</td>
                 </tr>
 
@@ -97,10 +97,15 @@ if (isset($_POST["submit"]) ) {
                 $club = $getData[7];
 
                 $rawDist = $getData[10];
+
+                #echo $rawDist;
+
                 $dists = explode(" ", $rawDist);
 
                 $track1 = 0;
                 $track2 = 0;
+                $track3 = 0;
+                $track4 = 0;
                 $i = 0;
                 while (!is_numeric($dists[$i]) and ($i < sizeof($dists))){
                     $i++;
@@ -112,8 +117,15 @@ if (isset($_POST["submit"]) ) {
                         $track1 = explode(")",explode("(", $dists[$i+1])[1])[0];
                         if (sizeof($dists) > ($i+3)){
                             $track2 = explode(")",explode("(", $dists[$i+3])[1])[0];
+                            if (sizeof($dists) > ($i+4)){
+                                $track3 = explode(")",explode("(", $dists[$i+4])[1])[0];
+                                if (sizeof($dists) > ($i+5)){
+                                    $track4 = explode(")",explode("(", $dists[$i+5])[1])[0];
+                                }
+                            }
                         }
                     }
+                    #echo $dist;
                 }
                 else {
                     if (str_contains($dist, "m")){
@@ -124,7 +136,11 @@ if (isset($_POST["submit"]) ) {
                     }
                 }
 
-                $track = max(array($track1, $track2));    
+                if ($dist < 50){
+                    $dist = $dist * 400;
+                }
+
+                $track = max(array($track1, $track2, $track3, $track4));    
                 if ($track == 0){
                     if ($age == "Senior" or $age == "Junior"){
                         $track = 111;
@@ -145,6 +161,24 @@ if (isset($_POST["submit"]) ) {
                     $time = $mins*60 + $secs;
                 }
 
+                $rType = "NULL";
+                $rVal = NULL;
+                if ($track == 100 or $track == 111){
+                    $rType = "ST";
+                    $rVal = 1;
+                }
+                else if ($track == 400){
+                    $rType = "LT";
+                    if (str_contains(strtoupper($rawDist), "MASS START")){
+                        $rType = "MS";
+                        $rVal = 2;
+                    }
+                    else if (str_contains(strtoupper($rawDist), "OLYMPIC STYLE")){
+                        $rType = "OS";
+                        $rVal = 3;
+                    }
+                }
+
                 ?>
                 <tr>
                     <td><?php echo $age?></td>
@@ -154,11 +188,12 @@ if (isset($_POST["submit"]) ) {
                     <td><?php echo $club?></td>
                     <td><?php echo $dist?></td>
                     <td><?php echo $track?></td>
+                    <td><?php echo $rType?></td>
                     <td><?php echo $time?></td>
                 </tr>
                 <?php
                 
-                $topass = $topass."!~!".$date."!~!".$age."!~!".$gender."!~!".$fName."!~!".$lName."!~!".$club."!~!".$dist."!~!".$track."!~!".$time;
+                $topass = $topass."!~!".$date."!~!".$age."!~!".$gender."!~!".$fName."!~!".$lName."!~!".$club."!~!".$dist."!~!".$track."!~!".$time."!~!".$rVal;
                 if ($date != $olddate){
 
                     $year = $date[0].$date[1].$date[2].$date[3];
