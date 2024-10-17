@@ -209,7 +209,7 @@ else {
             if (sizeof($currDists) > 1){
                 $OnQuery = implode(" AND ", $onQ);
                 $rank = "SELECT A.skaterID, ".$SelectQuery." AS rankTime 
-                FROM ".$FromQuery."
+                FROM ".$FromQuery." 
                 ON ".$OnQuery."
                 WHERE ".$WhereQuery."
                 GROUP BY A.skaterID
@@ -270,7 +270,7 @@ else {
                         $addQuery = $addQuery." AND gender = '".$currGender."'";
                     }
 
-                    $skatersql = "SELECT * FROM skaters WHERE skaterID = '$skaterID'".$addQuery." ORDER BY season DESC LIMIT 1;";
+                    $skatersql = "SELECT * FROM skaters AS A NATURAL JOIN (SELECT clubName AS club FROM club WHERE alberta = TRUE) AS B WHERE skaterID = '$skaterID'".$addQuery." ORDER BY season DESC LIMIT 1;";
 
                     // Executing the sql query
                     $result2 = mysqli_query($conn, $skatersql);
