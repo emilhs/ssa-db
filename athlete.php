@@ -51,8 +51,6 @@ $sql2 = "SELECT dist, track, compName, season, date, MIN(time) AS best
             WHERE skaterID = '$skaterID' AND time > 0 AND time < 2000000
             GROUP BY dist
             ORDER BY dist ASC;";
-
-            echo $sql2;
     #$sql = "SELECT fName, lName, country FROM athletes WHERE athleteID = '$athleteID';";
     // Executing the sql query
     $result2 = mysqli_query($conn, $sql2);

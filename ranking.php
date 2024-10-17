@@ -148,7 +148,7 @@ else {
                     <?php
                 }
                 else {
-                    $url = "y=".$currSeason."&aC=".$currCat."&a=".$currAge."&g=".$g."&t=".$currTrack."&d=".implode("m",$currDists);
+                    $url = "y=".$currSeason."&aC=".$currCat."&a=".$currAge."&g=".$currGender."&t=".$t."&d=".implode("m",$currDists);
                     ?>
                     <a class = "bebas-neue darktext selectorbtn" href = "ranking.php?<?php echo $url; ?>"><?php echo $t; ?></a>
                     <?php
@@ -270,7 +270,7 @@ else {
                         $addQuery = $addQuery." AND gender = '".$currGender."'";
                     }
 
-                    $skatersql = "SELECT * FROM skaters WHERE skaterID = '$skaterID'".$addQuery.";";
+                    $skatersql = "SELECT * FROM skaters WHERE skaterID = '$skaterID'".$addQuery." ORDER BY season DESC LIMIT 1;";
 
                     // Executing the sql query
                     $result2 = mysqli_query($conn, $skatersql);
@@ -289,7 +289,6 @@ else {
                             $gender = $rows2['gender'];
                             $age = $rows2['age'];
                             $club = $rows2['club'];
-
                         # PRINT ROW STATEMENTS
                         ?>
                         <tr <?php if($displayNum%2==0){?> class = "odd" <?php } ?> onclick="window.location='athlete.php?id=<?php echo $skaterID?>';">
@@ -313,7 +312,6 @@ else {
                         </tr>
                         <?php
                         $displayNum++;
-
                         }
                     }
                 }
@@ -321,7 +319,7 @@ else {
                 </table>
                 <?php
             }
-            else{ ?>
+            if ($displayNum == 1){ ?>
                 <p class = "arimo darktext text-center medsize">No skaters found for the selected query</p>
             <?php }
         }
