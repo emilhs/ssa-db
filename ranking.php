@@ -158,18 +158,36 @@ else {
         <p class = "selector-label bebas-neue whitetext text-center smallsize">Select <span class = "whitetext">Distance(s):</span></p>
         <?php
             if ($currTrack != NULL){
-                foreach ($avaldists as $d){
-                    if (in_array($d, $currDists)){
-                        $url = "y=".$currSeason."&aC=".$currCat."&a=".$currAge."&g=".$currGender."&t=".$currTrack."&d=".implode("m", array_diff($currDists, array($d)));
-                        ?>
-                        <a class = "bebas-neue whitetext selectorbtn-selected" href = "ranking.php?d=<?php echo $url; ?>"><?php echo $d; ?></a>
-                        <?php 
+                if ($currCat == "Senior" or $currCat == "Junior" or $currCat == "Neo-Junior"){
+                    foreach ($avaldists as $d){
+                        if (in_array($d, $currDists)){
+                            $url = "y=".$currSeason."&aC=".$currCat."&a=".$currAge."&g=".$currGender."&t=".$currTrack."&d=".implode("m", array_diff($currDists, array($d)));
+                            ?>
+                            <a class = "bebas-neue whitetext selectorbtn-selected" href = "ranking.php?d=<?php echo $url; ?>"><?php echo $d; ?></a>
+                            <?php 
+                        }
+                        else{
+                            $url = "y=".$currSeason."&aC=".$currCat."&a=".$currAge."&g=".$currGender."&t=".$currTrack."&d=".implode("m", array_merge($currDists, array($d)));
+                            ?>
+                            <a class = "bebas-neue darktext selectorbtn" href = "ranking.php?<?php echo $url; ?>"><?php echo $d; ?></a>
+                            <?php 
+                        }
                     }
-                    else{
-                        $url = "y=".$currSeason."&aC=".$currCat."&a=".$currAge."&g=".$currGender."&t=".$currTrack."&d=".implode("m", array_merge($currDists, array($d)));
-                        ?>
-                        <a class = "bebas-neue darktext selectorbtn" href = "ranking.php?<?php echo $url; ?>"><?php echo $d; ?></a>
-                        <?php 
+                }
+                else {
+                    foreach ($avaldists as $d){
+                        if (in_array($d, $currDists)){
+                            $url = "y=".$currSeason."&aC=".$currCat."&a=".$currAge."&g=".$currGender."&t=".$currTrack."&d=".$d;
+                            ?>
+                            <a class = "bebas-neue whitetext selectorbtn-selected" href = "ranking.php?d=<?php echo $url; ?>"><?php echo $d; ?></a>
+                            <?php 
+                        }
+                        else{
+                            $url = "y=".$currSeason."&aC=".$currCat."&a=".$currAge."&g=".$currGender."&t=".$currTrack."&d=".$d;
+                            ?>
+                            <a class = "bebas-neue darktext selectorbtn" href = "ranking.php?<?php echo $url; ?>"><?php echo $d; ?></a>
+                            <?php 
+                        }
                     }
                 }
             }
