@@ -7,6 +7,8 @@ if (isset($_POST["upload"]) ) {
     $skaters = $_POST["skaters"];
     $dates = $_POST["dates"];
 
+    $pointcounter = 0;
+    $oldskaterID = 0;
     // echo var_dump($skaters);
     #organize SKATERS string into array
     $unorganized = explode("!~!", $skaters);
@@ -14,9 +16,9 @@ if (isset($_POST["upload"]) ) {
     $skaters = array();
     $i = 1;
     while ($i < sizeof($unorganized)){
-        $newpart = array_slice($unorganized, $i, 10);
+        $newpart = array_slice($unorganized, $i, 11);
         $skaters[] = $newpart;
-        $i = $i + 10;
+        $i = $i + 11;
     }
 
     $sql = "SELECT * FROM comps WHERE compName = '$compName' AND season = '$season' AND location = '$location';";
@@ -61,6 +63,7 @@ if (isset($_POST["upload"]) ) {
                     $track = $splitinfo[7];
                     $time = $splitinfo[8];
                     $rVal = $splitinfo[9];
+                    $pts = (int) str_replace(',', '', $splitinfo[10]);
 
                     if ($time == "NULL"){
                          $time = 0;
@@ -176,8 +179,16 @@ if (isset($_POST["upload"]) ) {
                         }
                         if ($skaterID > 0){
                             $time = $time * 1000;
+                            #add result
                             $resultsql = "INSERT INTO results SET compID = '$compID', dayID = '$dayID', skaterID = '$skaterID', dist = '$dist', track = '$track', time = '$time', disc = '$rVal';";
                             $result = mysqli_query($conn, $resultsql) or die(mysqli_error());
+                            #add points
+                            if ($skaterID != $oldskaterID){
+                                $pointsql = "INSERT INTO points SET compID = '$compID', skaterID = '$skaterID', points = '$pts';";
+                                $result = mysqli_query($conn, $pointsql) or die(mysqli_error());
+                                $oldskaterID = $skaterID;
+                                $pointcounter++;
+                            }
                         }
                         else {
                             echo $fName;

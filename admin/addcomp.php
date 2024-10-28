@@ -50,7 +50,8 @@ if (isset($_POST["submit"]) ) {
                     <td class = "row-mid">Distance</td>
                     <td class = "row-mid">Track</td>
                     <td class = "row-mid">Type</td>
-                    <td class = "row-right">Time</td>
+                    <td class = "row-mid">Time</td>
+                    <td class = "row-right">Total Points</td>
                 </tr>
 
             <?php
@@ -58,6 +59,7 @@ if (isset($_POST["submit"]) ) {
             $dates = array();
             $oldskater = array();
             $topass = "";
+            $ptslist = array();
             $skaters = array();
             $counter = 0;
 
@@ -173,6 +175,8 @@ if (isset($_POST["submit"]) ) {
                     }
                 }
 
+                $totalpts = $getData[8];
+
                 $rawtime = $getData[13];
                 $mins = explode(":",$rawtime)[0];
                 $secs = explode(":",$rawtime)[1];
@@ -213,10 +217,11 @@ if (isset($_POST["submit"]) ) {
                     <td><?php echo $track?></td>
                     <td><?php echo $rType?></td>
                     <td><?php echo $time?></td>
+                    <td><?php echo $totalpts?></td>
                 </tr>
                 <?php
-                
-                $topass = $topass."!~!".$date."!~!".$age."!~!".$gender."!~!".$fName."!~!".$lName."!~!".$club."!~!".$dist."!~!".$track."!~!".$time."!~!".$rVal;
+
+                $topass = $topass."!~!".$date."!~!".$age."!~!".$gender."!~!".$fName."!~!".$lName."!~!".$club."!~!".$dist."!~!".$track."!~!".$time."!~!".$rVal."!~!".$totalpts;
                 if ($date != $olddate){
 
                     $year = $date[0].$date[1].$date[2].$date[3];
@@ -237,6 +242,7 @@ if (isset($_POST["submit"]) ) {
             }
             ?>
             </table>
+            <input type = "hidden" value = "<?php echo $ptslist; ?>" name = "points">
             <input type = "hidden" value = "<?php echo $topass; ?>" name = "skaters">
             <input type = "hidden" value="<?php echo $season?>" name="season">
             <input class = "filesubmission-wide darktext bebas-neue" type = "submit" value="Upload Competition" name="upload"></input>

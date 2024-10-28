@@ -97,7 +97,6 @@ if (isset($_POST["clearflag"]) ) {
                         <th class = "row-mid">Name</th>
                         <th class = "row-mid">Surname</th>
                         <th class = "row-mid">Age</th>
-                        <th class = "row-mid">Age Category</th>
                         <th class = "row-mid">Gender</th>
                         <th class = "row-mid">Club</th>
                         <th class = "row-mid">Date of Birth</th>
@@ -244,6 +243,8 @@ $sql2 = "SELECT *
         }
     }
 ?>
+<br>
+<a class = "btn" href = "viewskaters.php?f=<?php echo $fName[0]; ?>&l=<?php echo $lName[0]; ?>">Back to Search</a>
 </div>
 
 <?php include("../footer.php");

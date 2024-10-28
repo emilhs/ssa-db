@@ -10,12 +10,22 @@
 
     # FOR LIVE SERVER
 
-    $cleardb_url = parse_url(getenv("JAWSDB_URL"));
-    $hostname = "jj820qt5lpu6krut.cbetxkdyhwsb.us-east-1.rds.amazonaws.com";
-    $username = "g5epois4jr3fvwjm";
-    $password = "fknimuhilplydf54";
-    $database = "i4zt2ijecbj7ykgu";
-    $conn = mysqli_connect($hostname, $username, $password, $database, 3306) or die(mysqli_error());
+    // $cleardb_url = parse_url(getenv("JAWSDB_URL"));
+    // $HOST = "jj820qt5lpu6krut.cbetxkdyhwsb.us-east-1.rds.amazonaws.com";
+    // $USERNAME = "g5epois4jr3fvwjm";
+    // $PASSWORD = "fknimuhilplydf54";
+    // $DATABASE = "i4zt2ijecbj7ykgu";
+    // $PORT = 3306;
+
+    // $conn = mysqli_connect($HOST, $USERNAME, $PASSWORD, $DATABASE, $PORT);
+    # $db_select = mysqli_select_db($conn, $DATABASE) or die(mysqli_error()); //Selecting Database
+    # Check connection
+    // if ($conn->connect_error) {
+    //      die("Connection failed: " . $conn->connect_error);
+    // }
+    // echo "Connection was successfully established!";
+
+    #$conn = mysqli_connect($hostname, $username, $password, $database, 3306) or die(mysqli_error());
 
     # ---------
 
@@ -34,16 +44,16 @@
 
     # FOR LOCAL SERVER
 
-    // define('SITEURL', 'http://localhost/ssa-db/');
-    // define('LOCALHOST', 'localhost');
-    // define('DB_USERNAME', 'root');
-    // define('DB_PASSWORD', '');
-    // define('DB_NAME', 'new_ssa_db');
-    // $active_group = 'default';
-    // $query_builder = TRUE;
+    define('SITEURL', 'http://localhost/ssa-db/');
+    define('LOCALHOST', 'localhost');
+    define('DB_USERNAME', 'root');
+    define('DB_PASSWORD', '');
+    define('DB_NAME', 'new_ssa_db');
+    $active_group = 'default';
+    $query_builder = TRUE;
     // // Connect to DB
-    // $conn = mysqli_connect(LOCALHOST, DB_USERNAME, DB_PASSWORD);
-    // $db_select = mysqli_select_db($conn, DB_NAME) or die(mysqli_error()); //Selecting Database
+    $conn = mysqli_connect(LOCALHOST, DB_USERNAME, DB_PASSWORD);
+    $db_select = mysqli_select_db($conn, DB_NAME) or die(mysqli_error()); //Selecting Database
     
     # --------------
 

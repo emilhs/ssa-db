@@ -26,6 +26,23 @@ if (isset($_POST["updatecomp"]) ) {
     $result2 = mysqli_query($conn, $sql2) or die(mysqli_error());
 }
 
+if (isset($_POST["inseries"])) {
+    $compID = $_POST["compID"];
+    if ($compID != NULL){
+        $sql = "UPDATE comps SET series = TRUE
+        WHERE compID = '$compID';";
+        $result1 = mysqli_query($conn, $sql) or die(mysqli_error());
+    }
+}
+
+if (isset($_POST["notinseries"])) {
+    $compID = $_POST["compID"];
+    if ($compID != NULL){
+        $sql = "UPDATE comps SET series = FALSE
+        WHERE compID = '$compID';";
+        $result1 = mysqli_query($conn, $sql) or die(mysqli_error());
+    }
+}
 
 if (isset($_GET['y'])){
     $currSeason = $_GET["y"]; 
@@ -86,6 +103,7 @@ if (isset($_GET['y'])){
                     <th class = "row-mid">Discipline</th>
                     <th class = "row-mid">Location</th>
                     <th class = "row-mid">Date</th>
+                    <th></th>
                     <th class = "row-right"></th>
                 </tr>    
             <?php
@@ -94,6 +112,7 @@ if (isset($_GET['y'])){
                 $compName = $rows2['compName'];
                 $location = $rows2['location'];
                 $date = $rows2['date'];
+                $series = $rows2['series'];
                 ?>
                 <form action="" method="post" enctype="multipart/form-data">
                     <tr <?php if($displayNum%2==0){?> class = "odd" <?php } ?>>    
@@ -121,7 +140,23 @@ if (isset($_GET['y'])){
                         </td>
                         <td><input class = "filltable-wide" type = "text" name = "location" value ="<?php echo $location; ?>"></input></td>
                         <td><input class = "filltable-wide" type = "date" name = "date" value = "<?php echo $date; ?>"></input></td>
-                        <td class = "row-right"><input class = "filesubmission-long bebas-neue darktext" type = "submit" value="Update Competition" name="updatecomp"></input></td>
+                        <td><input class = "filesubmission-long bebas-neue darktext" type = "submit" value="Update Competition" name="updatecomp"></input></td>
+                        <td class = "row-right">
+                        <?php
+                            if ($series == NULL or $series <= 0) {
+                                ?>
+                                <button class = "filesubmission-selected bebas-neue darktext">Not in Series</button>
+                                <input class = "filesubmission bebas-neue darktext" type = "submit" value="In Series" name="inseries">
+                                <?php
+                            }
+                            else{
+                                ?>
+                                    <input class = "filesubmission bebas-neue darktext" type = "submit" value="Not in Series" name="notinseries">
+                                    <button class = "filesubmission-selected bebas-neue darktext">In Series</button>
+                                    <?php
+                                }
+                        ?>
+                        </td>
                     </tr>
                     <input type = "hidden" name = "compID" value = <?php echo $compID; ?>>
                 </form>
