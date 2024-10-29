@@ -111,12 +111,12 @@ if ($currSeason > 0){
         <?php
             foreach ($ageCats as $c){
                 if ($c == $currCat){
-                    $url = "y=".$currSeason."&aC=&a=".$currAge."&g=".$currGender;
+                    $url = "y=".$currSeason."&aC=&a=&g=".$currGender;
                     ?>
                     <a class = "bebas-neue darktext selectorbtn-selected" href = "series.php?<?php echo $url; ?>"><?php echo $c; ?></a>                    <?php 
                 }
                 else {
-                    $url = "y=".$currSeason."&aC=".$c."&a=".$currAge."&g=".$currGender;
+                    $url = "y=".$currSeason."&aC=".$c."&a=&g=".$currGender;
                     ?>
                     <a class = "bebas-neue darktext selectorbtn" href = "series.php?<?php echo $url; ?>"><?php echo $c; ?></a>
                     <?php 
@@ -173,7 +173,6 @@ if ($currSeason > 0){
     <div class = "ranking">
     <?php
         if ($currGender > 0 and $currAge > 0 AND $currSeason > 0){
-
             foreach ($rankingcomps as $c){
                 $cPts = "SELECT fName, lName, club, skaterID, compID, 
                                 62-2*RANK() OVER (ORDER BY 
@@ -187,7 +186,10 @@ if ($currSeason > 0){
                                 FROM points WHERE compID = '".$c."'
                             ) AS A 
                             NATURAL JOIN 
-                            (SELECT * FROM skaters WHERE gender = '".$currGender."' AND age = '".$currAge."' AND season = '".$currSeason."') AS S;";
+                            (SELECT * FROM skaters WHERE gender = '".$currGender."' AND age = '".$currAge."' AND season = '".$currSeason."') AS S
+                            JOIN
+                            club AS P
+                            WHERE P.clubName = S.club AND P.alberta = TRUE;";
             }
 
             $result = mysqli_query($conn, $cPts) or die(mysqli_error());
