@@ -18,7 +18,7 @@
     $PORT = 3306;
 
     $conn = mysqli_connect($HOST, $USERNAME, $PASSWORD, $DATABASE, $PORT);
-    # $db_select = mysqli_select_db($conn, $DATABASE) or die(mysqli_error()); //Selecting Database
+    // $db_select = mysqli_select_db($conn, $DATABASE) or die(mysqli_error()); //Selecting Database
     # Check connection
     // if ($conn->connect_error) {
     //      die("Connection failed: " . $conn->connect_error);
@@ -52,8 +52,8 @@
     // $active_group = 'default';
     // $query_builder = TRUE;
     // // Connect to DB
-    $conn = mysqli_connect(LOCALHOST, DB_USERNAME, DB_PASSWORD);
-    $db_select = mysqli_select_db($conn, DB_NAME) or die(mysqli_error()); //Selecting Database
+    // $conn = mysqli_connect(LOCALHOST, DB_USERNAME, DB_PASSWORD);
+    // $db_select = mysqli_select_db($conn, DB_NAME) or die(mysqli_error()); //Selecting Database
     
     # --------------
 
