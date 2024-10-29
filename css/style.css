@@ -286,6 +286,21 @@ box-shadow: 0px 0px black;
     background-color: #199bff;
 }
 
+.yearbtn-small, .yearbtn-small-selected, .yearbtn-small-selected:hover, .yearbtn-small:hover{
+    display: inline-block;
+    font-size: 25px;
+    font-weight: 300;
+    padding: 15px;
+    margin: 3px;
+    border-radius: 6px;
+    line-height: 1.15;
+}
+
+.yearbtn-small:hover, .yearbtn-small-selected, .yearbtn-small-selected:hover{
+    color:white;
+    background-color: #199bff;
+}
+
 .medsize{
     font-size: 25px;
 }
@@ -415,12 +430,10 @@ box-shadow: 0px 0px black;
     margin-right: auto;
 }
 .rankresult, .rankresult td, .rankresult th{
-    font-size: 10px;
+    font-size: 20px;
     text-align: left;
     border-collapse: collapse;
     padding: 5px;
-    padding-left: 10px;
-    padding-right: 10px;
 }
 .odd{
     margin: 15px;

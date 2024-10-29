@@ -60,7 +60,7 @@ else {
                         if ($season == $currSeason){
                             $url = "y=&aC=".$currCat."&a=".$currAge."&g=".$currGender."&t=".$currTrack."&d=".implode("m", $currDists);
                             ?>
-                            <a class = "bebas-neue whitetext yearbtn-selected" href = "series.php?<?php echo $url; ?>">
+                            <a class = "bebas-neue whitetext yearbtn-small-selected" href = "series.php?<?php echo $url; ?>">
                                 <?php echo ($season-1); ?>-<?php echo $season; ?>
                             </a>
                             <?php 
@@ -68,7 +68,7 @@ else {
                         else {
                             $url = "y=".$season."&aC=".$currCat."&a=".$currAge."&g=".$currGender."&t=".$currTrack."&d=".implode("m", $currDists);
                             ?>
-                            <a class = "bebas-neue whitetext yearbtn" href = "series.php?<?php echo $url;?>">
+                            <a class = "bebas-neue whitetext yearbtn-small" href = "series.php?<?php echo $url;?>">
                                 <?php echo ($season-1); ?>-<?php echo $season; ?>
                             </a>
                             <?php 
@@ -94,10 +94,14 @@ if ($currSeason > 0){
                 $rankingcomps[] = $compID;
                 $compName = $rows10['compName'];
                 # PRINT ROW STATEMENTS
-                ?><td class = "text-center"><p class = "arimo smalltext darktext"><?php echo $compName; ?> (Comp-<?php echo $compIndex; ?>)</p></td><?php
+                ?><td class = "text-center"><p class = "arimo smalltext darktext"><?php echo $compName; ?> (C<?php echo $compIndex; ?>) <b>Completed</b></p></td><?php
                 $compIndex++;
             }
         }
+        ?><td class = "text-center"><p class = "arimo smalltext darktext">Edmonton Fall Classic (C2)</p></td><?php
+        ?><td class = "text-center"><p class = "arimo smalltext darktext">Grand Prairie True North Strong (C3)</p></td><?php
+        ?><td class = "text-center"><p class = "arimo smalltext darktext">Debby Fisher's RU Fast (C4)</p></td><?php
+        ?><td class = "text-center"><p class = "arimo smalltext darktext">SSA ST Provincial Championships (C5)</p></td><?php
     }
 }
 ?>
@@ -105,9 +109,7 @@ if ($currSeason > 0){
 
 <div class = "ui-container">
     <div class = "options">
-        <!-- <p class = "arimo darktext smallsize"><span class = "darktext">Specify the Ranking List</span></p>
-        <br> -->
-        <p class = "selector-label bebas-neue whitetext text-center smallsize">Select <span class = "whitetext">Age Category:</span></p>
+        <p class = "selector-label top-selector-label bebas-neue whitetext text-center smallsize">Select <span class = "whitetext">Age Category:</span></p>
         <?php
             foreach ($ageCats as $c){
                 if ($c == $currCat){
@@ -206,15 +208,18 @@ if ($currSeason > 0){
                         <?php
                         foreach ($rankingcomps as $c){
                             ?>
-                            <th <?php if($c == end($rankingcomps) and sizeof($rankingcomps) == 1){?> class = "row-right" <?php } else { ?> class = "row-mid" <?php } ?>>Comp-<?php echo $c; ?></th>
+                            <th class = "row-mid">C<?php echo $c; ?></th>
                             <?php
                         }
-                        if (sizeof($currDists) > 1){
+                        $c = sizeof($rankingcomps);
+                        while ($c <= 5){
                             ?>
-                            <th class = "row-right">Combined</th>
+                            <th class = "row-mid">C<?php echo $c; ?></th>
                             <?php
+                            $c++;
                         }
                         ?>
+                        <th class = "row-right">Combined</th>
                     </tr>
                 <?php
                 while($rows = mysqli_fetch_assoc($result)){
@@ -228,23 +233,24 @@ if ($currSeason > 0){
                     ?>
                     <tr <?php if($displayNum%2==0){?> class = "odd" <?php } ?> onclick="window.location='athlete.php?id=<?php echo $skaterID?>';">
                             <td class = "row-left"><?php echo $displayNum; ?></td>
-                            <td class = ""><?php echo $fName; ?></td>
-                            <td class = ""><?php echo $lName; ?></td>
-                            <td class = ""><?php echo $club; ?></td>
-                            <td class = "row-right"><?php echo $pts; ?></td>
-                            <?php 
-                            $counter = 0;
-                            foreach ($currDists as $d){
-                                $showtime = $rows["".$letters[$counter]."time"]/1000;
+                            <td><?php echo $fName; ?></td>
+                            <td><?php echo $lName; ?></td>
+                            <td><?php echo $club; ?></td>
+                            <?php
+                            foreach ($rankingcomps as $c){
                                 ?>
-                                <td <?php if($d == end($currDists) and sizeof($currDists) == 1){?> class = "row-right" <?php } else { ?> class = "" <?php } ?> ><?php echo gmdate("i:s", $showtime); ?>.<?php echo end(explode(".", $showtime));?></td>
+                                <td><?php echo $pts; ?></td>
                                 <?php
-                                $counter++;
                             }
-                            if (sizeof($currDists) > 1){ ?>
-                                <td class = "row-right"><?php echo round($rankTime/1000,3); ?></td>
-                            <?php 
-                            }?>
+                            $c = sizeof($rankingcomps);
+                            while ($c <= 5){
+                                ?>
+                                <td>0</td>
+                                <?php
+                                $c++;
+                            }
+                            ?>
+                            <td class = "row-right"><b><?php echo $pts; ?></b></td>
                     </tr>
                     <?php
                     $displayNum++;
