@@ -111,12 +111,12 @@ if ($currSeason > 0){
         <?php
             foreach ($ageCats as $c){
                 if ($c == $currCat){
-                    $url = "y=".$currSeason."&aC=&a=&g=".$currGender;
+                    $url = "y=".$currSeason."&aC=&a=&g=";
                     ?>
                     <a class = "bebas-neue darktext selectorbtn-selected" href = "series.php?<?php echo $url; ?>"><?php echo $c; ?></a>                    <?php 
                 }
                 else {
-                    $url = "y=".$currSeason."&aC=".$c."&a=&g=".$currGender;
+                    $url = "y=".$currSeason."&aC=".$c."&a=&g=";
                     ?>
                     <a class = "bebas-neue darktext selectorbtn" href = "series.php?<?php echo $url; ?>"><?php echo $c; ?></a>
                     <?php 
@@ -129,13 +129,13 @@ if ($currSeason > 0){
                 foreach ($ageSort[$currCat] as $a){
                     if (sizeof($ageSort[$currCat]) == 1 or $currAge == $a){
                         $currAge = $a;
-                        $url = "y=".$currSeason."&aC=".$currCat."&a=&g=".$currGender;
+                        $url = "y=".$currSeason."&aC=".$currCat."&a=&g=";
                         ?>
                         <a class = "bebas-neue darktext selectorbtn-selected" href = "series.php?<?php echo $url; ?>"><?php echo $a; ?></a>
                         <?php 
                     }
                     else {
-                        $url = "y=".$currSeason."&aC=".$currCat."&a=".$a."&g=".$currGender;
+                        $url = "y=".$currSeason."&aC=".$currCat."&a=".$a."&g=";
                         ?>
                         <a class = "bebas-neue darktext selectorbtn" href = "series.php?a=<?php echo $url; ?>"><?php echo $a; ?></a>
                         <?php 
@@ -152,9 +152,8 @@ if ($currSeason > 0){
                 foreach ($genderSort[$currCat] as $g){
                     if (sizeof($genderSort[$currCat]) == 1 or $currGender == $g){
                         $currGender = $g;
-                        $url = "y=".$currSeason."&aC=".$currCat."&a=".$currAge."&g=";
                         ?>
-                        <a class = "bebas-neue darktext selectorbtn-selected" href = "series.php?<?php echo $url; ?>"><?php echo $g; ?></a>
+                        <a class = "bebas-neue darktext selectorbtn-selected" href = ""><?php echo $g; ?></a>
                         <?php 
                     }
                     else {
@@ -259,7 +258,7 @@ if ($currSeason > 0){
             <?php }
         }
         else {
-        ?><p class = "arimo darktext text-center medsize">Select a track and distance to begin ranking</p><?php
+        ?><p class = "arimo darktext text-center medsize">Select an age category, age, and gender to begin ranking</p><?php
         }
     ?>
     </div>
