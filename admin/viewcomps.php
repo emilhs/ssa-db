@@ -104,6 +104,7 @@ if (isset($_GET['y'])){
                     <th class = "row-mid">Location</th>
                     <th class = "row-mid">Date</th>
                     <th></th>
+                    <th></th>
                     <th class = "row-right"></th>
                 </tr>    
             <?php
@@ -141,7 +142,7 @@ if (isset($_GET['y'])){
                         <td><input class = "filltable-wide" type = "text" name = "location" value ="<?php echo $location; ?>"></input></td>
                         <td><input class = "filltable-wide" type = "date" name = "date" value = "<?php echo $date; ?>"></input></td>
                         <td><input class = "filesubmission-long bebas-neue darktext" type = "submit" value="Update Competition" name="updatecomp"></input></td>
-                        <td class = "row-right">
+                        <td>
                         <?php
                             if ($series == NULL or $series <= 0) {
                                 ?>
@@ -156,6 +157,9 @@ if (isset($_GET['y'])){
                                     <?php
                                 }
                         ?>
+                        </td>
+                        <td class = "row-right">
+                            <a class = "filesubmission bebas-neue darktext" href = "fullcomp.php?comp=<?php echo $compID;?>">Access Competition</a>
                         </td>
                     </tr>
                     <input type = "hidden" name = "compID" value = <?php echo $compID; ?>>

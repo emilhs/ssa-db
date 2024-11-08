@@ -332,11 +332,9 @@ box-shadow: 0px 0px black;
 
 .homebtn{    
     display: block;
-    font-size: 80px;
+    font-size: 65px;
     border-radius: 6px;
     padding: 20px;
-    margin-top: 30px;
-    margin-bottom: 30px;
     /* border: 1px solid #435664; */
     box-shadow: 0px 0px black;
     /* box-shadow: 1px 1px 2px black; */
@@ -344,11 +342,9 @@ box-shadow: 0px 0px black;
 
 .homebtn:hover{
     display: block;
-    font-size: 80px;
+    font-size: 65px;
     border-radius: 6px;
     padding: 20px;
-    margin-top: 30px;
-    margin-bottom: 30px;
     box-shadow: 0px 0px black;
     color: white;
     background-color: #199bff;
@@ -513,6 +509,14 @@ box-shadow: 0px 0px black;
         position: relative;
         display: block;
     }
+    .homebtn{
+        padding: 10px;
+        font-size: 36px;
+    }
+    .homebtn:hover{
+        padding: 10px;
+        font-size: 36px;
+    }
     .options{
         width: 100%;
     }
@@ -537,11 +541,16 @@ box-shadow: 0px 0px black;
         display: flex;
     }
     .left, .right{
+        gap: 8px; /* Adjust spacing between image and text as needed */
         text-align: center;
         justify-content: center;
     }
     #title{
-        font-size: 38px;
+        font-size: 30px;
+    }
+    #homelogo {
+        height: 45px; /* Keep aspect ratio */
+        width: auto; /* Adjust image size */
     }
 }
   
