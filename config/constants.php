@@ -38,7 +38,7 @@
     # FOR LOCAL SERVER
 
     // Create constants to store non-repeating values
-    // define('SITEURL', 'http://localhost/ssa-db/');
+    #define('SITEURL', 'http://localhost/ssa-db/');
     // define('LOCALHOST', 'localhost');
     // define('DB_USERNAME', 'root');
     // define('DB_PASSWORD', '');
