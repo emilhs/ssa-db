@@ -98,7 +98,6 @@ if ($currSeason > 0){
                 $compIndex++;
             }
         }
-        ?><td class = "text-center"><p class = "arimo smalltext darktext">Edmonton Fall Classic (C2)</p></td><?php
         ?><td class = "text-center"><p class = "arimo smalltext darktext">Grand Prairie True North Strong (C3)</p></td><?php
         ?><td class = "text-center"><p class = "arimo smalltext darktext">Debby Fisher's RU Fast (C4)</p></td><?php
         ?><td class = "text-center"><p class = "arimo smalltext darktext">SSA ST Provincial Championships (C5)</p></td><?php
@@ -112,6 +111,7 @@ if ($currSeason > 0){
         <p class = "selector-label top-selector-label bebas-neue whitetext text-center smallsize">Select <span class = "whitetext">Age Category:</span></p>
         <?php
             foreach ($ageCats as $c){
+                if ($c != "Senior"){
                 if ($c == $currCat){
                     $url = "y=".$currSeason."&aC=&a=&g=";
                     ?>
@@ -122,6 +122,7 @@ if ($currSeason > 0){
                     ?>
                     <a class = "bebas-neue darktext selectorbtn" href = "series.php?<?php echo $url; ?>"><?php echo $c; ?></a>
                     <?php 
+                }
                 }
             }
         ?>
@@ -173,25 +174,45 @@ if ($currSeason > 0){
     </div>
     <div class = "ranking">
     <?php
+        $cPtsArray = array();
+        $sumArray = array();
+        $idArray = array();
+        $maxArray = array();
         if ($currGender > 0 and $currAge > 0 AND $currSeason > 0){
+            $lettercount = 1;
             foreach ($rankingcomps as $c){
-                $cPts = "SELECT fName, lName, club, skaterID, compID, 
+                $cPtsArray[] = "(SELECT fName, lName, club, skaterID, compID, 
                                 62-2*RANK() OVER (ORDER BY 
                                 CASE WHEN points = prev_points THEN prev_pointIndex
                       	        ELSE pointIndex 
-                                END) AS pts
-                        FROM 
-                            (SELECT *, 
-                                LAG(points) OVER (ORDER BY pointIndex) AS prev_points,
-                                LAG(pointIndex) OVER (ORDER BY pointIndex) AS prev_pointIndex
-                                FROM points WHERE compID = '".$c."'
-                            ) AS A 
-                            NATURAL JOIN 
-                            (SELECT * FROM skaters WHERE gender = '".$currGender."' AND age = '".$currAge."' AND season = '".$currSeason."') AS S
-                            JOIN
-                            club AS P
-                            WHERE P.clubName = S.club AND P.alberta = TRUE;";
+                                END) AS C".$lettercount."
+                                FROM 
+                                    (SELECT *, 
+                                        LAG(points) OVER (ORDER BY pointIndex) AS prev_points,
+                                        LAG(pointIndex) OVER (ORDER BY pointIndex) AS prev_pointIndex
+                                        FROM points WHERE compID = '".$c."'
+                                    ) AS A 
+                                    NATURAL JOIN 
+                                    (SELECT * FROM skaters WHERE gender = '".$currGender."' AND age = '".$currAge."' AND season = '".$currSeason."') AS S
+                                    JOIN
+                                    club AS P
+                                    WHERE P.clubName = S.club AND P.alberta = TRUE) AS ".$letters[$lettercount-1];
+                $sumArray[] = "C".$lettercount;
+                $idArray[] = "BASE.skaterID = ".$letters[$lettercount-1].".skaterID";
+                $maxArray[] = "MAX(CASE WHEN BASE.skaterID = ".$letters[$lettercount-1].".skaterID THEN C".$lettercount." ELSE 0 END) AS C".$lettercount;
+                $lettercount++;
             }
+
+
+            $cPts = "SELECT *, C1+C2 AS TOTAL
+            FROM
+            (SELECT BASE.fName, BASE.lName, BASE.club, BASE.skaterID,".implode(",", $maxArray)."
+            FROM
+            (SELECT * FROM skaters) AS BASE JOIN club AS P ON P.clubName = BASE.club AND P.alberta = TRUE
+            JOIN ".implode(" JOIN ",$cPtsArray)."
+            WHERE (".implode(" OR ",$idArray).")
+            GROUP BY skaterID) AS BIG
+            ORDER BY TOTAL DESC;";
 
             $result = mysqli_query($conn, $cPts) or die(mysqli_error());
             $count = mysqli_num_rows($result);
@@ -206,12 +227,13 @@ if ($currSeason > 0){
                         <th class = "row-mid">Last Name</th>
                         <th class = "row-mid">Club</th>
                         <?php
-                        foreach ($rankingcomps as $c){
+                        $c = 1;
+                        while ($c < $lettercount){
                             ?>
                             <th class = "row-mid">C<?php echo $c; ?></th>
                             <?php
+                            $c++;
                         }
-                        $c = sizeof($rankingcomps);
                         while ($c <= 5){
                             ?>
                             <th class = "row-mid">C<?php echo $c; ?></th>
@@ -228,8 +250,7 @@ if ($currSeason > 0){
                     $fName = $rows['fName'];
                     $lName = $rows['lName'];
                     $club = $rows['club'];
-                    $pts = $rows['pts'];
-
+                    $TOTAL = $rows['TOTAL'];
                     ?>
                     <tr <?php if($displayNum%2==0){?> class = "odd" <?php } ?> onclick="window.location='athlete.php?id=<?php echo $skaterID?>';">
                             <td class = "row-left"><?php echo $displayNum; ?></td>
@@ -237,12 +258,14 @@ if ($currSeason > 0){
                             <td><?php echo $lName; ?></td>
                             <td><?php echo $club; ?></td>
                             <?php
-                            foreach ($rankingcomps as $c){
+                            $c = 1;
+                            while ($c < $lettercount){
+                                $colname = "C".$c;
                                 ?>
-                                <td><?php echo $pts; ?></td>
+                                <td><?php echo $rows[$colname]; ?></td>
                                 <?php
+                                $c++;
                             }
-                            $c = sizeof($rankingcomps);
                             while ($c <= 5){
                                 ?>
                                 <td>0</td>
@@ -250,7 +273,7 @@ if ($currSeason > 0){
                                 $c++;
                             }
                             ?>
-                            <td class = "row-right"><b><?php echo $pts; ?></b></td>
+                            <td class = "row-right"><b><?php echo $TOTAL; ?></b></td>
                     </tr>
                     <?php
                     $displayNum++;

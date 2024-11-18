@@ -81,12 +81,12 @@ else {
         <?php
             foreach ($ageCats as $c){
                 if ($c == $currCat){
-                    $url = "y=".$currSeason."&aC=&a=".$currAge."&g=".$currGender."&t=".$currTrack."&d=".implode("m", $currDists);
+                    $url = "y=".$currSeason."&aC=&a=&g=".$currGender."&t=".$currTrack."&d=".implode("m", $currDists);
                     ?>
                     <a class = "bebas-neue darktext selectorbtn-selected" href = "ranking.php?<?php echo $url; ?>"><?php echo $c; ?></a>                    <?php 
                 }
                 else {
-                    $url = "y=".$currSeason."&aC=".$c."&a=".$currAge."&g=".$currGender."&t=".$defaultTrack[$c]."&d=".$defaultRank[$c];
+                    $url = "y=".$currSeason."&aC=".$c."&a=&g=".$currGender."&t=".$defaultTrack[$c]."&d=".$defaultRank[$c];
                     ?>
                     <a class = "bebas-neue darktext selectorbtn" href = "ranking.php?<?php echo $url; ?>"><?php echo $c; ?></a>
                     <?php 
@@ -107,7 +107,7 @@ else {
                     else {
                         $url = "y=".$currSeason."&aC=".$currCat."&a=".$a."&g=".$currGender."&t=".$currTrack."&d=".implode("m",$currDists);
                         ?>
-                        <a class = "bebas-neue darktext selectorbtn" href = "ranking.php?a=<?php echo $url; ?>"><?php echo $a; ?></a>
+                        <a class = "bebas-neue darktext selectorbtn" href = "ranking.php?<?php echo $url; ?>"><?php echo $a; ?></a>
                         <?php 
                     }
                 }
@@ -198,7 +198,7 @@ else {
     </div>
     <div class = "ranking">
     <?php
-        if ($currTrack > 0 and sizeof($currDists) > 0){
+        if ($currAge != NULL and $currSeason > 0 and $currTrack > 0 and sizeof($currDists) > 0){
 
             $counter = 0;
             foreach ($currDists as $d){
@@ -213,11 +213,11 @@ else {
                 else{
                     $selectQ2[] = $currLetter.".".$currLetter."time";
                 }
-                $whereQ[] = $currLetter."time > 0 AND ".$currLetter."time < 2000000";
+                $whereQ[] = $currLetter."time > 0 AND ".$currLetter."time < 3000000";
                 if ($d != end($currDists)){
                     $onQ[] = $currLetter.".skaterID"."=".$nextLetter.".skaterID";
                 }
-                $fromQ[] = "(SELECT skaterID, dayID, compID, raceID, MIN(time) AS ".$currLetter."time FROM results WHERE dist = ".$d." AND track = ".$currTrack." AND time IS NOT NULL AND time > 0 GROUP BY skaterID) AS ".$currLetter; 
+                $fromQ[] = "(SELECT skaterID, dayID, compID, raceID, MIN(time) AS ".$currLetter."time FROM results AS res NATURAL JOIN comps AS comps WHERE season = ".$currSeason." AND dist = ".$d." AND track = ".$currTrack." AND time IS NOT NULL AND time > 0 GROUP BY skaterID) AS ".$currLetter; 
                 $counter++;
             }
 
@@ -240,8 +240,6 @@ else {
                 GROUP BY A.skaterID
                 ORDER BY rankTime ASC;";
             }
-
-            #echo $rank;
 
             $result = mysqli_query($conn, $rank) or die(mysqli_error());
             $count = mysqli_num_rows($result);
@@ -277,7 +275,10 @@ else {
 
                     $addQuery = "";
                     if ($currCat != NULL){
-                        if ($currAge == NULL){
+                        if ($currCat == "Senior" and $currAge > 0) {
+                            $addQuery = $addQuery." AND age >= '".$currAge."'";
+                        }
+                        else if ($currAge == NULL){
                             $addQuery = $addQuery." AND (age = '".implode("' OR age = '",$ageSort[$currCat])."')";
                         }
                         else {
@@ -342,7 +343,7 @@ else {
             <?php }
         }
         else {
-        ?><p class = "arimo darktext text-center medsize">Select a track and distance to begin ranking</p><?php
+        ?><p class = "arimo darktext text-center medsize">Select a season, age, gender, track, and distance to begin ranking</p><?php
         }
     ?>
     </div>
