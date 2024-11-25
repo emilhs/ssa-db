@@ -2,48 +2,6 @@
     // Start Session
     session_start();
     
-
-    //Get Heroku ClearDB connection information
-    // define('SITEURL', 'http://localhost/ssa-db/');
-    // define('LOCALHOST', 'localhost');
-    #$cleardb_url = parse_url(getenv("JAWSDB_URL"));
-
-    # FOR LIVE SERVER
-
-    // $conn = mysqli_connect($HOST, $USERNAME, $PASSWORD, $DATABASE, $PORT);
-    // $db_select = mysqli_select_db($conn, $DATABASE) or die(mysqli_error()); //Selecting Database
-    # Check connection
-    // if ($conn->connect_error) {
-    //      die("Connection failed: " . $conn->connect_error);
-    // }
-    // echo "Connection was successfully established!";
-
-    #$conn = mysqli_connect($hostname, $username, $password, $database, 3306) or die(mysqli_error());
-
-    # ---------
-
-    #$conn = mysqli_connect(LOCALHOST, DB_USERNAME, DB_PASSWORD);
-    #$db_select = mysqli_select_db($conn, DB_NAME) or die(mysqli_error()); //Selecting Database
-    // Check connection
-    // if ($conn->connect_error) {
-    //     die("Connection failed: " . $conn->connect_error);
-    // }
-    // echo "Connection was successfully established!";
-
-    // #$db_select = mysqli_select_db($conn, $cleardb_url["path"]) or die(mysqli_error());
-    // Create constants to store non-repeating values
-    
-    //Get Heroku ClearDB connection information
-
-    # FOR LOCAL SERVER
-
-    // Create constants to store non-repeating values
-    #define('SITEURL', 'http://localhost/ssa-db/');
-    // define('LOCALHOST', 'localhost');
-    // define('DB_USERNAME', 'root');
-    // define('DB_PASSWORD', '');
-    // define('DB_NAME', 'new_ssa_db');
-
     define('LOCALHOST', 'localhost');
     define('DB_USERNAME', "eejkmtmwqd");
     define('DB_PASSWORD', "R8JFuYWf3q");

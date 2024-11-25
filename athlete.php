@@ -46,11 +46,11 @@ if($result == TRUE) {
 </div>
 <p class = "bebas-neue darktext text-center medsize">Personal Bests:</p>
 <?php
-$sql2 = "SELECT dist, track, compName, season, date, MIN(time) AS best
-            FROM results NATURAL JOIN dates NATURAL JOIN comps
-            WHERE skaterID = '$skaterID' AND time > 0 AND time < 2000000
-            GROUP BY dist
-            ORDER BY dist ASC;";
+$sql2 = "SELECT * FROM dates AS D NATURAL JOIN comps AS C NATURAL JOIN results AS R NATURAL JOIN 
+                (SELECT dist, track, MIN(time) AS best 
+                    FROM results 
+                    WHERE skaterID = $skaterID AND time > 0 AND time < 2000000 GROUP BY dist) AS T 
+        WHERE R.time = T.best AND skaterID = $skaterID ORDER BY R.dist ASC;";
     #$sql = "SELECT fName, lName, country FROM athletes WHERE athleteID = '$athleteID';";
     // Executing the sql query
     $result2 = mysqli_query($conn, $sql2);
@@ -79,7 +79,14 @@ $sql2 = "SELECT dist, track, compName, season, date, MIN(time) AS best
                 $date = $rows2['date'];
                 ?>
                 <tr>
-                    <td><?php echo gmdate("i:s", $time); ?>.<?php echo end(explode(".", $time));?></td>
+                    <?php
+                    if ($time == round($time, 0)){
+                        ?><td><?php echo gmdate("i:s", $time); ?>.00</td><?php
+                    }
+                    else{
+                        ?><td><?php echo gmdate("i:s", $time); ?>.<?php echo end(explode(".", $time));?></td><?php
+                    }                    
+                    ?>
                     <td><?php echo $dist; ?>m (<?php echo $track;?>)</td>
                     <td><?php echo $comp; ?></td>
                     <td><?php echo ($season-1)?>-<?php echo $season; ?></td>

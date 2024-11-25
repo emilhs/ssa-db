@@ -98,7 +98,6 @@ if ($currSeason > 0){
                 $compIndex++;
             }
         }
-        ?><td class = "text-center"><p class = "arimo smalltext darktext">Grand Prairie True North Strong (C3)</p></td><?php
         ?><td class = "text-center"><p class = "arimo smalltext darktext">Debby Fisher's RU Fast (C4)</p></td><?php
         ?><td class = "text-center"><p class = "arimo smalltext darktext">SSA ST Provincial Championships (C5)</p></td><?php
     }
@@ -152,18 +151,26 @@ if ($currSeason > 0){
         <p class = "selector-label bebas-neue whitetext text-center smallsize">Select <span class = "whitetext">Gender:</span></p>
         <?php
             if ($currCat != NULL){
-                foreach ($genderSort[$currCat] as $g){
-                    if (sizeof($genderSort[$currCat]) == 1 or $currGender == $g){
-                        $currGender = $g;
-                        ?>
-                        <a class = "bebas-neue darktext selectorbtn-selected" href = ""><?php echo $g; ?></a>
-                        <?php 
-                    }
-                    else {
-                        $url = "y=".$currSeason."&aC=".$currCat."&a=".$currAge."&g=".$g;
-                        ?>
-                        <a class = "bebas-neue darktext selectorbtn" href = "series.php?<?php echo $url; ?>"><?php echo $g; ?></a>
-                        <?php 
+                if ($currCat == "Active Start"){
+                    $currGender = "Mixte";
+                    ?>
+                    <a class = "bebas-neue darktext selectorbtn-selected" href = "">Mixte</a>
+                    <?php 
+                }
+                else {
+                    foreach ($genderSort[$currCat] as $g){
+                        if (sizeof($genderSort[$currCat]) == 1 or $currGender == $g){
+                            $currGender = $g;
+                            ?>
+                            <a class = "bebas-neue darktext selectorbtn-selected" href = ""><?php echo $g; ?></a>
+                            <?php 
+                        }
+                        else {
+                            $url = "y=".$currSeason."&aC=".$currCat."&a=".$currAge."&g=".$g;
+                            ?>
+                            <a class = "bebas-neue darktext selectorbtn" href = "series.php?<?php echo $url; ?>"><?php echo $g; ?></a>
+                            <?php 
+                        }
                     }
                 }
             }
@@ -181,30 +188,54 @@ if ($currSeason > 0){
         if ($currGender > 0 and $currAge > 0 AND $currSeason > 0){
             $lettercount = 1;
             foreach ($rankingcomps as $c){
-                $cPtsArray[] = "(SELECT fName, lName, club, skaterID, compID, 
-                                62-2*RANK() OVER (ORDER BY 
-                                CASE WHEN points = prev_points THEN prev_pointIndex
-                      	        ELSE pointIndex 
-                                END) AS C".$lettercount."
-                                FROM 
-                                    (SELECT *, 
-                                        LAG(points) OVER (ORDER BY pointIndex) AS prev_points,
-                                        LAG(pointIndex) OVER (ORDER BY pointIndex) AS prev_pointIndex
-                                        FROM points WHERE compID = '".$c."'
-                                    ) AS A 
-                                    NATURAL JOIN 
-                                    (SELECT * FROM skaters WHERE gender = '".$currGender."' AND age = '".$currAge."' AND season = '".$currSeason."') AS S
-                                    JOIN
-                                    club AS P
-                                    WHERE P.clubName = S.club AND P.alberta = TRUE) AS ".$letters[$lettercount-1];
-                $sumArray[] = "C".$lettercount;
-                $idArray[] = "BASE.skaterID = ".$letters[$lettercount-1].".skaterID";
-                $maxArray[] = "MAX(CASE WHEN BASE.skaterID = ".$letters[$lettercount-1].".skaterID THEN C".$lettercount." ELSE 0 END) AS C".$lettercount;
-                $lettercount++;
+                if ($currGender == "Mixte"){
+                    $cPtsArray[] = "(SELECT fName, lName, club, skaterID, compID, 
+                    62-2*RANK() OVER (ORDER BY 
+                    CASE WHEN points = prev_points THEN prev_pointIndex
+                      ELSE pointIndex 
+                    END) AS C".$lettercount."
+                    FROM 
+                        (SELECT *, 
+                            LAG(points) OVER (ORDER BY pointIndex) AS prev_points,
+                            LAG(pointIndex) OVER (ORDER BY pointIndex) AS prev_pointIndex
+                            FROM points WHERE compID = '".$c."'
+                        ) AS A 
+                        NATURAL JOIN 
+                        (SELECT * FROM skaters WHERE age = '".$currAge."' AND season = '".$currSeason."') AS S
+                        JOIN
+                        club AS P
+                        WHERE P.clubName = S.club AND P.alberta = TRUE) AS ".$letters[$lettercount-1];
+                    $sumArray[] = "C".$lettercount;
+                    $idArray[] = "BASE.skaterID = ".$letters[$lettercount-1].".skaterID";
+                    $maxArray[] = "MAX(CASE WHEN BASE.skaterID = ".$letters[$lettercount-1].".skaterID THEN C".$lettercount." ELSE 0 END) AS C".$lettercount;
+                    $lettercount++;
+                }
+                else {
+                    $cPtsArray[] = "(SELECT fName, lName, club, skaterID, compID, 
+                    62-2*RANK() OVER (ORDER BY 
+                    CASE WHEN points = prev_points THEN prev_pointIndex
+                      ELSE pointIndex 
+                    END) AS C".$lettercount."
+                    FROM 
+                        (SELECT *, 
+                            LAG(points) OVER (ORDER BY pointIndex) AS prev_points,
+                            LAG(pointIndex) OVER (ORDER BY pointIndex) AS prev_pointIndex
+                            FROM points WHERE compID = '".$c."'
+                        ) AS A 
+                        NATURAL JOIN 
+                        (SELECT * FROM skaters WHERE gender = '".$currGender."' AND age = '".$currAge."' AND season = '".$currSeason."') AS S
+                        JOIN
+                        club AS P
+                        WHERE P.clubName = S.club AND P.alberta = TRUE) AS ".$letters[$lettercount-1];
+                    $sumArray[] = "C".$lettercount;
+                    $idArray[] = "BASE.skaterID = ".$letters[$lettercount-1].".skaterID";
+                    $maxArray[] = "MAX(CASE WHEN BASE.skaterID = ".$letters[$lettercount-1].".skaterID THEN C".$lettercount." ELSE 0 END) AS C".$lettercount;
+                    $lettercount++;
+                }
             }
 
 
-            $cPts = "SELECT *, C1+C2 AS TOTAL
+            $cPts = "SELECT *,".implode("+",$sumArray)." AS TOTAL
             FROM
             (SELECT BASE.fName, BASE.lName, BASE.club, BASE.skaterID,".implode(",", $maxArray)."
             FROM
