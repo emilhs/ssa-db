@@ -5,6 +5,13 @@ body {
     display: block;
 }
 
+.pb-table {
+    display: none; /* Hide all tables by default */
+}
+.pb-table.active {
+    display: table; /* Show the active table */
+}
+
 .smallpadding{
     padding: 5px;
     margin: 0;
@@ -301,6 +308,23 @@ box-shadow: 0px 0px black;
     background-color: #199bff;
 }
 
+.thinbtn, .thinbtn-selected, .thinbtn-selected:hover, .thinbtn:hover{
+    border: 0px solid black;
+    background-color: white;
+    display: inline-block;
+    font-size: 18px;
+    font-weight: 200;
+    width: 55px;
+    padding: 10px;
+    margin: 3px;
+    border-radius: 6px;
+    line-height: 1.15;
+}
+.activebtn, .thinbtn:hover, .thinbtn-selected, .thinbtn-selected:hover{
+    color:white;
+    background-color: #199bff;
+}
+
 .medsize{
     font-size: 25px;
 }
@@ -360,6 +384,11 @@ box-shadow: 0px 0px black;
 .padded {
     display: block;
     padding: 12px;
+}
+
+.lowpad{
+    display: block;
+    padding: 3px;
 }
 
 .top-selector-label{

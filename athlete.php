@@ -45,23 +45,59 @@ if($result == TRUE) {
 </table>
 <p class = "arimo darktext text-center tinysize">Note: skater information (age, club) is not updated until a race is done.</p>
 </div>
-<p class = "bebas-neue darktext text-center medsize">Personal Bests:</p>
-<?php
-$sql2 = "SELECT * FROM dates AS D NATURAL JOIN comps AS C NATURAL JOIN results AS R NATURAL JOIN 
-                (SELECT dist, track, MIN(time) AS best 
-                    FROM results 
-                    WHERE skaterID = $skaterID AND time > 0 AND time < 2000000 GROUP BY dist) AS T 
-        WHERE R.time = T.best AND skaterID = $skaterID ORDER BY R.dist ASC;";
-    #$sql = "SELECT fName, lName, country FROM athletes WHERE athleteID = '$athleteID';";
-    // Executing the sql query
-    $result2 = mysqli_query($conn, $sql2);
+<div class = "text-center padded">
+<span class = "bebas-neue darktext text-center medsize">Personal Bests:</span>
+</div>
+
+<?php 
+$mytracks = array();
+$sqlTrack = "SELECT DISTINCT track FROM results WHERE skaterID = $skaterID ORDER BY track ASC"; 
+    $resultTrack = mysqli_query($conn, $sqlTrack);
     // Verify that SQL Query is executed or not
-    if($result2 == TRUE) {
+    if($resultTrack == TRUE) {
+        // Count the number of rows which will be a way to verify if there is data in the database
+        $countTrack = mysqli_num_rows($resultTrack);
+        // Initialize display of Athlete Number 
+        if($countTrack > 0){
+            $numer = 1;
+            ?>
+            <div class = "text-center lowpad">
+            <?php
+            while($rowsTrack = mysqli_fetch_assoc($resultTrack)){
+                $track = $rowsTrack['track'];
+                if (in_array($track, $Alltracks)){
+                    $mytracks[] = $track;
+                    ?>
+                    <button onclick="showTable('<?php echo $track; ?>')" id = "btn<?php echo $track; ?>" class = "bebas-neue darktext thinbtn <?php if($numer == 1){?> activebtn <?php } ?>"><?php echo $track; ?></button>
+                    <?php
+                    $numer++;
+                }
+            }
+            ?>
+            </div>
+            <?php
+        }
+    }
+?>
+
+<?php
+foreach ($mytracks as $t){
+    $sql2 = "SELECT * FROM dates AS D NATURAL JOIN comps AS C NATURAL JOIN results AS R NATURAL JOIN 
+    (SELECT dist, track, MIN(time) AS best 
+        FROM results 
+        WHERE track = '$t' AND skaterID = $skaterID AND time > 0 AND time < 2000000 GROUP BY dist) AS T 
+        WHERE R.time = T.best AND skaterID = $skaterID ORDER BY R.dist ASC;";
+        #$sql = "SELECT fName, lName, country FROM athletes WHERE athleteID = '$athleteID';";
+        // Executing the sql query
+        $result2 = mysqli_query($conn, $sql2);
+        // Verify that SQL Query is executed or not
+        if($result2 == TRUE) {
         // Count the number of rows which will be a way to verify if there is data in the database
         $count2 = mysqli_num_rows($result2);
         // Initialize display of Athlete Number 
         if($count2 > 0){
-            ?>
+        ?>
+        <div id = "table<?php echo $t; ?>" class = "pb-table<?php if ($t == $mytracks[0]){ ?> active <?php } ?>">
             <table class = "darktext searchresult arimo">
                 <tr class = "toprow">
                     <th class = "row-left">Time</td>
@@ -95,11 +131,15 @@ $sql2 = "SELECT * FROM dates AS D NATURAL JOIN comps AS C NATURAL JOIN results A
                 </tr>
                 <?php
             }
-            ?></table><?php
+            ?>
+            </table>
+        </div>
+        <?php
         }
-    }
-
+        }
+}
 ?>
+
 <p class = "bebas-neue darktext text-center medsize">Results:</p>
 <?php
 $sql2 = "SELECT *
@@ -159,4 +199,19 @@ $sql2 = "SELECT *
 ?>
 <br>
 <!-- <a href = "search.php?f=<#?php echo $fName[0]; ?>&l=<#?php echo $lName[0]; ?>">back to search</a> -->
-<?php include('footer.php');
+
+<script>
+    function showTable(id) {
+        let tableid = "table".concat(id);
+        const tables = document.querySelectorAll('.pb-table');
+        tables.forEach(table => table.classList.remove('active'));
+        document.getElementById(tableid).classList.add('active');
+
+        let buttonid = "btn".concat(id);
+        const buttons = document.querySelectorAll('.thinbtn');
+        buttons.forEach(button => button.classList.remove('activebtn'));
+        document.getElementById(buttonid).classList.add('activebtn');
+    }
+</script>
+
+<?php include('footer.php'); ?>
