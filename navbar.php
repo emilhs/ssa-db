@@ -1,5 +1,8 @@
-<?php include('config/constants.php'); ?>
+<?php 
+include('config/constants.php'); 
+?>
 <html>
+    <meta charset="UTF-8">
     <head>
         <title>Alberta Speed Skating Results</title>
         <link rel="stylesheet" href="css/style.css">
@@ -16,3 +19,6 @@
         </div>  
     </div>
 </html>
+<?php
+header('Content-Type: text/html; charset=utf-8');
+

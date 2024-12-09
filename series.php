@@ -188,30 +188,8 @@ if ($currSeason > 0){
         if ($currGender > 0 and $currAge > 0 AND $currSeason > 0){
             $lettercount = 1;
             foreach ($rankingcomps as $c){
-                if ($currGender == "Mixte"){
-                    $cPtsArray[] = "(SELECT fName, lName, club, skaterID, compID, 
-                    62-2*RANK() OVER (ORDER BY 
-                    CASE WHEN points = prev_points THEN prev_pointIndex
-                      ELSE pointIndex 
-                    END) AS C".$lettercount."
-                    FROM 
-                        (SELECT *, 
-                            LAG(points) OVER (ORDER BY pointIndex) AS prev_points,
-                            LAG(pointIndex) OVER (ORDER BY pointIndex) AS prev_pointIndex
-                            FROM points WHERE compID = '".$c."'
-                        ) AS A 
-                        NATURAL JOIN 
-                        (SELECT * FROM skaters WHERE age = '".$currAge."' AND season = '".$currSeason."') AS S
-                        JOIN
-                        club AS P
-                        WHERE P.clubName = S.club AND P.alberta = TRUE) AS ".$letters[$lettercount-1];
-                    $sumArray[] = "C".$lettercount;
-                    $idArray[] = "BASE.skaterID = ".$letters[$lettercount-1].".skaterID";
-                    $maxArray[] = "MAX(CASE WHEN BASE.skaterID = ".$letters[$lettercount-1].".skaterID THEN C".$lettercount." ELSE 0 END) AS C".$lettercount;
-                    $lettercount++;
-                }
-                else {
-                    $cPtsArray[] = "(SELECT fName, lName, club, skaterID, compID, 
+                if ($currGender == "M" or $currGender == "F"){
+                    $cPtsArray[] = "(SELECT A.skaterID, 
                     62-2*RANK() OVER (ORDER BY 
                     CASE WHEN points = prev_points THEN prev_pointIndex
                       ELSE pointIndex 
@@ -226,24 +204,58 @@ if ($currSeason > 0){
                         (SELECT * FROM skaters WHERE gender = '".$currGender."' AND age = '".$currAge."' AND season = '".$currSeason."') AS S
                         JOIN
                         club AS P
-                        WHERE P.clubName = S.club AND P.alberta = TRUE) AS ".$letters[$lettercount-1];
-                    $sumArray[] = "C".$lettercount;
-                    $idArray[] = "BASE.skaterID = ".$letters[$lettercount-1].".skaterID";
-                    $maxArray[] = "MAX(CASE WHEN BASE.skaterID = ".$letters[$lettercount-1].".skaterID THEN C".$lettercount." ELSE 0 END) AS C".$lettercount;
+                        WHERE P.clubName = S.club AND P.alberta = TRUE) AS ".$letters[$lettercount-1]."
+                        ON BASE.skaterID = ".$letters[$lettercount-1].".skaterID";
+                    $sumArray[] = "COALESCE(C".$lettercount.",0)";
+                    $detsumArray[] = "CASE WHEN C".$lettercount." > 0 THEN C".$lettercount." ELSE 0 END AS C".$lettercount;
+                    $lettercount++;
+                }
+                else {
+                    $cPtsArray[] = "(SELECT A.skaterID, 
+                    62-2*RANK() OVER (ORDER BY 
+                    CASE WHEN points = prev_points THEN prev_pointIndex
+                      ELSE pointIndex 
+                    END) AS C".$lettercount."
+                    FROM 
+                        (SELECT *, 
+                            LAG(points) OVER (ORDER BY pointIndex) AS prev_points,
+                            LAG(pointIndex) OVER (ORDER BY pointIndex) AS prev_pointIndex
+                            FROM points WHERE compID = '".$c."'
+                        ) AS A 
+                        NATURAL JOIN 
+                        (SELECT * FROM skaters WHERE age = '".$currAge."' AND season = '".$currSeason."') AS S
+                        JOIN
+                        club AS P
+                        WHERE P.clubName = S.club AND P.alberta = TRUE) AS ".$letters[$lettercount-1]."
+                        ON BASE.skaterID = ".$letters[$lettercount-1].".skaterID";
+                    $sumArray[] = "COALESCE(C".$lettercount.",0)";
+                    $detsumArray[] = "CASE WHEN C".$lettercount." > 0 THEN C".$lettercount." ELSE 0 END AS C".$lettercount;
                     $lettercount++;
                 }
             }
 
-
-            $cPts = "SELECT *,".implode("+",$sumArray)." AS TOTAL
-            FROM
-            (SELECT BASE.fName, BASE.lName, BASE.club, BASE.skaterID,".implode(",", $maxArray)."
-            FROM
-            (SELECT * FROM skaters) AS BASE JOIN club AS P ON P.clubName = BASE.club AND P.alberta = TRUE
-            JOIN ".implode(" JOIN ",$cPtsArray)."
-            WHERE (".implode(" OR ",$idArray).")
-            GROUP BY skaterID) AS BIG
-            ORDER BY TOTAL DESC;";
+            if ($currGender == "M" or $currGender == "F"){
+                $cPts = "SELECT BASE.fName, BASE.lName, BASE.skaterID, BASE.club,".implode(",",$detsumArray).",".implode("+",$sumArray)." AS TOTAL
+                FROM 
+                (SELECT * FROM club) AS CLUB
+                JOIN
+                (SELECT * FROM skaters WHERE gender = '".$currGender."' AND age = '".$currAge."' AND season = '".$currSeason."') AS BASE 
+                ON CLUB.clubName = BASE.club AND CLUB.alberta = TRUE
+                LEFT JOIN 
+                ".implode(" LEFT JOIN ",$cPtsArray)."
+                ORDER BY TOTAL DESC;";
+            }
+            else {
+                $cPts = "SELECT BASE.fName, BASE.lName, BASE.skaterID, BASE.club,".implode(",",$detsumArray).",".implode("+",$sumArray)." AS TOTAL
+                FROM 
+                (SELECT * FROM club) AS CLUB
+                JOIN
+                (SELECT * FROM skaters WHERE age = '".$currAge."' AND season = '".$currSeason."') AS BASE 
+                ON CLUB.clubName = BASE.club AND CLUB.alberta = TRUE
+                LEFT JOIN 
+                ".implode(" LEFT JOIN ",$cPtsArray)."
+                ORDER BY TOTAL DESC;";
+            }
 
             $result = mysqli_query($conn, $cPts) or die(mysqli_error());
             $count = mysqli_num_rows($result);

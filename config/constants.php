@@ -10,6 +10,20 @@
     $conn = mysqli_connect(LOCALHOST,DB_USERNAME,DB_PASSWORD) or die(mysqli_error()); //Database Connection
     $db_select = mysqli_select_db($conn, DB_NAME) or die(mysqli_error()); //Selecting Database
 
+    if (!mysqli_set_charset($conn, "utf8mb4")) {
+        die("Error loading character set utf8mb4: " . mysqli_error($conn));
+    }
+
+    // if ($conn->connect_error) {
+    //     die('Connect Error (' . $conn->connect_errno . ') ' . $conn->connect_error);
+    // }
+    
+    // // Set the character set to UTF-8
+    // if (!conn->set_charset("utf8mb4")) {
+    //     printf("Error loading character set utf8mb4: %s\n", $conn->error);
+    //     exit();
+    // }
+
     # --------------
 
     $letters = array("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z");
