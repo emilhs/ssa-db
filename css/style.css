@@ -6,9 +6,13 @@ body {
 }
 
 .pb-table {
+    margin-left: auto;
+    margin-right: auto;
     display: none; /* Hide all tables by default */
 }
 .pb-table.active {
+    margin-left: auto;
+    margin-right: auto;
     display: table; /* Show the active table */
 }
 

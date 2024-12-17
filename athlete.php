@@ -181,9 +181,12 @@ $sql2 = "SELECT *
                         <?php
                     }
                     else { 
-                        ?>
-                        <td class = "row-left"><?php echo gmdate("i:s", $time); ?>.<?php echo end(explode(".", $time));?></td>
-                        <?php
+                        if ($time == round($time, 0)){
+                            ?><td><?php echo gmdate("i:s", $time); ?>.00</td><?php
+                        }
+                        else{
+                            ?><td><?php echo gmdate("i:s", $time); ?>.<?php echo end(explode(".", $time));?></td><?php
+                        }                    
                     } ?>
                     <td><?php echo $dist; ?>m (<?php echo $track;?>)</td>
                     <td><?php echo $compName; ?></td>
