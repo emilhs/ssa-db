@@ -21,6 +21,21 @@ if (isset($_POST["updateresult"]) ) {
     $result1 = mysqli_query($conn, $sql) or die(mysqli_error());
 }
 
+if (isset($_POST["updaterace"]) ) {
+    $compID = $_POST["compID"];
+
+    $track = $_POST["track"];
+    $dist = $_POST["dist"];
+
+    $oldtrack = $_POST["oldtrack"];
+    $olddist = $_POST["olddist"];
+
+    $sql00 = "UPDATE results SET dist = '$dist', track = '$track'
+    WHERE track = '$oldtrack' AND dist = '$olddist' AND compID = '$compID';";
+    
+    $result00 = mysqli_query($conn, $sql00) or die(mysqli_error());
+}
+
 if (isset($_GET['comp'])){
     $currComp = $_GET["comp"]; 
 }
@@ -41,6 +56,7 @@ if (isset($_GET['comp'])){
             if ($count > 0){
                 while($rows = mysqli_fetch_assoc($result)){
                     $compName = $rows['compName'];
+                    $currSeason = $rows['season'];
                     ?>
                     <p><?php echo $compName; ?></p>
                     <?php 
@@ -48,7 +64,141 @@ if (isset($_GET['comp'])){
             }
         }
     ?>
+    <p class = "bebas-neue darktext padded text-center medsize">Races:</p>
+    <?php
+    $sql2 = "SELECT DISTINCT track, dist FROM results WHERE compID = '$currComp';";
+    #$sql = "SELECT fName, lName, country FROM athletes WHERE athleteID = '$athleteID';";
+    // Executing the sql query
+    $result2 = mysqli_query($conn, $sql2);
+    // Verify that SQL Query is executed or not
+    if($result2 == TRUE) {
+        // Count the number of rows which will be a way to verify if there is data in the database
+        $count2 = mysqli_num_rows($result2);
+        // Initialize display of Athlete Number 
+        if($count2 > 0){
+            $displayNum = 1;
+            ?>
+            <table>
+                <tr class = "toprow">
+                    <th class = "row-mid">Distance</th>
+                    <th class = "row-mid">Track</th>
+                    <th class = "row-right"></th>
+                </tr>    
+            <?php
+            while($rows2 = mysqli_fetch_assoc($result2)){
+                $track = $rows2['track'];
+                $dist = $rows2['dist'];
+                ?>
+                <form action="" method="post" enctype="multipart/form-data">
+                    <tr <?php if($displayNum%2==0){?> class = "odd" <?php } ?>>    
+                        <td>
+                            <select class = "filltable" name = "dist">
+                                <?php
+                                    foreach ($alldistances as $d){
+                                        ?>
+                                        <option <?php if ($d == $dist){ ?> selected <?php } ?>value="<?php echo $d; ?>"><?php echo $d; ?></option>
+                                        <?php
+                                    }
+                                ?>
+                            </select>
+                        </td>
+                        <td>
+                            <select class = "filltable" name = "track">
+                                <?php
+                                    foreach ($Alltracks as $t){
+                                        ?>
+                                        <option <?php if ($t == $track){ ?> selected <?php } ?>value="<?php echo $t; ?>"><?php echo $t; ?></option>
+                                        <?php
+                                    }
+                                ?>
+                            </select>
+                        </td>
+                        <input type = "hidden" name = "oldtrack" value = <?php echo $track; ?>>
+                        <input type = "hidden" name = "olddist" value = <?php echo $dist; ?>>
+                        <input type = "hidden" name = "compID" value = <?php echo $currComp; ?>>
+                        <td class = "row-right"><input class = "filesubmission bebas-neue darktext" type = "submit" value="Update Race" name="updaterace"></input></td>
+                    </tr>
+                </form>
+                <?php
+            }
+            ?>
+            </table>
+            <?php
+        }
+        else {
+            echo "Nothing to see yet";
+        }
+    }
+    ?>
+
     <p class = "bebas-neue darktext padded text-center medsize">Results (Latest to Earliest):</p>
+    <table>
+                <tr class = "toprow">
+                    <th class = "row-left">Name</th>
+                    <th class = "row-mid">Distance</th>
+                    <th class = "row-mid">Track</th>
+                    <th class = "row-mid">Time</th>
+                    <th></th>
+                    <th>Discipline</th>
+                    <th class = "row-right"></th>
+                </tr>    
+                <form action="" method="post" enctype="multipart/form-data">
+                    <tr <?php if($displayNum%2==0){?> class = "odd" <?php } ?>>    
+                        <td>
+                            <select class = "filltable" name = "track">
+                                <?php
+                                    $sql2 = "SELECT fName, lName FROM results WHERE season = '$currSeason';";
+                                    foreach ($Alltracks as $t){
+                                        ?>
+                                        <option value="<?php echo $t; ?>"><?php echo $t; ?></option>
+                                        <?php
+                                    }
+                                ?>
+                            </select>
+                        </td>
+                        <td>
+                            <select class = "filltable" name = "dist">
+                                <?php
+                                    foreach ($alldistances as $d){
+                                        ?>
+                                        <option value="<?php echo $d; ?>"><?php echo $d; ?></option>
+                                        <?php
+                                    }
+                                ?>
+                            </select>
+                        </td>
+                        <td>
+                            <select class = "filltable" name = "track">
+                                <?php
+                                    foreach ($Alltracks as $t){
+                                        ?>
+                                        <option value="<?php echo $t; ?>"><?php echo $t; ?></option>
+                                        <?php
+                                    }
+                                ?>
+                            </select>
+                        </td>
+                        <td>
+                                <input class = "subtable" type = "number" name = "mins" step = "1">
+                                <input class = "subtable" type = "number" name = "secs" step = "1">
+                                <input class = "subtable" type = "number" name = "msecs" step = "1">
+                        </td>
+                        <td>
+                            <select class = "filltable" name = "disc">
+                                <?php
+                                    foreach (array_keys($discSort) as $d){
+                                        ?>
+                                        <option value="<?php echo $d; ?>"><?php echo $discSort[$d]; ?></option>
+                                        <?php
+                                    }
+                                ?>
+                            </select>
+                        </td>
+                        <input type = "hidden" name = "raceID" value = <?php echo $raceID; ?>>
+                        <td class = "row-right"><input class = "filesubmission bebas-neue darktext" type = "submit" value="Add Result" name="updateresult"></input></td>
+    </table>
+
+
     <?php
     $sql2 = "SELECT * FROM results NATURAL JOIN skaters WHERE compID = '$currComp' ORDER BY raceID ASC;";
     #$sql = "SELECT fName, lName, country FROM athletes WHERE athleteID = '$athleteID';";
@@ -135,6 +285,9 @@ if (isset($_GET['comp'])){
             ?>
             </table>
             <?php
+        }
+        else {
+            echo "Nothing to see yet";
         }
     }
 ?>

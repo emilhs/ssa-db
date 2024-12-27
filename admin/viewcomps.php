@@ -1,5 +1,60 @@
 <?php include('navbar.php');
 
+if (isset($_POST["addcomp"])) {
+    $compName = $_POST["compName"];
+    $location = $_POST["location"];
+    $date = $_POST["date"];
+
+    $year = $date[0].$date[1].$date[2].$date[3];
+    $month = $date[5].$date[6];
+
+    // EC
+    if ($month > 6){
+        $season = $year + 1;
+    }
+    else {
+        $season = $year;
+    }
+
+    $date = date("Ymd", strtotime($date));
+    echo $date;
+
+    $sqlcheck = "SELECT * FROM comps WHERE compName = '$compName' AND location = '$location' AND season = '$season';";
+    $result0 = mysqli_query($conn, $sqlcheck) or die(mysqli_error());
+
+    if ($result0 == TRUE){
+        $count0 = mysqli_num_rows($result0);
+        if ($count0 > 0){
+            echo "ALREADY EXISTS";
+        }
+        else {
+            $sql1 = "INSERT INTO comps SET compName = '$compName', location = '$location', season = '$season';";
+            $result1 = mysqli_query($conn, $sql1) or die(mysqli_error());
+            $sqlget = "SELECT compID FROM comps WHERE compName = '$compName' AND location = '$location' AND season = '$season';";
+            $result2 = mysqli_query($conn, $sqlget) or die(mysqli_error());
+            $count2 = mysqli_num_rows($result2);
+            if ($count2 == 1){
+                $rows2 = mysqli_fetch_assoc($result2);
+                $compID = $rows2['compID'];
+
+                $sqlinsert = "INSERT INTO dates SET compID = '$compID', dayID = 1, date = '$date';";
+                echo $sqlinsert;
+                $result3 = mysqli_query($conn, $sqlinsert) or die(mysqli_error());
+                echo "SUCCESS";
+            }
+            else {
+                "SOMETHING WENT WRONG";
+            }
+        }
+    }
+
+
+
+    // $result1 = mysqli_query($conn, $sql1) or die(mysqli_error());
+    // echo "Success!"
+
+}
+
 if (isset($_POST["updatecomp"]) ) {
     $compID = $_POST["compID"];
     $compName = $_POST["compName"];
@@ -50,6 +105,25 @@ if (isset($_GET['y'])){
 ?>
 
 <div class = "menuH">
+
+<table class = "darktext searchresult arimo">
+    <p class = "bebas-neue darktext padded text-center medsize">Add Competition:</p>
+    <table class = "darktext searchresult arimo">
+                <tr class = "toprow">
+                    <th class = "row-left">Competition Name</th>
+                    <th class = "row-mid">Location</th>
+                    <th class = "row-mid">Date</th>
+                    <th class = "row-right"></th>
+                </tr>    
+                <tr>
+                    <form action="" method="post" enctype="multipart/form-data">
+                        <td><input class = "filltable-wide" type = "text" name = "compName"></input></td>
+                        <td><input class = "filltable-wide" type = "text" name = "location"></input></td>
+                        <td><input class = "filltable-wide" type = "date" name = "date"></input></td>
+                        <td><input class = "filesubmission bebas-neue darktext" type = "submit" value="Add" name="addcomp"></td>
+                    </form>
+                </tr>
+    </table>
     <p class = "bebas-neue darktext padded text-center medsize">Select a Season:</p>
     <?php
         $sql = "SELECT DISTINCT season FROM comps ORDER BY season ASC;";
@@ -136,7 +210,14 @@ if (isset($_GET['y'])){
                                     }
                                 }
                             }
+                            if ($count5 > 0){
                             echo implode(', ',$discs); 
+                            }
+                            else{
+                                ?>
+                                <span class = "danger">More Info Needed</span>
+                                <?php
+                            }
                         ?>
                         </td>
                         <td><input class = "filltable-wide" type = "text" name = "location" value ="<?php echo $location; ?>"></input></td>
