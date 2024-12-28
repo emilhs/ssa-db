@@ -50,6 +50,13 @@ if (isset($_POST["updateresult"]) ) {
     $result1 = mysqli_query($conn, $sql) or die(mysqli_error());
 }
 
+if (isset($_POST["removeresult"]) ) {
+    $raceID = $_POST["raceID"];
+
+    $sql = "DELETE FROM results WHERE raceID = '$raceID';";
+    $result1 = mysqli_query($conn, $sql) or die(mysqli_error());
+}
+
 if (isset($_POST["updaterace"]) ) {
     $compID = $_POST["compID"];
 
@@ -162,7 +169,6 @@ if (isset($_GET['comp'])){
 
     <?php
         $sqlnames = "SELECT DISTINCT skaterID, fName, lName FROM skaters WHERE season = '$currSeason' ORDER BY lName, fName ASC;";
-        echo $sqlnames;
         $resultnames = mysqli_query($conn, $sqlnames);
         $countnames = mysqli_num_rows($resultnames);
     ?>
@@ -236,12 +242,12 @@ if (isset($_GET['comp'])){
                         </td>
                         <input type = "hidden" name = "compID" value = <?php echo $currComp; ?>>
                         <td class = "row-right"><input class = "filesubmission bebas-neue darktext" type = "submit" value="Add Result" name="addresult"></input></td>
-                                </form>
-                    </table>
-
+                    </tr>
+                </form>
+    </table>
 
     <?php
-    $sql2 = "SELECT * FROM results NATURAL JOIN skaters WHERE compID = '$currComp' ORDER BY raceID ASC;";
+    $sql2 = "SELECT * FROM results NATURAL JOIN skaters WHERE compID = '$currComp' AND season = '$currSeason' ORDER BY raceID ASC;";
     #$sql = "SELECT fName, lName, country FROM athletes WHERE athleteID = '$athleteID';";
     // Executing the sql query
     $result2 = mysqli_query($conn, $sql2);
@@ -261,6 +267,7 @@ if (isset($_GET['comp'])){
                     <th class = "row-mid">Time</th>
                     <th></th>
                     <th>Discipline</th>
+                    <th></th>
                     <th class = "row-right"></th>
                 </tr>    
             <?php
@@ -276,8 +283,8 @@ if (isset($_GET['comp'])){
                 $dist = $rows2['dist'];
                 $disc = $rows2['disc'];
                 ?>
-                <form action="" method="post" enctype="multipart/form-data">
                     <tr <?php if($displayNum%2==0){?> class = "odd" <?php } ?>>    
+                    <form action="" method="post" enctype="multipart/form-data">
                         <td><?php echo $fName; ?> <?php echo $lName; ?> (<?php echo $club; ?>)</td>
                         <td>
                             <select class = "filltable" name = "dist">
@@ -319,8 +326,12 @@ if (isset($_GET['comp'])){
                         </td>
                         <input type = "hidden" name = "raceID" value = <?php echo $raceID; ?>>
                         <td class = "row-right"><input class = "filesubmission bebas-neue darktext" type = "submit" value="Update Result" name="updateresult"></input></td>
+                    </form>
+                    <form action="" method="post" enctype="multipart/form-data">
+                        <input type = "hidden" name = "raceID" value = <?php echo $raceID; ?>>
+                        <td class = "row-right"><input class = "filesubmission-opp bebas-neue darktext" type = "submit" value="Remove Result" name="removeresult"></input></td>
+                    </form>
                     </tr>
-                </form>
                 <?php
             }
             ?>
