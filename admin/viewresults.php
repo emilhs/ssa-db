@@ -1,5 +1,7 @@
 <?php include('navbar.php');
 
+
+
 if (isset($_GET['comp']) & isset($_GET['day'])){
     $currComp = $_GET["comp"]; 
     $currDay = $_GET["day"]; 

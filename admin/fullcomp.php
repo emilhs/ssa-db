@@ -1,5 +1,34 @@
 <?php include('navbar.php');
 
+if (isset($_POST["addresult"]) ) {
+    $compID = $_POST["compID"];
+    $skaterID = $_POST["skaterID"];
+
+    echo $skaterID;
+    echo $compID;
+
+    $mins = $_POST["mins"];
+    $secs = $_POST["secs"];
+    $msecs = $_POST["msecs"];
+    $dist = $_POST["dist"];
+    $disc = $_POST["disc"];
+    $track = $_POST["track"];
+
+    $secs = ($mins*60)+$secs;
+    $fulltime = $secs.".".$msecs;
+    $fulltime = $fulltime * 1000;
+
+    echo $fulltime;
+
+    $sql = "INSERT INTO results SET skaterID = '$skaterID', compID = '$compID', dayID = '1', time = '$fulltime', dist = '$dist', disc = '$disc', track = '$track';";
+    
+    echo $sql;
+
+    $result1 = mysqli_query($conn, $sql) or die(mysqli_error());
+
+    $_POST["addresult"] = NULL;
+}
+
 if (isset($_POST["updateresult"]) ) {
     $compID = $_POST["compID"];
     $raceID = $_POST["raceID"];
@@ -131,6 +160,13 @@ if (isset($_GET['comp'])){
     }
     ?>
 
+    <?php
+        $sqlnames = "SELECT DISTINCT skaterID, fName, lName FROM skaters WHERE season = '$currSeason' ORDER BY lName, fName ASC;";
+        echo $sqlnames;
+        $resultnames = mysqli_query($conn, $sqlnames);
+        $countnames = mysqli_num_rows($resultnames);
+    ?>
+
     <p class = "bebas-neue darktext padded text-center medsize">Results (Latest to Earliest):</p>
     <table>
                 <tr class = "toprow">
@@ -143,15 +179,19 @@ if (isset($_GET['comp'])){
                     <th class = "row-right"></th>
                 </tr>    
                 <form action="" method="post" enctype="multipart/form-data">
-                    <tr <?php if($displayNum%2==0){?> class = "odd" <?php } ?>>    
+                    <tr>    
                         <td>
-                            <select class = "filltable" name = "track">
+                            <select class = "filltable" name = "skaterID">
                                 <?php
-                                    $sql2 = "SELECT fName, lName FROM results WHERE season = '$currSeason';";
-                                    foreach ($Alltracks as $t){
-                                        ?>
-                                        <option value="<?php echo $t; ?>"><?php echo $t; ?></option>
-                                        <?php
+                                    if($countnames > 0){
+                                        while($rowsnames = mysqli_fetch_assoc($resultnames)){
+                                            $skaterID = $rowsnames["skaterID"];
+                                            $fName = $rowsnames["fName"];
+                                            $lName = $rowsnames["lName"];
+                                            ?>
+                                            <option value="<?php echo $skaterID; ?>"><?php echo $fName." ".$lName; ?></option>
+                                            <?php
+                                        }
                                     }
                                 ?>
                             </select>
@@ -194,9 +234,10 @@ if (isset($_GET['comp'])){
                                 ?>
                             </select>
                         </td>
-                        <input type = "hidden" name = "raceID" value = <?php echo $raceID; ?>>
-                        <td class = "row-right"><input class = "filesubmission bebas-neue darktext" type = "submit" value="Add Result" name="updateresult"></input></td>
-    </table>
+                        <input type = "hidden" name = "compID" value = <?php echo $currComp; ?>>
+                        <td class = "row-right"><input class = "filesubmission bebas-neue darktext" type = "submit" value="Add Result" name="addresult"></input></td>
+                                </form>
+                    </table>
 
 
     <?php
