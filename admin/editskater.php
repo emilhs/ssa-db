@@ -7,22 +7,74 @@ if (isset($_POST["updateinfo"]) ) {
     $fName = $_POST["fName"];
     $lName = $_POST["lName"];
     $age = $_POST["age"];
-    $gender = $_POST["gender"];
+    $gender = strtoupper($_POST["gender"]);
     $club = $_POST["club"];
     $dob = $_POST["dob"];
     $season = $_POST["season"];
 
-    if ($dob != NULL){
-        $sql = "UPDATE skaters SET fName = '$fName', lName = '$lName',age = '$age', gender = '$gender',
-        club = '$club', dob = '$dob'
-        WHERE skaterID = '$skaterID' AND season = '$season';";
+    $sqlspecific = "SELECT MAX(dob) AS dob FROM skaters WHERE skaterID = '$skaterID' AND season = '$season';";
+    $resultskater = mysqli_query($conn, $sqlspecific) or die(mysqli_error());
+    if($resultskater == TRUE) {
+        $countseason = mysqli_num_rows($resultskater);
+        if($countseason == 1){
+            $rows = mysqli_fetch_assoc($resultskater);
+            $mydob = $rows['dob'];
+        }
     }
+
+    // echo "CHANGE";
+    // echo $mydob;
+
+    // echo "TO";
+    // echo empty($dob);
+
+    # NEW BIRTHDAY
+    if ($dob != $mydob){
+        if (empty($dob)){
+            $sql2 = "UPDATE skaters SET dob = NULL WHERE skaterID = '$skaterID';";
+            $result2 = mysqli_query($conn, $sql2) or die(mysqli_error());
+        }
+        else{
+            $sql2 = "UPDATE skaters SET dob = '$dob' WHERE skaterID = '$skaterID';";
+            $result2 = mysqli_query($conn, $sql2) or die(mysqli_error());
+        
+            # GET SEASONS
+            $sqlseason = "SELECT season FROM skaters WHERE skaterID = '$skaterID' ORDER BY season ASC;";
+            $resultseason = mysqli_query($conn, $sqlseason) or die(mysqli_error());
+            if($resultseason == TRUE) {
+                $countseason = mysqli_num_rows($resultseason);
+                if($countseason > 0){
+                    while($rows2 = mysqli_fetch_assoc($resultseason)){
+                        # SEASON
+                        $myseason = $rows2['season'];
+                        $age = get_agecat($dob, $myseason);
+                        # IS THIS THE SEASON OF INTEREST?
+                        if ($myseason == $season){
+                            # EDIT SPECIFICS
+                            $sql = "UPDATE skaters SET fName = '$fName', lName = '$lName',age = '$age', gender = '$gender', club = '$club', dob = '$dob'
+                            WHERE skaterID = '$skaterID' AND season = '$myseason';";
+                            $result1 = mysqli_query($conn, $sql) or die(mysqli_error());
+                        }
+                        else{
+                            # JUST UPDATE AGE
+                            $sql = "UPDATE skaters SET age = '$age', dob = '$dob'
+                            WHERE skaterID = '$skaterID' AND season = '$myseason';";
+                            $result1 = mysqli_query($conn, $sql) or die(mysqli_error());
+                        }
+                    }
+                }
+            }
+        }
+    } 
     else {
+        $sql2 = "UPDATE skaters SET gender = '$gender' WHERE skaterID = '$skaterID';";
+        $result2 = mysqli_query($conn, $sql2) or die(mysqli_error());
+
         $sql = "UPDATE skaters SET fName = '$fName', lName = '$lName', age = '$age', gender = '$gender',
         club = '$club'
         WHERE skaterID = '$skaterID' AND season = '$season';";
+        $result1 = mysqli_query($conn, $sql) or die(mysqli_error());
     }
-    $result1 = mysqli_query($conn, $sql) or die(mysqli_error());
 }
 
 if (isset($_POST["updatetime"]) ) {
@@ -56,7 +108,7 @@ if (isset($_POST["clearflag"]) ) {
 ?>
 <div class = "menuH">
     <?php
-    $sql = "SELECT * FROM skaters WHERE skaterID = '$skaterID' ORDER BY season DESC LIMIT 1;";
+    $sql = "SELECT *, MIN(season) as MIN FROM skaters WHERE skaterID = '$skaterID' ORDER BY season DESC LIMIT 1;";
     // Executing the sql query
     $result = mysqli_query($conn, $sql);
     // Verify that SQL Query is executed or not

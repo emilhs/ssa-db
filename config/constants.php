@@ -30,12 +30,14 @@
     $ages = array("Active Start", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "Senior");
     $ageCats = array("Active Start", "Child", "Youth", "Neo-Junior", "Junior", "Senior");
     $alldiscs = array("ST");
-    $alldistances = array(50, 100, 200, 300, 400, 500, 800, 1000, 1500, 2000, 3000, 5000, 10000);
+    $alldistances = array(50, 100, 200, 300, 400, 500, 600, 800, 1000, 1500, 2000, 3000, 5000, 10000);
     $Alltracks = array(100,111,400);
-    $only100 = array(50, 100, 200, 300, 400, 800);
-    $only111 = array(1000);
+    $only100 = array();
+    $only111 = array();
+    $only400 = array();
     $distances100 = array(50, 100, 200, 300, 400, 500, 800, 1500);
     $distances111 = array(500, 1000, 1500);
+    $distances400 = array(100, 200, 400, 500, 800, 1000, 1500, 2800, 3000, 5000);
     $pagelength = 20;
 
     $discSort = array(1 => "Short Track", 2 => "Mass Start", 3 => "Olympic Style");

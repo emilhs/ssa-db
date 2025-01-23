@@ -1,5 +1,7 @@
 <?php 
 include('config/constants.php'); 
+include('config/functions.php'); 
+
 ?>
 <html>
     <meta charset="UTF-8">

@@ -1,4 +1,5 @@
 <?php include('../config/constants.php'); ?>
+<?php include('../config/functions.php'); ?>
 <?php include('VerifyAdminLogin.php'); ?>
 
 <html>

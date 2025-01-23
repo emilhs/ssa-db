@@ -81,6 +81,18 @@ if (isset($_POST["updatecomp"]) ) {
     $result2 = mysqli_query($conn, $sql2) or die(mysqli_error());
 }
 
+if (isset($_POST["deletecomp"])){
+    $compID = $_POST["compID"];
+    $sql1 = "DELETE FROM comps WHERE compID = '$compID';";
+    $result1 = mysqli_query($conn, $sql1) or die(mysqli_error());
+
+    $sql2 = "DELETE FROM results WHERE compID = '$compID'";
+    $result2 = mysqli_query($conn, $sql2) or die(mysqli_error());
+
+    $sql3 = "DELETE FROM points WHERE compID = '$compID'";
+    $result3 = mysqli_query($conn, $sql3) or die(mysqli_error());
+}
+
 if (isset($_POST["inseries"])) {
     $compID = $_POST["compID"];
     if ($compID != NULL){
@@ -179,6 +191,7 @@ if (isset($_GET['y'])){
                     <th class = "row-mid">Date</th>
                     <th></th>
                     <th></th>
+                    <th></th>
                     <th class = "row-right"></th>
                 </tr>    
             <?php
@@ -222,7 +235,7 @@ if (isset($_GET['y'])){
                         </td>
                         <td><input class = "filltable-wide" type = "text" name = "location" value ="<?php echo $location; ?>"></input></td>
                         <td><input class = "filltable-wide" type = "date" name = "date" value = "<?php echo $date; ?>"></input></td>
-                        <td><input class = "filesubmission-long bebas-neue darktext" type = "submit" value="Update Competition" name="updatecomp"></input></td>
+                        <td><input class = "filesubmission bebas-neue darktext" type = "submit" value="Update" name="updatecomp"></input></td>
                         <td>
                         <?php
                             if ($series == NULL or $series <= 0) {
@@ -239,9 +252,8 @@ if (isset($_GET['y'])){
                                 }
                         ?>
                         </td>
-                        <td class = "row-right">
-                            <a class = "filesubmission bebas-neue darktext" href = "fullcomp.php?comp=<?php echo $compID;?>">Access Competition</a>
-                        </td>
+                        <td><input class = "filesubmission-opp bebas-neue darktext" type = "submit" value="Delete" name="deletecomp"></input></td>
+                        <td class = "row-right"><a class = "filesubmission bebas-neue darktext" href = "fullcomp.php?comp=<?php echo $compID;?>">Access</a></td>
                     </tr>
                     <input type = "hidden" name = "compID" value = <?php echo $compID; ?>>
                 </form>

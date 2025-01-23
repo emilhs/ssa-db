@@ -122,7 +122,7 @@ if (isset($_POST["upload"]) ) {
                                     }
                                     else {
                                         # get most recent info (info from most recent season) based on fname and lname
-                                        $getskaterID = "SELECT skaterID, gender, club, age, MAX(season) AS season FROM skaters WHERE fName = '$fName' AND lName = '$lName' GROUP BY fName, lName ORDER BY season ASC;";
+                                        $getskaterID = "SELECT skaterID, gender, club, age, MAX(season) AS season, MAX(dob) AS dob FROM skaters WHERE fName = '$fName' AND lName = '$lName' GROUP BY fName, lName ORDER BY season ASC;";
                                         $result3 = mysqli_query($conn, $getskaterID) or die(mysqli_error());
                                         $count3 = mysqli_num_rows($result3);
                                          # there is just one skater, get ID right away
@@ -130,19 +130,36 @@ if (isset($_POST["upload"]) ) {
                                             # is info from most recent season the same as what is being inserted? 
                                             $rows = mysqli_fetch_assoc($result3);
                                             $skaterID = $rows['skaterID'];
+                                            $oldgender = $rows['gender'];
                                             $oldseason = $rows['season'];
-                                            $oldclub = $rows['season'];
+                                            $oldclub = $rows['club'];
                                             $oldage = $rows['age'];
+                                            $olddob = $rows['dob'];
 
-                                            $FLAG = FALSE;
+                                            $FLAG = 0;
+                                            $DOBFLAG = FALSE;
+
                                             # if club or age has changed
-                                            if ($club != $oldclub or $age != $oldage){
-                                                $FLAG = TRUE;
+                                            if ($club != $oldclub){
+                                                $FLAG = 1;
+                                            } 
+                                            if (is_null($olddob)){
+                                                $DOBFLAG = TRUE;
+                                                if ($age != $oldage){
+                                                    $FLAG = 1;
+                                                }
                                             }
                                             # if new season, add to DB
                                             if ($season != $oldseason){
-                                                $skater = "INSERT INTO skaters SET fname = '$fName', lname = '$lName', age = '$age', gender = '$gender', club = '$club', skaterID = '$skaterID', season = '$season', checkInfo = '$FLAG';";
-                                                $result2 = mysqli_query($conn, $skater) or die(mysqli_error());
+                                                if ($DOBFLAG){
+                                                    $skater = "INSERT INTO skaters SET fName = '$fName', lName = '$lName', age = '$age', gender = '$oldgender', club = '$club', skaterID = '$skaterID', season = '$season', checkInfo = '$FLAG';";
+                                                    $result2 = mysqli_query($conn, $skater) or die(mysqli_error());
+                                                }
+                                                else {
+                                                    $age = get_agecat($olddob, $season);
+                                                    $skater = "INSERT INTO skaters SET dob = '$olddob', fName = '$fName', lName = '$lName', age = '$age', gender = '$oldgender', club = '$club', skaterID = '$skaterID', season = '$season', checkInfo = '$FLAG';";
+                                                    $result2 = mysqli_query($conn, $skater) or die(mysqli_error());
+                                                }
                                             }
                                             # set FLAG to True if Flag is true
                                             else if ($FLAG == TRUE){

@@ -62,12 +62,14 @@ if (isset($_POST["updaterace"]) ) {
 
     $track = $_POST["track"];
     $dist = $_POST["dist"];
+    $disc = $_POST["disc"];
 
     $oldtrack = $_POST["oldtrack"];
     $olddist = $_POST["olddist"];
+    $olddisc = $_POST["olddisc"];
 
-    $sql00 = "UPDATE results SET dist = '$dist', track = '$track'
-    WHERE track = '$oldtrack' AND dist = '$olddist' AND compID = '$compID';";
+    $sql00 = "UPDATE results SET dist = '$dist', track = '$track', disc = '$disc'
+    WHERE track = '$oldtrack' AND dist = '$olddist' AND compID = '$compID' AND disc = '$olddisc';";
     
     $result00 = mysqli_query($conn, $sql00) or die(mysqli_error());
 }
@@ -102,7 +104,7 @@ if (isset($_GET['comp'])){
     ?>
     <p class = "bebas-neue darktext padded text-center medsize">Races:</p>
     <?php
-    $sql2 = "SELECT DISTINCT track, dist FROM results WHERE compID = '$currComp';";
+    $sql2 = "SELECT DISTINCT track, dist, disc FROM results WHERE compID = '$currComp';";
     #$sql = "SELECT fName, lName, country FROM athletes WHERE athleteID = '$athleteID';";
     // Executing the sql query
     $result2 = mysqli_query($conn, $sql2);
@@ -118,12 +120,14 @@ if (isset($_GET['comp'])){
                 <tr class = "toprow">
                     <th class = "row-mid">Distance</th>
                     <th class = "row-mid">Track</th>
+                    <th class = "row-mid">Discipline</th>
                     <th class = "row-right"></th>
                 </tr>    
             <?php
             while($rows2 = mysqli_fetch_assoc($result2)){
                 $track = $rows2['track'];
                 $dist = $rows2['dist'];
+                $disc = $rows2['disc'];
                 ?>
                 <form action="" method="post" enctype="multipart/form-data">
                     <tr <?php if($displayNum%2==0){?> class = "odd" <?php } ?>>    
@@ -149,8 +153,20 @@ if (isset($_GET['comp'])){
                                 ?>
                             </select>
                         </td>
+                        <td>
+                            <select class = "filltable" name = "disc">
+                                <?php
+                                    foreach (array_keys($discSort) as $d){
+                                        ?>
+                                        <option <?php if ($d == $disc){ ?> selected <?php } ?>value="<?php echo $d; ?>"><?php echo $discSort[$d]; ?></option>
+                                        <?php
+                                    }
+                                ?>
+                            </select>
+                        </td>
                         <input type = "hidden" name = "oldtrack" value = <?php echo $track; ?>>
                         <input type = "hidden" name = "olddist" value = <?php echo $dist; ?>>
+                        <input type = "hidden" name = "olddisc" value = <?php echo $disc; ?>>
                         <input type = "hidden" name = "compID" value = <?php echo $currComp; ?>>
                         <td class = "row-right"><input class = "filesubmission bebas-neue darktext" type = "submit" value="Update Race" name="updaterace"></input></td>
                     </tr>
@@ -309,9 +325,22 @@ if (isset($_GET['comp'])){
                             </select>
                         </td>
                         <td>
+                            <?php
+                            if ($time == round($time, 0)){
+                                ?>
+                                <input class = "subtable" type = "number" name = "mins" step = "1" value = <?php echo round(gmdate("i", $time)); ?>>
+                                <input class = "subtable" type = "number" name = "secs" step = "1" value = <?php echo round(gmdate("s", $time)); ?>>
+                                <input class = "subtable" type = "number" name = "msecs" step = "1" value = "00">
+                                <?php
+                            }
+                            else{
+                                ?>
                                 <input class = "subtable" type = "number" name = "mins" step = "1" value = <?php echo round(gmdate("i", $time)); ?>>
                                 <input class = "subtable" type = "number" name = "secs" step = "1" value = <?php echo round(gmdate("s", $time)); ?>>
                                 <input class = "subtable" type = "number" name = "msecs" step = "1" value = <?php echo end(explode(".", $time)); ?>>
+                                <?php
+                            }           
+                            ?> 
                         </td>
                         <td>
                             <select class = "filltable" name = "disc">

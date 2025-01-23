@@ -25,11 +25,15 @@ if (isset($_GET['t'])){
     $currTrack = $_GET["t"]; 
     if ($currTrack == 100){
         $avaldists = $distances100;
-        $currDists = array_diff($currDists, $only111);
+        $currDists = array_intersect($currDists, $distances100);
     }
     else if ($currTrack == 111){
         $avaldists = $distances111;
-        $currDists = array_diff($currDists, $only100);
+        $currDists = array_intersect($currDists, $distances111);
+    }
+    else if ($currTrack == 400){
+        $avaldists = $distances400;
+        $currDists = array_intersect($currDists, $distances400);
     }
     else if ($currTrack == NULL){
         $avaldists = $alldistances;
@@ -145,7 +149,7 @@ else {
         ?>
     <p class = "selector-label bebas-neue whitetext text-center smallsize">Select <span class = "whitetext">Track:</span></p>
         <?php 
-            foreach (array(100, 111) as $t){
+            foreach (array(100, 111, 400) as $t){
                 if ($currTrack == $t){
                     ?>
                     <a class = "bebas-neue whitetext selectorbtn-selected" href = ""><?php echo $t; ?></a>
