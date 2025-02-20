@@ -77,6 +77,66 @@ if (isset($_POST["updaterace"]) ) {
 if (isset($_GET['comp'])){
     $currComp = $_GET["comp"]; 
 }
+
+if (isset($_POST["inherit"])){
+    $childComp = $_POST["child"];
+
+    echo "Absorb ".$childComp." into ".$currComp;
+
+    $sqlI = "SELECT * FROM results WHERE compID = '$childComp';";
+    $result = mysqli_query($conn, $sqlI);
+    $del = 0;
+    $ins = 0;
+    if($result == TRUE) {
+        $count = mysqli_num_rows($result);
+        if ($count > 0){
+            while($rows = mysqli_fetch_assoc($result)){
+                $dayID = $rows['dayID'];
+                $skaterID = $rows['skaterID'];
+                $dist = $rows['dist'];
+                $track = $rows['track'];
+                $fulltime = $rows['time'];
+                $disc = $rows['disc'];
+                $raceID = $rows['raceID'];
+
+                $delquery = "DELETE FROM results WHERE raceID = '$raceID';";
+                $resultD = mysqli_query($conn, $delquery) or die(mysqli_error());
+                $del++;
+
+                $insquery = "INSERT INTO results SET skaterID = '$skaterID', compID = '$currComp', dayID = '$dayID', time = '$fulltime', dist = '$dist', disc = '$disc', track = '$track';";
+                $resultI = mysqli_query($conn, $insquery) or die(mysqli_error());
+                $ins++;
+            }
+        }
+    }
+
+    $sqlP = "SELECT * FROM points where compID = '$childComp';";
+    // echo $sqlP;
+    $result = mysqli_query($conn, $sqlP);
+    if($result == TRUE){
+        $count = mysqli_num_rows($result);
+        if ($count > 0){
+            while($rows = mysqli_fetch_assoc($result)){
+                $skaterID = $rows['skaterID'];
+                $pts = $rows['points'];
+
+                $delquery = "DELETE FROM points WHERE compID = '$childComp' AND skaterID = '$skaterID';";
+
+                // echo $delquery;
+
+                $resultD = mysqli_query($conn, $delquery) or die(mysqli_error());
+
+                $insquery = "INSERT INTO points SET skaterID = '$skaterID', compID = '$currComp', points = '$pts';";
+
+                // echo $insquery;
+
+                $resultI = mysqli_query($conn, $insquery) or die(mysqli_error());
+            }
+        }
+    }
+
+    echo "deleted ".$del." results and inserted ".$ins." results";
+}
 ?>
 
 <div class = "menuH">
@@ -100,6 +160,36 @@ if (isset($_GET['comp'])){
                     <?php 
                 }
             }
+        }
+        $sql = "SELECT * FROM comps WHERE compID != '$currComp';";
+        #$sql = "SELECT fName, lName, country FROM athletes WHERE athleteID = '$athleteID';";
+        // Executing the sql query
+        $result = mysqli_query($conn, $sql);
+        // Verify that SQL Query is executed or not
+        if($result == TRUE) {
+            ?><p class = "bebas-neue darktext padded text-center medsize">Inherit:</p><?php
+            // Count the number of rows which will be a way to verify if there is data in the database
+            $count = mysqli_num_rows($result);
+            // Initialize display of Athlete Number 
+            ?>
+            <form action="" method="post" enctype="multipart/form-data">
+            <select class = "filltable" name = "child">
+            <?php
+            if ($count > 0){    
+                while($rows = mysqli_fetch_assoc($result)){
+                    $compName = $rows['compName'];
+                    $myseason = $rows['season'];
+                    $compID = $rows['compID'];
+                    ?>
+                    <option value="<?php echo $compID; ?>"><?php echo $compName; ?> (<?php echo $myseason; ?>)</option>
+                    <?php 
+                }
+            }
+            ?>
+            </select>
+            <input class = "filesubmission bebas-neue darktext" type = "submit" value="Inherit Comp" name="inherit"></input></td>
+            </form>
+            <?php
         }
     ?>
     <p class = "bebas-neue darktext padded text-center medsize">Races:</p>

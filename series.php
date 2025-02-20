@@ -98,7 +98,6 @@ if ($currSeason > 0){
                 $compIndex++;
             }
         }
-        ?><td class = "text-center"><p class = "arimo smalltext darktext">Debby Fisher's RU Fast (C4)</p></td><?php
         ?><td class = "text-center"><p class = "arimo smalltext darktext">SSA ST Provincial Championships (C5)</p></td><?php
     }
 }

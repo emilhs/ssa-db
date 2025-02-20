@@ -244,9 +244,22 @@ $sql2 = "SELECT *
                         <tr <?php if($displayNum%2==0){?> class = "odd" <?php } ?>>
                         <input type = "hidden" value ="<?php echo $raceID; ?>" name = "raceID">
                             <td class = "row-left">
-                                <input class = "subtable" type = "number" name = "mins" step = "1" value = <?php echo round(gmdate("i", $time)); ?>>
-                                <input class = "subtable" type = "number" name = "secs" step = "1" value = <?php echo round(gmdate("s", $time)); ?>>
-                                <input class = "subtable" type = "number" name = "msecs" step = "1" value = <?php echo end(explode(".", $time)); ?>>
+                            <?php            
+                                if ($time == round($time, 0)){
+                                    ?>
+                                    <input class = "subtable" type = "number" name = "mins" step = "1" value = <?php echo round(gmdate("i", $time)); ?>>
+                                    <input class = "subtable" type = "number" name = "secs" step = "1" value = <?php echo round(gmdate("s", $time)); ?>>
+                                    <input class = "subtable" type = "number" name = "msecs" step = "1" value = "00">
+                                    <?php
+                                }
+                                else{
+                                    ?>
+                                    <input class = "subtable" type = "number" name = "mins" step = "1" value = <?php echo round(gmdate("i", $time)); ?>>
+                                    <input class = "subtable" type = "number" name = "secs" step = "1" value = <?php echo round(gmdate("s", $time)); ?>>
+                                    <input class = "subtable" type = "number" name = "msecs" step = "1" value = <?php echo end(explode(".", $time)); ?>>
+                                    <?php
+                                }        
+                                ?>
                             </td>
                             <td>
                                 <select class = "filltable" name = "track">

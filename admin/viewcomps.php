@@ -91,6 +91,9 @@ if (isset($_POST["deletecomp"])){
 
     $sql3 = "DELETE FROM points WHERE compID = '$compID'";
     $result3 = mysqli_query($conn, $sql3) or die(mysqli_error());
+
+    $sql4 = "DELETE FROM dates WHERE compID = '$compID'";
+    $result4 = mysqli_query($conn, $sql4) or die(mysqli_error());
 }
 
 if (isset($_POST["inseries"])) {
@@ -192,6 +195,7 @@ if (isset($_GET['y'])){
                     <th></th>
                     <th></th>
                     <th></th>
+                    <th></th>
                     <th class = "row-right"></th>
                 </tr>    
             <?php
@@ -254,6 +258,7 @@ if (isset($_GET['y'])){
                         </td>
                         <td><input class = "filesubmission-opp bebas-neue darktext" type = "submit" value="Delete" name="deletecomp"></input></td>
                         <td class = "row-right"><a class = "filesubmission bebas-neue darktext" href = "fullcomp.php?comp=<?php echo $compID;?>">Access</a></td>
+                        <td class = "row-right"><a class = "filesubmission bebas-neue darktext" href = "comppoint.php?comp=<?php echo $compID;?>">Points</a></td>
                     </tr>
                     <input type = "hidden" name = "compID" value = <?php echo $compID; ?>>
                 </form>

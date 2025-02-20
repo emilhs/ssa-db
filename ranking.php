@@ -206,27 +206,51 @@ else {
     </div>
     <div class = "ranking">
     <?php
-        if (sizeof($currAges) > 0 and $currSeason > 0 and $currTrack > 0 and sizeof($currDists) > 0){
+        if (sizeof($currAges) > 0 and $currTrack > 0 and sizeof($currDists) > 0){
 
-            $counter = 0;
-            foreach ($currDists as $d){
-                $currLetter = $letters[$counter];
-                $nextLetter = $letters[$counter+1];
-
-                $selectQ1[] = $currLetter.".".$currLetter."time";
-                if ($currTrack == 111){
-                    $samalog = $d/500;
-                    $selectQ2[] = $currLetter.".".$currLetter."time/".$samalog;
+            if ($currSeason > 0){
+                $counter = 0;
+                foreach ($currDists as $d){
+                    $currLetter = $letters[$counter];
+                    $nextLetter = $letters[$counter+1];
+    
+                    $selectQ1[] = $currLetter.".".$currLetter."time";
+                    if ($currTrack == 111){
+                        $samalog = $d/500;
+                        $selectQ2[] = $currLetter.".".$currLetter."time/".$samalog;
+                    }
+                    else{
+                        $selectQ2[] = $currLetter.".".$currLetter."time";
+                    }
+                    $whereQ[] = $currLetter."time > 0 AND ".$currLetter."time < 3000000";
+                    if ($d != end($currDists)){
+                        $onQ[] = $currLetter.".skaterID"."=".$nextLetter.".skaterID";
+                    }
+                    $fromQ[] = "(SELECT skaterID, dayID, compID, raceID, MIN(time) AS ".$currLetter."time FROM results AS res NATURAL JOIN comps AS comps WHERE season = ".$currSeason." AND dist = ".$d." AND track = ".$currTrack." AND time IS NOT NULL AND time > 0 GROUP BY skaterID) AS ".$currLetter; 
+                    $counter++;
                 }
-                else{
-                    $selectQ2[] = $currLetter.".".$currLetter."time";
+            }
+            else {
+                $counter = 0;
+                foreach ($currDists as $d){
+                    $currLetter = $letters[$counter];
+                    $nextLetter = $letters[$counter+1];
+    
+                    $selectQ1[] = $currLetter.".".$currLetter."time";
+                    if ($currTrack == 111){
+                        $samalog = $d/500;
+                        $selectQ2[] = $currLetter.".".$currLetter."time/".$samalog;
+                    }
+                    else{
+                        $selectQ2[] = $currLetter.".".$currLetter."time";
+                    }
+                    $whereQ[] = $currLetter."time > 0 AND ".$currLetter."time < 3000000";
+                    if ($d != end($currDists)){
+                        $onQ[] = $currLetter.".skaterID"."=".$nextLetter.".skaterID";
+                    }
+                    $fromQ[] = "(SELECT skaterID, dayID, compID, raceID, MIN(time) AS ".$currLetter."time FROM results AS res NATURAL JOIN comps AS comps WHERE dist = ".$d." AND track = ".$currTrack." AND time IS NOT NULL AND time > 0 GROUP BY skaterID) AS ".$currLetter; 
+                    $counter++;
                 }
-                $whereQ[] = $currLetter."time > 0 AND ".$currLetter."time < 3000000";
-                if ($d != end($currDists)){
-                    $onQ[] = $currLetter.".skaterID"."=".$nextLetter.".skaterID";
-                }
-                $fromQ[] = "(SELECT skaterID, dayID, compID, raceID, MIN(time) AS ".$currLetter."time FROM results AS res NATURAL JOIN comps AS comps WHERE season = ".$currSeason." AND dist = ".$d." AND track = ".$currTrack." AND time IS NOT NULL AND time > 0 GROUP BY skaterID) AS ".$currLetter; 
-                $counter++;
             }
 
             $WhereQuery = implode(" AND ", $whereQ);
@@ -281,17 +305,33 @@ else {
                     $Btime = $rows['Btime'];
                     $rankTime = $rows['rankTime'];
 
-                    $addQuery = "";
-                    if ($currCat != NULL){
-                        if ($currCat == "Senior" and sizeof($currAges) > 1) {
-                            $addQuery = $addQuery." AND season = '".$currSeason."' AND (age >= '".implode("OR age >= '", $currAges)."')";
+                    if ($currSeason > 0){
+                        $addQuery = "";
+                        if ($currCat != NULL){
+                            if ($currCat == "Senior" and sizeof($currAges) > 1) {
+                                $addQuery = $addQuery." AND season = '".$currSeason."' AND (age >= '".implode("OR age >= '", $currAges)."')";
+                            }
+                            else {
+                                $addQuery = $addQuery." AND season = '".$currSeason."' AND (age = '".implode("' OR age = '", $currAges)."')";
+                            }
                         }
-                        else {
-                            $addQuery = $addQuery." AND season = '".$currSeason."' AND (age = '".implode("' OR age = '", $currAges)."')";
+                        if ($currGender != NULL AND in_array($currGender, array("M", "F"))){
+                            $addQuery = $addQuery." AND gender = '".$currGender."'";
                         }
                     }
-                    if ($currGender != NULL AND in_array($currGender, array("M", "F"))){
-                        $addQuery = $addQuery." AND gender = '".$currGender."'";
+                    else {
+                        $addQuery = "";
+                        if ($currCat != NULL){
+                            if ($currCat == "Senior" and sizeof($currAges) > 1) {
+                                $addQuery = $addQuery." AND (age >= '".implode("OR age >= '", $currAges)."')";
+                            }
+                            else {
+                                $addQuery = $addQuery." AND (age = '".implode("' OR age = '", $currAges)."')";
+                            }
+                        }
+                        if ($currGender != NULL AND in_array($currGender, array("M", "F"))){
+                            $addQuery = $addQuery." AND gender = '".$currGender."'";
+                        }
                     }
 
                     $skatersql = "SELECT * FROM skaters AS A NATURAL JOIN (SELECT clubName AS club FROM club WHERE alberta = TRUE) AS B WHERE skaterID = '$skaterID'".$addQuery." ORDER BY season DESC LIMIT 1;";
@@ -357,7 +397,7 @@ else {
             <?php }
         }
         else {
-        ?><p class = "arimo darktext text-center medsize">Select a season, age, gender, track, and distance to begin ranking</p><?php
+        ?><p class = "arimo darktext text-center medsize">Select an age, gender, track, and distance to begin ranking</p><?php
         }
     ?>
     </div>

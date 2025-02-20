@@ -176,7 +176,9 @@ foreach ($mytracks as $t){
                         ?><td><?php echo gmdate("i:s", $time); ?>.00</td><?php
                     }
                     else{
-                        ?><td><?php echo gmdate("i:s", $time); ?>.<?php echo end(explode(".", $time));?></td><?php
+                        $decimals = end(explode(".", $time));
+                        $moreO = 3-strlen($decimals);
+                        ?><td><?php echo gmdate("i:s", $time); ?>.<?php echo $decimals.str_repeat("0",$moreO); ?></td><?php
                     }                    
                     ?>
                     <td><?php echo $comp; ?></td>
@@ -260,6 +262,7 @@ foreach ($myseasons as $s){
             while($rows2 = mysqli_fetch_assoc($result2)){
                 $time = $rows2['best']/1000;
                 $dist = $rows2['dist'];
+                $disc = $rows2['disc'];
                 $track = $rows2['track'];
                 $comp = $rows2['compName'];
                 $season = $rows2['season'];
@@ -272,8 +275,10 @@ foreach ($myseasons as $s){
                         ?><td><?php echo gmdate("i:s", $time); ?>.00</td><?php
                     }
                     else{
-                        ?><td><?php echo gmdate("i:s", $time); ?>.<?php echo end(explode(".", $time));?></td><?php
-                    }                    
+                        $decimals = end(explode(".", $time));
+                        $moreO = 3-strlen($decimals);
+                        ?><td><?php echo gmdate("i:s", $time); ?>.<?php echo $decimals.str_repeat("0",$moreO); ?></td><?php
+                    }                      
                     ?>
                     <td><?php echo $comp; ?></td>
                     <td><?php echo $date; ?></td>
@@ -297,7 +302,7 @@ foreach ($myseasons as $s){
 $sql2 = "SELECT *
             FROM results NATURAL JOIN dates NATURAL JOIN comps
             WHERE skaterID = '$skaterID'
-            ORDER BY date DESC, track, dist ASC;";
+            ORDER BY date DESC, disc, track, dist ASC;";
     #$sql = "SELECT fName, lName, country FROM athletes WHERE athleteID = '$athleteID';";
     // Executing the sql query
     $result2 = mysqli_query($conn, $sql2);
@@ -313,19 +318,20 @@ $sql2 = "SELECT *
             <?php
             $oldcomp = "";
             while($rows2 = mysqli_fetch_assoc($result2)){
-                $time = $rows2['time']/1000;
+                $fulltime = $rows2['time'];
+                $time = $fulltime/1000;
                 $dist = $rows2['dist'];
                 $track = $rows2['track'];
                 $compName = $rows2['compName'];
                 $season = $rows2['season'];
                 $date = $rows2['date'];
-
                 if ($compName != $oldcomp){
                     $displayNum = 1;
                     $oldcomp = $compName;
                     ?>
                     <tr class = "subtable darktext bestbox-subbanner">
                         <th width = "50%" style = "text-align: left"><?php echo $compName?></th>
+                        <th style = "text-align: right"></th>
                         <th style = "text-align: right"><?php echo $date?></th>
                     </tr>
                     <?php
@@ -333,19 +339,49 @@ $sql2 = "SELECT *
 
                 ?>
                 <tr <?php if($displayNum%2==0){?> class = "odd" <?php } ?>>
-                    <td style = "text-align: left"><?php echo $dist; ?>m (<?php echo $track;?>)</td>
-                    <?php
-                        if ($time == 0 or $time == NULL or $time > 600){ ?>
+                        <td style = "text-align: left"><?php echo $dist; ?>m (<?php echo $track;?>)</td>
+                        <?php
+                    if ($time == 0 or $time == NULL or $time > 600){ ?>
                         <td style = "text-align: right" class = "row-left"><span class = "dangertext">NO TIME</span></td>
+                        <td></td>
                         <?php
                     }
                     else { 
                         if ($time == round($time, 0)){
-                            ?><td><?php echo gmdate("i:s", $time); ?>.00</td><?php
+                            ?><td style = "text-align: right;"><?php echo gmdate("i:s", $time); ?>.00</td><?php
                         }
                         else{
-                            ?><td style = "text-align: right"><?php echo gmdate("i:s", $time); ?>.<?php echo end(explode(".", $time));?></td><?php
-                        }                    
+                            $decimals = end(explode(".", $time));
+                            $moreO = 3-strlen($decimals);
+                            ?><td><?php echo gmdate("i:s", $time); ?>.<?php echo $decimals.str_repeat("0",$moreO); ?></td><?php
+                        }                           
+                        $isPB = "SELECT * FROM results NATURAL JOIN dates WHERE skaterID = '$skaterID' AND track = '$track' AND dist = '$dist' AND date <= '$date' AND time < '$fulltime' AND time > 0;"; 
+                        $isSB = "SELECT * FROM results NATURAL JOIN dates NATURAL JOIN comps WHERE season = '$season' AND skaterID = '$skaterID' AND track = '$track' AND dist = '$dist' AND date <= '$date' AND time < '$fulltime' AND time > 0;"; 
+    
+                        $result3 = mysqli_query($conn, $isPB);
+                        $result4 = mysqli_query($conn, $isSB);
+                        // Verify that SQL Query is executed or not
+                        if($result3 == TRUE and $result4 == TRUE) {
+                            // Count the number of rows which will be a way to verify if there is data in the database
+                            $count3 = mysqli_num_rows($result3);
+                            $count4 = mysqli_num_rows($result4);
+                            // Initialize display of Athlete Number 
+                            if ($count3 == 0){
+                                ?>
+                                <td style = "text-align: right;">PB SB</td>
+                                <?php
+                            }
+                            else if ($count4 == 0){
+                                ?>
+                                <td style = "text-align: right;">SB</td>
+                                <?php
+                            }
+                            else {
+                                ?>
+                                <td style = "text-align: right;"></td>
+                                <?php
+                            }
+                        }
                     } ?>
                 </tr>
                 <?php
