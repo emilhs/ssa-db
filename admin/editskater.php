@@ -105,7 +105,24 @@ if (isset($_POST["clearflag"]) ) {
     $result1 = mysqli_query($conn, $sql) or die(mysqli_error());
 }
 
+if (isset($_POST["inherit"])){
+    $childSkater = $_POST["child"];
+
+    echo "Absorb ".$childSkater." into ".$skaterID;
+
+    $sqlR = "UPDATE results SET skaterID = '$skaterID' WHERE skaterID = '$childSkater';";
+    $resultR = mysqli_query($conn, $sqlR) or die(mysqli_error());
+
+    $sqlP = "UPDATE points SET skaterID = '$skaterID' WHERE skaterID = '$childSkater';";
+    $resultP = mysqli_query($conn, $sqlP) or die(mysqli_error());
+
+    $sqlN = "DELETE FROM skaters WHERE skaterID = '$childSkater';";
+    $resultN = mysqli_query($conn, $sqlN) or die(mysqli_error());
+
+    echo "success";
+}
 ?>
+
 <div class = "menuH">
     <?php
     $sql = "SELECT *, MIN(season) as MIN FROM skaters WHERE skaterID = '$skaterID' ORDER BY season DESC LIMIT 1;";
@@ -131,6 +148,42 @@ if (isset($_POST["clearflag"]) ) {
             <?php
         }
     }
+    ?>
+
+    <?php
+        $sql = "SELECT DISTINCT fName, lName, skaterID FROM skaters WHERE skaterID != '$skaterID';";
+        #$sql = "SELECT fName, lName, country FROM athletes WHERE athleteID = '$athleteID';";
+        // Executing the sql query
+        $result = mysqli_query($conn, $sql);
+        // Verify that SQL Query is executed or not
+        if($result == TRUE) {
+            ?><p class = "bebas-neue darktext padded text-center medsize">Inherit:</p><?php
+            // Count the number of rows which will be a way to verify if there is data in the database
+            $count = mysqli_num_rows($result);
+            // Initialize display of Athlete Number 
+            ?>
+            <form action="" method="post" enctype="multipart/form-data">
+            <select class = "filltable" name = "child">
+            <?php
+            if ($count > 0){    
+                while($rows = mysqli_fetch_assoc($result)){
+                    $oppskaterID = $rows['skaterID'];
+                    $oppfName = $rows['fName'];
+                    $opplName = $rows['lName'];
+                    ?>
+                    <option value="<?php echo $oppskaterID; ?>"><?php echo $oppfName." ".$opplName; ?></option>
+                    <?php 
+                }
+            }
+            ?>
+            </select>
+            <input class = "filesubmission bebas-neue darktext" type = "submit" value="Inherit Skater" name="inherit"></input></td>
+            </form>
+            <?php
+        }
+    ?>
+
+    <?php
     $sql2 = "SELECT * FROM skaters WHERE skaterID = '$skaterID' ORDER BY season DESC;";
         #$sql = "SELECT fName, lName, country FROM athletes WHERE athleteID = '$athleteID';";
         // Executing the sql query
