@@ -68,7 +68,7 @@ else {
                         else {
                             $url = "y=".$season."&aC=".$currCat."&a=".$currAge."&g=".$currGender."&t=".$currTrack."&d=".implode("m", $currDists);
                             ?>
-                            <a class = "bebas-neue whitetext yearbtn-small" href = "series.php?<?php echo $url;?>">
+                            <a class = "bebas-neue darktext yearbtn-small" href = "series.php?<?php echo $url;?>">
                                 <?php echo ($season-1); ?>-<?php echo $season; ?>
                             </a>
                             <?php 
@@ -98,7 +98,6 @@ if ($currSeason > 0){
                 $compIndex++;
             }
         }
-        ?><td class = "text-center"><p class = "arimo smalltext darktext">SSA ST Provincial Championships (C5)</p></td><?php
     }
 }
 ?>
