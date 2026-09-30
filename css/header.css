@@ -6,14 +6,21 @@ body { margin: 0; }
 .header { font-size: 16px; line-height: normal; }
 .header { display: flex; justify-content: space-between; align-items: center; background: #fff; padding: 14px 40px; border-bottom: 3px solid #199bff; margin: 0 0 20px; }
 .header a, .header a:hover, .header a:visited { text-decoration: none; }
-.header .left { display: flex; align-items: center; gap: 15px; min-width: 0; margin: 0; }
+.header .left { display: flex; align-items: center; justify-content: flex-start; text-align: left; gap: 15px; min-width: 0; margin: 0; }
 .header #homelogo { height: 60px; width: auto; }
-.header #title { font-family: "Bebas Neue", sans-serif; font-weight: 400; font-style: normal; font-size: clamp(22px, 4.2vw, 52px); line-height: 1; padding-top: 0.08em; margin: 0; white-space: nowrap; }
+.header #title { font-family: "Bebas Neue", sans-serif; font-weight: 400; font-style: normal; font-size: 52px; line-height: 1; padding-top: 0.08em; margin: 0; white-space: nowrap; }
 .header .bluetext { color: #199bff; }
+.header .ttl-short { display: none; }
+@media (max-width: 1150px) {
+    .header .ttl-full { display: none; }
+    .header .ttl-short { display: inline; }
+}
 .header .darktext { color: #435664; }
 .header .backlink, .header .backlink:visited { color: #199bff; font-family: Arial, sans-serif; font-size: 0.75rem; font-weight: normal; }
 @media (max-width: 700px) {
     .header { padding: 10px 14px; }
     .header .left { gap: 8px; }
-    .header #homelogo { height: 36px; }
+    .header #homelogo { height: 46px; }
+    .header .left { flex: 1; }
+    .header #title { white-space: normal; text-align: left; font-size: 9vw; }
 }

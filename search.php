@@ -1,108 +1,101 @@
-<?php include('navbar.php'); 
+<?php include('navbar.php');
 
-$fValid = FALSE;
-$lValid = FALSE;
-
-if (isset($_GET['f'])){
-    $flet = $_GET["f"]; 
-    if (in_array($flet, $letters)){
-        $fValid = TRUE;
-    }
+// Every skater that has raced in an Alberta club; filtered live in the browser.
+$sql = "SELECT fName, lName, club, skaterID FROM skaters AS A NATURAL JOIN (SELECT clubName AS club FROM club WHERE alberta = TRUE) AS B GROUP BY skaterID ORDER BY lName, fName;";
+$result = mysqli_query($conn, $sql) or die(mysqli_error($conn));
+$skaters = array();
+while ($rows = mysqli_fetch_assoc($result)) {
+    $skaters[] = array('id' => (int)$rows['skaterID'], 'f' => $rows['fName'], 'l' => $rows['lName'], 'c' => $rows['club']);
 }
-if (isset($_GET['l'])){
-    $llet = $_GET["l"]; 
-    if (in_array($llet, $letters)){
-        $lValid = TRUE;
-    }
-}
-
 ?>
 
-<body>
-<div class = "menuH">
-    <p class = "bebas-neue darktext pagetitle">Skater Search</p>
-    <p class = "arimo desc darktext ">Only skaters that raced one of the <a class = "intextlink" href = "competitions.php">competitions</a> in the database can be found.</p>
-    <p class = "bebas-neue darktext text-center medsize">First Name:</p>
-    <div><?php 
-        foreach ($letters as $x){ 
-                if ($x == $flet){ 
-                    ?>
-                    <a class = "letterbutton-selected bebas-neue darktext" href="search.php?l=<?php echo $llet?>"><?php echo $x?></a>
-                    <?php 
-                }else{ 
-                    ?>
-                    <a class = "letterbutton bebas-neue darktext" href="search.php?f=<?php echo $x?>&l=<?php echo $llet;?>"><?php echo $x?></a>
-                    <?php 
-                }
-        } ?>
-    </div>
-    <p class = "bebas-neue darktext text-center medsize">Last Name:</p>
-    <div><?php 
-        foreach ($letters as $x){
-                if ($x == $llet){ 
-                    ?>
-                    <a class = "letterbutton-selected bebas-neue darktext" href="search.php?f=<?php echo $flet?>"><?php echo $x?></a>
-                    <?php 
-                }else{ 
-                    ?>
-                    <a class = "letterbutton bebas-neue darktext" href="search.php?f=<?php echo $flet?>&l=<?php echo $x;?>"><?php echo $x?></a>
-                    <?php 
-                }
-        } ?>
-    </div>
-    <p class = "bebas-neue darktext text-center medsize">Skaters:</p>
-        <?php
-        if ($fValid or $lValid){
-                if ($fValid and $lValid){
-                    $sql = "SELECT fName, lName, club, skaterID, max(season) AS season FROM skaters AS A NATURAL JOIN (SELECT clubName AS club FROM club WHERE alberta = TRUE) AS B WHERE fName LIKE '$flet%' AND lName LIKE '$llet%'  GROUP BY skaterID ORDER BY lName, fName;";
-                }
-                else if ($lValid){
-                    $sql = "SELECT fName, lName, club, skaterID, max(season) AS season FROM skaters AS A NATURAL JOIN (SELECT clubName AS club FROM club WHERE alberta = TRUE) AS B WHERE lName LIKE '$llet%'  GROUP BY skaterID ORDER BY lName, fName;";
-                }
-                else if ($fValid){
-                    $sql = "SELECT fName, lName, club, skaterID, max(season) AS season FROM skaters AS A NATURAL JOIN (SELECT clubName AS club FROM club WHERE alberta = TRUE) AS B WHERE fName LIKE '$flet%'  GROUP BY skaterID ORDER BY lName, fName;";
-                }
+<link rel="stylesheet" href="css/search.css?v=<?php echo filemtime(__DIR__ . '/css/search.css'); ?>">
 
-                $result = mysqli_query($conn, $sql) or die(mysqli_error());
-                $count = mysqli_num_rows($result);
-                $displayNum = 1;
-                if($count > 0) {
-                            ?>
-                            <table class = "darktext searchresult arimo">
-                                <tr class = "toprow">
-                                    <th class = "row-left">First Name</th>
-                                    <th class = "row-mid">Last Name</th>
-                                    <th class = "row-right">Club</th>
-                                </tr>    
-                            <?php
-                            // For everything in the database, display
-                            while($rows = mysqli_fetch_assoc($result)){
-                                // Store database details in variables. 
-                                $fName = $rows['fName'];
-                                $lName = $rows['lName'];
-                                $club = $rows['club'];
-                                $skaterID = $rows['skaterID'];
-                                # $cumTime = $rows['cumTime'];
-                                ?>
-                                <tr <?php if($displayNum%2==0){?> class = "odd" <?php } ?> onclick="window.location='athlete.php?id=<?php echo $skaterID?>';">
-                                    <td class = "row-left"><?php echo $fName; ?></td>
-                                    <td><?php echo $lName; ?></td>
-                                    <td class = "row-right"><?php echo $club; ?></td>
-                                </tr>
-                            <?php
-                            $displayNum++;
-                            }?>
-                    </table></div><?php
-                }
-                else{?>
-                    <p class = "arimo darktext text-center medsize">No skaters found for the selected letter(s)</p>
-                <?php }
-        } 
-        else {
-        ?>
-    <p class = "arimo darktext text-center medsize">Search for a skater by their first name or last name</p>
-    <?php
-        }
-        ?>
-</div>
+<main class = "search-page">
+    <div class = "search-hero">
+        <img src = "images/DSC00762-scaled.jpg" alt = "">
+        <div class = "search-frost">
+            <div class = "search-title bebas-neue">Skater Search</div>
+        </div>
+    </div>
+
+    <div class = "search-panels">
+    <div class = "search-card search-left">
+        <div class = "search-card-title bebas-neue">Search</div>
+        <div class = "search-bar">
+            <input id = "q" type = "search" placeholder = "Enter Details" autocomplete = "off" autocapitalize = "off" spellcheck = "false">
+        </div>
+        <div class = "search-card-title bebas-neue">First Name</div>
+        <div id = "fLetters" class = "letters"></div>
+        <div class = "search-card-title bebas-neue">Last Name</div>
+        <div id = "lLetters" class = "letters"></div>
+    </div>
+
+    <div class = "search-card search-right">
+        <div class = "search-card-title bebas-neue">Skaters</div>
+        <p class = "search-note">Only skaters that raced one of the <a href = "competitions.php">competitions</a> in the database can be found.</p>
+        <div id = "results"></div>
+        <p id = "count" class = "search-count"></p>
+    </div>
+    </div>
+</main>
+
+<script>
+const SKATERS = <?php echo json_encode($skaters, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE); ?>;
+const LETTERS = <?php echo json_encode(array_values($letters)); ?>;
+const norm = s => (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+SKATERS.forEach(s => { s.key = norm(s.f + ' ' + s.l + ' ' + s.l + ' ' + s.f); s.fn = norm(s.f); s.ln = norm(s.l); });
+
+const params = new URLSearchParams(location.search);
+let flet = LETTERS.includes(params.get('f')) ? params.get('f') : '';
+let llet = LETTERS.includes(params.get('l')) ? params.get('l') : '';
+const input = document.getElementById('q');
+input.value = params.get('q') || '';
+
+function letterRow(el, current, which) {
+    el.innerHTML = LETTERS.map(x =>
+        '<a class = "' + (x === current ? 'letterbutton-selected' : 'letterbutton') + ' bebas-neue darktext" href = "#" data-w = "' + which + '" data-l = "' + x + '">' + x + '</a>').join('');
+}
+
+function update() {
+    letterRow(document.getElementById('fLetters'), flet, 'f');
+    letterRow(document.getElementById('lLetters'), llet, 'l');
+    const tokens = norm(input.value.trim()).split(/\s+/).filter(Boolean);
+    const out = document.getElementById('results');
+    try {
+        const p = new URLSearchParams();
+        if (input.value.trim()) p.set('q', input.value.trim());
+        if (flet) p.set('f', flet);
+        if (llet) p.set('l', llet);
+        history.replaceState(null, '', p.toString() ? '?' + p : location.pathname);
+    } catch (e) {}
+    const count = document.getElementById('count');
+    if (!tokens.length && !flet && !llet) {
+        count.textContent = SKATERS.length + ' eligible skaters';
+        out.innerHTML = '';
+        return;
+    }
+    const f = norm(flet), l = norm(llet);
+    const m = SKATERS.filter(s => (!f || s.fn.startsWith(f)) && (!l || s.ln.startsWith(l)) && tokens.every(t => t.length === 1 ? (s.fn.startsWith(t) || s.ln.startsWith(t)) : s.key.includes(t)));
+    count.textContent = m.length + ' of ' + SKATERS.length + ' eligible skaters';
+    if (!m.length) {
+        out.innerHTML = '<p class = "search-empty">No skaters found</p>';
+        return;
+    }
+    out.innerHTML = '<table class = "results-table"><tr class = "head"><th>First Name</th><th>Last Name</th><th>Club</th></tr>' +
+        m.map((s, i) => '<tr' + (i % 2 ? ' class = "odd"' : '') + ' onclick = "window.location=\'athlete.php?id=' + s.id + '\';"><td>' + esc(s.f) + '</td><td>' + esc(s.l) + '</td><td>' + esc(s.c) + '</td></tr>').join('') + '</table>';
+}
+
+document.addEventListener('click', e => {
+    const a = e.target.closest('a[data-l]');
+    if (!a) return;
+    e.preventDefault();
+    if (a.dataset.w === 'f') flet = (flet === a.dataset.l) ? '' : a.dataset.l;
+    else llet = (llet === a.dataset.l) ? '' : a.dataset.l;
+    update();
+});
+input.addEventListener('input', update);
+update();
+</script>
 <?php include('footer.php');

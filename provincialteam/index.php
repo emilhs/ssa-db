@@ -49,7 +49,7 @@
 </head>
 <body>
 
-<?php $base = '../'; $pageTitle = 'Provincial Team Calculator'; include('../header.php'); ?>
+<?php $base = '../'; $pageTitle = 'Team Calculator'; include('../header.php'); ?>
 
 <div class="container">
   <div class="left-section">

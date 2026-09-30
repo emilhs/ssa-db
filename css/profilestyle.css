@@ -283,3 +283,44 @@ body { background: #f5f5f5; }
 @media (max-width: 1150px) { #title { font-size: 30px; } }
 
 .header .backlink, .header .backlink:visited { color: #000; font-family: Arial, sans-serif; font-size: 14px; font-weight: normal; align-self: center; }
+
+/* ---- Club list ---- */
+.clubs-list { max-width: 900px; margin: 0 auto; padding: 0 20px 10px; }
+.club-row { display: flex; justify-content: space-between; align-items: center; gap: 16px; background: #fff; border-left: 4px solid #199bff; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); padding: 12px 20px; margin-bottom: 10px; font-size: 26px; color: #435664; }
+.club-row .club-count { color: #97a4ae; font-size: 22px; }
+
+/* ---- Athlete page (frosted style) ---- */
+.athlete-page .profile-hero { position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #0c5a9e 0%, #199bff 100%); width: calc(100% - 40px); max-width: 1100px; margin: 0 auto 20px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+.athlete-page .profile-frost { position: relative; z-index: 2; box-sizing: border-box; width: calc(100% - 32px); margin: 16px; padding: 12px 16px 14px; background: rgba(255,255,255,.18); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,.7); border-radius: 4px; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.3); }
+.athlete-page .profile-name { text-align: center; font-size: 46px; letter-spacing: 1px; line-height: 1.1; }
+.athlete-page .profiletbl { margin: 6px auto 0; color: #fff; }
+.athlete-page .profiletbl td { padding: 2px 18px; text-align: center; }
+.athlete-page .profiletbl tr.boldtext td { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; opacity: .85; }
+.athlete-page .bestbox { width: calc(100% - 40px); max-width: 1100px; margin: 0 auto 20px; background: #fff; border: 0; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); overflow: hidden; }
+.athlete-page .bestbox-banner { text-align: center; font-size: 28px; color: #199bff; padding: 14px 20px 10px; border-bottom: 1px solid #eef1f3; }
+.athlete-page .btn-tbl { display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 14px; margin: 0; padding: 14px; }
+.athlete-page .btn-tbl .sbtns, .athlete-page .btn-tbl .pbtns { flex: 1 1 0; min-width: 0; }
+.athlete-page .sbtns, .athlete-page .pbtns { width: auto; margin: 0; padding: 6px 18px; font-size: 22px; background: #eef1f3; color: #435664; border: 0; border-radius: 4px; cursor: pointer; }
+.athlete-page .sbtns:hover, .athlete-page .pbtns:hover { background: #eef1f3; color: #435664; }
+.athlete-page .sbtns.activebtn, .athlete-page .pbtns.activebtn, .athlete-page .activebtn:hover { background: #199bff; color: #fff; }
+.athlete-page .bannertable { border: 0; margin: 0; }
+.athlete-page .bannertable td, .athlete-page .bannertable th { padding: 8px 20px; }
+.athlete-page .bestbox-subbanner { background: #eef1f3; color: #435664; border: 0; margin: 0; padding: 0; font-size: 13px; text-transform: uppercase; letter-spacing: .5px; }
+.athlete-page .odd { background: #f7f9fa; }
+@media (max-width: 700px) {
+    .athlete-page .profile-hero, .athlete-page .bestbox { width: calc(100% - 24px); }
+    .athlete-page .profile-name { font-size: 34px; }
+    .athlete-page .bannertable td:last-child, .athlete-page .bannertable th:last-child { white-space: nowrap; }
+    .athlete-page .bannertable td, .athlete-page .bannertable th { padding: 6px 6px; font-size: 14px; }
+    .athlete-page .bannertable td:first-child, .athlete-page .bannertable th:first-child { padding-left: 12px; }
+    .athlete-page .bannertable td:last-child, .athlete-page .bannertable th:last-child { padding-right: 12px; }
+    /* Club drops below Age and Gender on small screens */
+    .athlete-page .profiletbl { display: grid; grid-template-columns: 1fr 1fr; width: 100%; }
+    .athlete-page .profiletbl tbody, .athlete-page .profiletbl tr { display: contents; }
+    .athlete-page .profiletbl tr:nth-child(1) td:nth-child(1) { grid-area: 1 / 1; }
+    .athlete-page .profiletbl tr:nth-child(1) td:nth-child(2) { grid-area: 1 / 2; }
+    .athlete-page .profiletbl tr:nth-child(2) td:nth-child(1) { grid-area: 2 / 1; }
+    .athlete-page .profiletbl tr:nth-child(2) td:nth-child(2) { grid-area: 2 / 2; }
+    .athlete-page .profiletbl tr:nth-child(1) td:nth-child(3) { grid-area: 3 / 1 / 4 / 3; padding-top: 8px; }
+    .athlete-page .profiletbl tr:nth-child(2) td:nth-child(3) { grid-area: 4 / 1 / 5 / 3; }
+}

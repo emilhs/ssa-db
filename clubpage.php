@@ -12,7 +12,7 @@ if (isset($_GET['y'])){
 
 $sql = "SELECT season, club, COUNT(skaterID) as regd FROM skaters WHERE club = '$currClub' GROUP BY season ORDER BY season ASC;";
 
-$sql0 = "SELECT MAX(season) as maxs, MIN(season) as mins, COUNT(DISTINCT skaterID) as regd FROM skaters WHERE club = '$currClub';";
+$sql0 = "SELECT MAX(season) as maxs, MIN(CASE WHEN season >= 2000 THEN season END) as mins, COUNT(DISTINCT skaterID) as regd FROM skaters WHERE club = '$currClub';";
 
 // Executing the sql query
 $result = mysqli_query($conn, $sql);
@@ -30,24 +30,15 @@ if($result == TRUE and $result0 == TRUE) {
             <meta charset="UTF-8">
             <head>
                 <title><?php echo strtoupper($currClub); ?> Club Overview</title>
-                <link rel="stylesheet" href="css/profilestyle.css">
+                <meta name="viewport" content="width=device-width, initial-scale=1">
+                <link rel="stylesheet" href="css/profilestyle.css?v=<?php echo filemtime(__DIR__ . '/css/profilestyle.css'); ?>">
             </head>
-            <div class = "header">
-                <a href = "index.php" class = "left">
-                    <img id = "homelogo" src="images/TrimmedorgLogo2024.png" alt="">
-                    <p class = "bebas-neue" id = "title"><span class = "darktext">Speed Skating</span> <span class = "bluetext">Alberta</span> <span class = "darktext">Results Database</span></p>
-                </a>
-                <div class = "right">
-                    <a class = "darktext bebas-neue" href = "about.php">About the Site</a>
-                    <br>
-                    <a class = "bluetext bebas-neue" href = "signin.php">Sign in as Admin</a>
-                </div>  
-            </div>
-        </html>
+            <?php include('header.php'); ?>
+</html>
 
         <?php
         $rows0 = mysqli_fetch_assoc($result0);
-        $mins = $rows0['mins'];
+        $mins = $rows0['mins'] ?? $rows0['maxs'];
         $maxs = $rows0['maxs'];
         $tregd = $rows0['regd'];
         ?>

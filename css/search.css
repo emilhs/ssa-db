@@ -1,0 +1,51 @@
+/* Skater search (search.php) - matches the homepage / athlete page style */
+.search-page { font-family: Arial, sans-serif; }
+.search-hero { position: relative; overflow: hidden; display: flex; align-items: flex-end; justify-content: center; min-height: 150px; width: calc(100% - 40px); max-width: 1100px; margin: 0 auto 20px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+.search-hero > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 35%; }
+.search-hero::before { content: ""; position: absolute; inset: 0; z-index: 1; background: linear-gradient(to top, rgba(0,0,0,.55), rgba(0,0,0,0) 65%); }
+.search-frost { position: relative; z-index: 2; box-sizing: border-box; width: calc(100% - 32px); margin: 16px; padding: 10px 16px 12px; background: rgba(255,255,255,.2); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,.7); border-radius: 4px; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.3); text-align: center; }
+.search-title { font-size: 40px; letter-spacing: 1px; line-height: 1.1; }
+.search-bar { padding: 12px 14px 14px; }
+.search-bar input { box-sizing: border-box; display: block; width: 100%; max-width: 560px; margin: 0 auto; padding: 12px 16px; font-size: 18px; font-family: Arial, sans-serif; text-align: center; color: #435664; background: #fff; border: 1px solid #cfd8de; border-radius: 4px; outline: none; -webkit-appearance: none; }
+.search-bar input:focus { border-color: #199bff; }
+.search-note { margin: 0; padding: 8px 20px 10px; text-align: center; font-size: 13px; color: #97a4ae; }
+.search-note a, .search-note a:visited { color: #199bff; }
+.search-count { margin: 0; padding: 12px 20px 14px; text-align: center; font-size: 13px; color: #97a4ae; }
+.search-card { width: calc(100% - 40px); max-width: 1100px; margin: 0 auto 20px; background: #fff; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); overflow: hidden; }
+.search-card-title { text-align: center; font-size: 28px; color: #199bff; padding: 14px 20px 10px; border-bottom: 1px solid #eef1f3; }
+/* Fixed-size buttons with a fixed gap; any spare width becomes side padding */
+.search-card .letters { display: grid; grid-template-columns: repeat(26, 32px); gap: 4px; justify-content: center; padding: 10px 14px 14px; }
+@media (max-width: 1010px), (min-width: 1200px) { .search-card .letters { grid-template-columns: repeat(13, 32px); } }
+@media (max-width: 520px) {
+    .search-card .letters { grid-template-columns: repeat(18, 13px); }
+    .search-card .letters a { grid-column: span 2; }
+    .search-card .letters a:nth-child(19) { grid-column: 2 / span 2; }
+}
+.search-card .letters + .search-card-title, .search-bar + .search-card-title { border-top: 1px solid #eef1f3; }
+.results-table { width: 100%; border-collapse: collapse; font-size: 16px; color: #435664; }
+.results-table th, .results-table td { padding: 8px 20px; text-align: left; }
+.results-table .head th { background: #eef1f3; font-size: 13px; text-transform: uppercase; letter-spacing: .5px; }
+.results-table tr.odd { background: #f7f9fa; }
+.results-table tr { cursor: pointer; }
+.results-table .head { cursor: default; }
+.search-empty { text-align: center; color: #97a4ae; font-size: 14px; padding: 18px 20px; margin: 0; }
+@media (max-width: 700px) {
+    .search-hero, .search-card { width: calc(100% - 24px); }
+    .search-title { font-size: 34px; }
+    .results-table th, .results-table td { padding: 6px 10px; font-size: 14px; }
+    .results-table th:first-child, .results-table td:first-child { padding-left: 12px; }
+    .results-table th:last-child, .results-table td:last-child { padding-right: 12px; }
+}
+.search-card .letterbutton, .search-card .letterbutton-selected, .search-card .letterbutton:hover, .search-card .letterbutton-selected:hover { box-sizing: border-box; width: 100%; height: 32px; margin: 0; padding: 0; font-size: 22px; font-weight: 400; line-height: 30px; text-align: center; border: 1px solid #cfd8de; border-radius: 4px; background: #fff; color: #435664; }
+.search-card .letterbutton:hover { background: #fff; color: #435664; }
+.search-card .letterbutton-selected, .search-card .letterbutton-selected:hover { color: #fff; border-color: #199bff; background: #199bff; }
+@media (max-width: 520px) { .search-card .letterbutton, .search-card .letterbutton-selected, .search-card .letterbutton:hover, .search-card .letterbutton-selected:hover { height: 30px; font-size: 20px; line-height: 28px; } }
+
+/* Wide screens: search on the left, results on the right */
+@media (min-width: 1200px) {
+    .search-hero, .search-panels { max-width: 1200px; }
+    .search-panels { display: grid; grid-template-columns: 500px 1fr; gap: 20px; align-items: start; width: calc(100% - 40px); margin: 0 auto 20px; }
+    .search-panels .search-card { width: auto; max-width: none; margin: 0; }
+    .search-left { position: sticky; top: 20px; }
+}
+.results-table tr:not(.head):hover { background: #dff0ff; }

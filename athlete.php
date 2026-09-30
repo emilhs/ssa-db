@@ -36,25 +36,18 @@ if($result == TRUE) {
     <meta charset="UTF-8">
     <head>
         <title><?php echo strtoupper($fName); ?> <?php echo ucfirst($lName); ?> SSA Skater Profile</title>
-        <link rel="stylesheet" href="css/profilestyle.css">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+                <link rel="stylesheet" href="css/profilestyle.css?v=<?php echo filemtime(__DIR__ . '/css/profilestyle.css'); ?>">
     </head>
-    <div class = "header">
-        <a href = "index.php" class = "left">
-            <img id = "homelogo" src="images/TrimmedorgLogo2024.png" alt="">
-            <p class = "bebas-neue" id = "title"><span class = "darktext">Speed Skating</span> <span class = "bluetext">Alberta</span> <span class = "darktext">Results Database</span></p>
-        </a>
-        <div class = "right">
-            <a class = "darktext bebas-neue" href = "about.php">About the Site</a>
-            <br>
-            <a class = "bluetext bebas-neue" href = "signin.php">Sign in as Admin</a>
-        </div>  
-    </div>
+    <?php include('header.php'); ?>
 </html>
 
+<div class = "athlete-page">
+
+<div class = "profile-hero">
+    <div class = "profile-frost">
+        <div class = "profile-name bebas-neue"><?php echo $fName; ?> <?php echo $lName; ?></div>
 <table class = "darktext profiletbl">
-    <tr class = "bebas-neue darktext pagetitle">
-        <td colspan = "3" style = "text-align:center;"><?php echo $fName?></span> <span class = "bluetext"><?php echo $lName?></span></td>
-    </tr>
     <tr class = "boldtext arimo">
         <td>Age</td>
         <td>Gender</td>
@@ -69,7 +62,7 @@ if($result == TRUE) {
         </td>
         <td>
             <?php
-            $sql = "SELECT club, MIN(season) as mins, MAX(season) as maxs FROM skaters WHERE skaterID = '$skaterID' GROUP BY club ORDER BY maxs DESC;";
+            $sql = "SELECT club, MIN(CASE WHEN season >= 2000 THEN season END) as mins, MAX(season) as maxs FROM skaters WHERE skaterID = '$skaterID' GROUP BY club ORDER BY maxs DESC;";
             $result = mysqli_query($conn, $sql);
             // Verify that SQL Query is executed or not
             if($result == TRUE) {
@@ -80,7 +73,8 @@ if($result == TRUE) {
                     // For everything in the database, display
                     while($rows = mysqli_fetch_assoc($result)){
                         // Store database details in variables.
-                        $seasonmin = $rows['mins']; 
+                        // Ignore bad entries (e.g. season 1970) when working out the first season
+                        $seasonmin = $rows['mins'] ?? $rows['maxs']; 
                         $season = $rows['maxs'];
                         $club = $rows['club'];
                         ?>
@@ -95,10 +89,12 @@ if($result == TRUE) {
         </td>
     </tr>
 </table>
+    </div>
+</div>
 <!-- <p class = "arimo darktext text-center tinysize">Note: skater information (age, club) is not updated until a race is done.</p> -->
 
 <div class = "bestbox">
-<div class = "bebas-neue darktext bestbox-banner">Personal Bests:</div>
+<div class = "bebas-neue darktext bestbox-banner">Personal Bests</div>
 <?php
 # DISTANCE BUTTONS
 $mytracks = array();
@@ -198,7 +194,7 @@ foreach ($mytracks as $t){
 </div>
 
 <div class = "bestbox">
-<div class = "bebas-neue darktext bestbox-banner">Season Bests:</div>
+<div class = "bebas-neue darktext bestbox-banner">Season Bests</div>
 <?php
 # DISTANCE BUTTONS
 $mytracks = array();
@@ -297,7 +293,7 @@ foreach ($myseasons as $s){
 </div>
 
 <div class = "bestbox">
-<div class = "bebas-neue darktext bestbox-banner">Results:</div>
+<div class = "bebas-neue darktext bestbox-banner">Results</div>
 <?php
 $sql2 = "SELECT *
             FROM results NATURAL JOIN dates NATURAL JOIN comps
@@ -425,4 +421,5 @@ $sql2 = "SELECT *
 </script>
 
 
+</div>
 <?php include('footer.php'); ?>
