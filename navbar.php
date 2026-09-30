@@ -7,7 +7,7 @@ include('config/functions.php');
     <meta charset="UTF-8">
     <head>
         <title>Alberta Speed Skating Results</title>
-        <link rel="stylesheet" href="css/style.css">
+        <link rel="stylesheet" href="css/style.css?v=<?php echo filemtime(__DIR__ . '/css/style.css'); ?>">
     </head>
     <?php include('header.php'); ?>
 </html>

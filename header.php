@@ -5,7 +5,7 @@ $siteTitles = ['ranking.php'=>'Ranking List','series.php'=>'Circuit Ranking List
 $page = basename($_SERVER['PHP_SELF']);
 $siteTitle = isset($pageTitle) ? $pageTitle : (isset($siteTitles[$page]) ? $siteTitles[$page] : 'Results Database');
 ?>
-<link rel="stylesheet" href="<?php echo $base; ?>css/header.css">
+<link rel="stylesheet" href="<?php echo $base; ?>css/header.css?v=<?php echo filemtime(__DIR__ . '/css/header.css'); ?>">
 <div class = "header">
     <a href = "<?php echo $base; ?>index.php" class = "left">
         <img id = "homelogo" src="<?php echo $base; ?>images/TrimmedorgLogo2024.png" alt="Speed Skating Alberta">
