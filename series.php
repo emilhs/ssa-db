@@ -137,7 +137,7 @@ if ($currSeason > 0){
                     else {
                         $url = "y=".$currSeason."&aC=".$currCat."&a=".$a."&g=";
                         ?>
-                        <a class = "bebas-neue darktext selectorbtn" href = "series.php?a=<?php echo $url; ?>"><?php echo $a; ?></a>
+                        <a class = "bebas-neue darktext selectorbtn" href = "series.php?<?php echo $url; ?>"><?php echo $a; ?></a>
                         <?php 
                     }
                 }

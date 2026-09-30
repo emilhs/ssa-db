@@ -1,0 +1,7 @@
+/* Shared site footer (footer.php) - used by the main site and /provincialteam */
+.site-footer { text-align: center; padding: 0 20px 10px; margin: 0; font-family: Arial, sans-serif; }
+.site-footer-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 40px; padding: 20px 0; line-height: 1; }
+.site-footer-links a, .site-footer-links a:visited { color: #199bff; text-decoration: none; font-size: 0.75rem; }
+.site-footer-byline a, .site-footer-byline a:visited { color: #999; text-decoration: none; }
+.site-footer-byline { color: #999; font-size: 0.75rem; padding: 10px 10px 10px; margin: 0; line-height: 1; }
+.site-footer-byline a, .site-footer-byline a:visited { font-size: inherit; }

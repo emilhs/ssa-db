@@ -267,3 +267,19 @@ a, a:hover, a:visited{
         display: block;
     }
 }
+/* ---- Modern header + homepage (matches provincialteam/) ---- */
+body { background: #f5f5f5; }
+.header { background: #fff; padding: 14px 40px; border-bottom: 3px solid #199bff; align-items: center; margin-bottom: 20px; }
+.left { min-width: 0; }
+.topnav { display: flex; align-items: center; gap: 22px; font-family: Arial, sans-serif; font-size: 14px; }
+.topnav a { color: #666; }
+.topnav a:hover { color: #199bff; }
+.topnav a.navcta { color: #fff; background: #199bff; padding: 8px 16px; border-radius: 4px; font-weight: 600; }
+.topnav a.navcta:hover { background: #1080d0; color: #fff; }
+
+
+#title { font-size: 44px; }
+.header { justify-content: flex-start; }
+@media (max-width: 1150px) { #title { font-size: 30px; } }
+
+.header .backlink, .header .backlink:visited { color: #000; font-family: Arial, sans-serif; font-size: 14px; font-weight: normal; align-self: center; }
