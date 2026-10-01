@@ -1,124 +1,63 @@
 <?php include('navbar.php');
-if (isset($_GET['y'])){
-    $currSeason = $_GET["y"]; 
-}
-?>
 
-<div class = "menuH">
-<p class = "bebas-neue darktext pagetitle">Competitions List</p>
-<p class = "arimo desc darktext ">The following competitions (and skaters who raced the competitions) are included in the current database.</p>
+$currSeason = isset($_GET['y']) ? (int)$_GET['y'] : 0;
+$label = function ($s) { return ($s - 1) . '-' . sprintf('%02d', $s % 100); };
 
-<p class = "bebas-neue darktext padded text-center medsize">Select a Season:</p>
-<?php
-$sql = "SELECT DISTINCT season FROM comps ORDER BY season ASC;";
-    #$sql = "SELECT fName, lName, country FROM athletes WHERE athleteID = '$athleteID';";
-    // Executing the sql query
-    $result = mysqli_query($conn, $sql);
-    // Verify that SQL Query is executed or not
-    if($result == TRUE) {
-        // Count the number of rows which will be a way to verify if there is data in the database
-        $count = mysqli_num_rows($result);
-        // Initialize display of Athlete Number 
-        if($count > 0){
-            while($rows = mysqli_fetch_assoc($result)){
-                $season = $rows['season'];
-                if ($season == $currSeason){
-                    ?>
-                    <a class = "bebas-neue whitetext yearbtn-selected" href = "competitions.php"><?php echo ($season-1)?>-<?php echo $season; ?></a>
-                    <?php 
-                }
-                else {
-                    ?>
-                    <a class = "bebas-neue darktext yearbtn" href = "competitions.php?y=<?php echo $season; ?>"><?php echo ($season-1)?>-<?php echo $season; ?></a>
-                    <?php 
-                }
-            }
-        }
-    }
+// Seasons that have competitions, oldest to newest
+$seasons = array();
+$sr = mysqli_query($conn, "SELECT DISTINCT season FROM comps ORDER BY season ASC");
+while ($r = mysqli_fetch_assoc($sr)) $seasons[] = (int)$r['season'];
+// Always show one season; the most recent (last button) unless another one is chosen
+if (!in_array($currSeason, $seasons)) $currSeason = $seasons ? end($seasons) : 0;
+
+// Disciplines raced at each competition
+$discByComp = array();
+$dq = mysqli_query($conn, "SELECT compID, GROUP_CONCAT(DISTINCT disc) AS d FROM results GROUP BY compID");
+while ($r = mysqli_fetch_assoc($dq)) {
+    $names = array();
+    foreach (explode(',', $r['d']) as $k) { if (isset($discSort[$k])) $names[] = $discSort[$k]; }
+    $discByComp[$r['compID']] = implode(', ', $names);
+}
+
+// One row per competition, however many days it ran
+$where = $currSeason ? "WHERE c.season = $currSeason" : "";
+$cr = mysqli_query($conn, "SELECT c.compID, c.compName, c.location, c.season, MIN(d.date) AS firstDate, MAX(d.date) AS lastDate
+    FROM comps c JOIN dates d ON d.compID = c.compID $where
+    GROUP BY c.compID, c.compName, c.location, c.season
+    ORDER BY firstDate DESC, c.compName");
+$comps = array();
+while ($r = mysqli_fetch_assoc($cr)) $comps[] = $r;
 ?>
-<p class = "bebas-neue darktext padded text-center medsize">Competitions (Latest to Earliest):</p>
-<?php
-if ($currSeason == NULL){
-    $sql2 = "SELECT * FROM comps NATURAL JOIN dates ORDER BY date DESC;";
-}
-else {
-    $sql2 = "SELECT * FROM comps NATURAL JOIN dates WHERE season = '$currSeason' ORDER BY date DESC;";
-}
-    #$sql = "SELECT fName, lName, country FROM athletes WHERE athleteID = '$athleteID';";
-    // Executing the sql query
-    $result2 = mysqli_query($conn, $sql2);
-    // Verify that SQL Query is executed or not
-    if($result2 == TRUE) {
-        // Count the number of rows which will be a way to verify if there is data in the database
-        $count2 = mysqli_num_rows($result2);
-        // Initialize display of Athlete Number 
-        if($count2 > 0){
-            $displayNum = 1;
-            ?>
-            <table class = "darktext searchresult arimo">
-                <tr class = "toprow">
-                    <th class = "row-left">Competition Name</th>
-                    <th class = "row-mid">Discipline</th>
-                    <th class = "row-mid">Location</th>
-                    <th class = "row-right">Date</th>
-                </tr>    
-            <?php
-            while($rows2 = mysqli_fetch_assoc($result2)){
-                $compID = $rows2['compID'];
-                $compName = $rows2['compName'];
-                $location = $rows2['location'];
-                $date = $rows2['date'];
+<link rel="stylesheet" href="css/search.css?v=<?php echo filemtime(__DIR__ . '/css/search.css'); ?>">
+
+<main class = "search-page">
+    <div class = "search-card wide-card">
+        <div class = "search-card-title bebas-neue">Competitions</div>
+        <div class = "season-btns under-title">
+            <?php foreach ($seasons as $s) { ?>
+                <a class = "bebas-neue<?php echo $s === $currSeason ? ' on' : ''; ?>" href = "competitions.php?y=<?php echo $s; ?>"><?php echo $label($s); ?></a>
+            <?php } ?>
+        </div>
+        <p class = "search-note">These competitions, and the skaters who raced them, are included in the database.</p>
+        <?php if (!$comps) { ?>
+            <p class = "search-empty">No competitions found</p>
+        <?php } else { ?>
+        <table class = "results-table comps-results">
+            <tr class = "head"><th>Competition</th><th>Disciplines</th><th>Location</th><th>Date</th></tr>
+            <?php foreach ($comps as $i => $c) {
+                $date = ($c['firstDate'] === $c['lastDate']) ? $c['firstDate'] : $c['firstDate'] . ' to ' . $c['lastDate'];
                 ?>
-                <tr <?php if($displayNum%2==0){?> class = "odd" <?php } ?>>    
-                    <td class = "row-left"><?php echo $compName; ?></td>
-                    <td>
-                    <?php
-                            $sql5 = "SELECT DISTINCT disc FROM comps NATURAL JOIN results WHERE compID = '$compID';";
-                            $result5 = mysqli_query($conn, $sql5);
-                            
-                            // Verify that SQL Query is executed or not
-                            if($result5 == TRUE) {
-                                // Count the number of rows which will be a way to verify if there is data in the database
-                                $count5 = mysqli_num_rows($result5);
-                                if ($count5 > 0){
-                                    $discs = array();
-                                    while($rows5 = mysqli_fetch_assoc($result5)){
-                                        $disc = $rows5['disc'];
-                                        $disc = strval($disc);
-                                        $discs[] = $discSort[$disc];
-                                    }
-                                }
-                            }
-                            echo implode(', ',$discs); 
-                    ?>    
-                    </td>
-                    <td><?php echo $location; ?></td>
-                    <td class = "row-right"><?php echo $date; ?></td>
-                </tr>
-                <?php 
-                $sql3 = "SELECT * FROM dates NATURAL JOIN comps WHERE compID = '$compID';";
-                $result3 = mysqli_query($conn, $sql3);
-                // Verify that SQL Query is executed or not
-                if($result3 == TRUE) {
-                    // Count the number of rows which will be a way to verify if there is data in the database
-                    $count3 = mysqli_num_rows($result3);
-                    // Initialize display of Athlete Number 
-                    if($count3 > 0){
-                        while($rows3 = mysqli_fetch_assoc($result3)){
-                            $compID = $rows3['compID'];
-                            $dayID = $rows3['dayID'];
-                            $date = $rows3['date'];
-                        }
-                    }
-                } 
-                $displayNum++;
-            }
-            ?>
-            </table>
-            <?php
-        }
-    }
-?>
-</div>
+            <tr<?php echo $i % 2 ? ' class = "odd"' : ''; ?>>
+                <td><?php echo htmlspecialchars($c['compName']); ?></td>
+                <td><?php echo htmlspecialchars($discByComp[$c['compID']] ?? ''); ?></td>
+                <td><?php echo htmlspecialchars($c['location']); ?></td>
+                <td><?php echo htmlspecialchars($date); ?></td>
+            </tr>
+            <?php } ?>
+        </table>
+        <?php } ?>
+        <p class = "search-count"><?php echo count($comps); ?> competition<?php echo count($comps) == 1 ? '' : 's'; ?><?php echo $currSeason ? ' in ' . $label($currSeason) : ''; ?></p>
+    </div>
+</main>
 
 <?php include("footer.php");

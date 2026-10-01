@@ -18,7 +18,7 @@
                         if(isset($_POST['submit'])) {
                             // Get the data from database
                             $username = $_POST['usr'];
-                            $password = md5($_POST['pwd']); //Code to encrypt password
+                            $password = password_hash($_POST['pwd'], PASSWORD_DEFAULT); // Hash the password
 
                             //Block of code to check if username is already in database, if it is, then return an error message and end the process. 
                             $sql2 = "SELECT * FROM admin_table WHERE username = '$username';";

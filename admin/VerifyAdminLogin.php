@@ -1,22 +1,18 @@
 <?php
-    // Check Authorization
+    // Check Authorization: no session means no access, and nothing below this include may run
     if(!isset($_SESSION['user-admin'])) {
-        // Set the error message indicating that the user is not logged in and redirect to login page. 
-        header('location: signin.php');
+        header('location: ../signin.php');
+        exit;
     }
-    else {
-        $userID = $_SESSION['user-admin'];
-        $sql = "SELECT * FROM admin_table WHERE adminID = '$userID;'";
-        // Executing the sql query
-        $result = mysqli_query($conn, $sql);
-        if ($result == TRUE) {
-            // For everything in the database, display
-            $rows = mysqli_fetch_assoc($result);
-            // Store database details in variables. 
-            $username = $rows['username'];
-        }
-        else{
-            header('location: signin.php');
-        }
+    $userID = (int)$_SESSION['user-admin'];
+    $stmtVerify = mysqli_prepare($conn, "SELECT username FROM admin_table WHERE adminID = ?;");
+    mysqli_stmt_bind_param($stmtVerify, 'i', $userID);
+    mysqli_stmt_execute($stmtVerify);
+    $rowVerify = mysqli_fetch_assoc(mysqli_stmt_get_result($stmtVerify));
+    if (!$rowVerify) {
+        unset($_SESSION['user-admin']);
+        header('location: ../signin.php');
+        exit;
     }
+    $username = $rowVerify['username'];
 ?>

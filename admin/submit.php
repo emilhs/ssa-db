@@ -1,40 +1,29 @@
 <?php include('navbar.php'); ?>
+<link rel="stylesheet" href="../css/admin.css?v=<?php echo filemtime(__DIR__ . '/../css/admin.css'); ?>">
 
-<div class = "menuH">
-    <p class = "bebas-neue darktext pagetitle">Submit Results to SSA Database</p>
-    <form id="uploadForm" action="addcomp.php" method="post" enctype="multipart/form-data">
-    
-    <input type="file" id="fileInput" name="csv" style="display: none;">
-    <button type="button" class = "bebas-neue darktext filesubmission" id="customButton">Select File</button>
-    <span class = "fileout arimo medsize darktext" id="fileName"></span>
-    
-    <button class = "bebas-neue darktext filesubmission" type="submit" id="submitButton" name = "submit" disabled>Submit</button>
+<main class = "admin-page admin-narrow">
+    <h1 class = "admin-h1 bebas-neue">Add a Competition</h1>
+    <p class = "admin-hint">Choose the results CSV file. You'll get to review everything before it is saved.</p>
+
+    <form id = "uploadForm" action = "addcomp.php" method = "post" enctype = "multipart/form-data" class = "pw-card upload-card">
+        <input type = "file" id = "fileInput" name = "csv" accept = ".csv,text/csv" style = "display: none;">
+        <button type = "button" class = "pair-btn" id = "customButton">Select file</button>
+        <span class = "upload-name" id = "fileName">No file chosen</span>
+        <button class = "pair-btn primary" type = "submit" id = "submitButton" name = "submit" value = "1" disabled>Continue</button>
     </form>
-</div>
+</main>
 
 <script>
-document.getElementById('customButton').addEventListener('click', function() {
+document.getElementById('customButton').addEventListener('click', function () {
     document.getElementById('fileInput').click();
 });
-
-document.getElementById('fileInput').addEventListener('change', function() {
-    const fileInput = document.getElementById('fileInput');
-    const customButton = document.getElementById('customButton');
-    const fileName = document.getElementById('fileName');
-    const submitButton = document.getElementById('submitButton');
-
-    if (fileInput.files.length > 0) {
-        customButton.classList.remove('filesubmission');
-        customButton.classList.add('filesubmission-selected');
-        fileName.textContent = fileInput.files[0].name;
-        submitButton.disabled = false;
-    } else {
-        customButton.classList.remove('filesubmission-selected');
-        customButton.classList.add('filesubmission');
-        fileName.textContent = '';
-        submitButton.disabled = true;
-    }
+document.getElementById('fileInput').addEventListener('change', function () {
+    const input = document.getElementById('fileInput');
+    const has = input.files.length > 0;
+    document.getElementById('fileName').textContent = has ? input.files[0].name : 'No file chosen';
+    document.getElementById('customButton').classList.toggle('sel', has);
+    document.getElementById('submitButton').disabled = !has;
 });
 </script>
 
-<?php include('../fixedfooter.php');
+<?php include('../footer.php'); ?>

@@ -11,5 +11,6 @@ $siteTitle = isset($pageTitle) ? $pageTitle : (isset($siteTitles[$page]) ? $site
         <img id = "homelogo" src="<?php echo $base; ?>images/TrimmedorgLogo2024.png" alt="Speed Skating Alberta">
         <p class = "bebas-neue" id = "title"><span class = "bluetext"><span class = "ttl-full">Speed Skating Alberta</span><span class = "ttl-short">SSA</span></span> <span class = "darktext"><?php echo $siteTitle; ?></span></p>
     </a>
-    <?php if ($page !== 'index.php' || $base !== '') { ?><a class = "backlink" href = "<?php echo $base; ?>index.php">Home</a><?php } ?>
+    <?php $backHref = isset($backHref) ? $backHref : $base . 'index.php'; $backLabel = isset($backLabel) ? $backLabel : 'Home';
+if (empty($hideBack) && ($page !== 'index.php' || $base !== '')) { ?><a class = "backlink" href = "<?php echo $backHref; ?>"><?php echo $backLabel; ?></a><?php } ?>
 </div>

@@ -1,18 +1,22 @@
 <?php include('config/constants.php'); 
 include('config/functions.php'); 
+if (is_file(__DIR__ . '/config/visibility.php')) { include_once(__DIR__ . '/config/visibility.php'); }
+if (!function_exists('visible_sql')) { function visible_sql($col = 'skaterID') { return '1 = 1'; } }   // keeps the page working if config/visibility.php hasn't been uploaded
+if (!defined('REQUIRE_BIRTHDAY')) { define('REQUIRE_BIRTHDAY', false); }
 
-if (isset($_GET['club'])){
-    $currClub = $_GET["club"]; 
-}
+$currClub = isset($_GET['club']) ? (string)$_GET['club'] : '';
+$clubSql = mysqli_real_escape_string($conn, $currClub);            // for SQL
+$clubHtml = htmlspecialchars($currClub);                          // for the page
+$clubUrl = urlencode($currClub);                                  // for links
 if (isset($_GET['y'])){
-    $currSeasons = array_filter(explode("s", $_GET["y"])); 
+    $currSeasons = array_values(array_unique(array_map('intval', array_filter(explode("s", $_GET["y"])))));
 }else{
     $currSeasons = array();
 }
 
-$sql = "SELECT season, club, COUNT(skaterID) as regd FROM skaters WHERE club = '$currClub' GROUP BY season ORDER BY season ASC;";
+$sql = "SELECT season, club, COUNT(skaterID) as regd FROM skaters WHERE club = '$clubSql' AND " . visible_sql('skaterID') . " GROUP BY season ORDER BY season ASC;";
 
-$sql0 = "SELECT MAX(season) as maxs, MIN(CASE WHEN season >= 2000 THEN season END) as mins, COUNT(DISTINCT skaterID) as regd FROM skaters WHERE club = '$currClub';";
+$sql0 = "SELECT MAX(season) as maxs, MIN(CASE WHEN season >= 2000 THEN season END) as mins, COUNT(DISTINCT skaterID) as regd FROM skaters WHERE club = '$clubSql' AND " . visible_sql('skaterID') . ";";
 
 // Executing the sql query
 $result = mysqli_query($conn, $sql);
@@ -27,13 +31,14 @@ if($result == TRUE and $result0 == TRUE) {
     if($count > 0 and $count0 == 1) {
         ?>
         <html>
-            <meta charset="UTF-8">
             <head>
-                <title><?php echo strtoupper($currClub); ?> Club Overview</title>
+                <meta charset="UTF-8">
+                <title><?php echo strtoupper($clubHtml); ?> Club Overview</title>
                 <meta name="viewport" content="width=device-width, initial-scale=1">
+                <?php include_once(__DIR__ . '/config/ga.php'); ga_tag(); ?>
                 <link rel="stylesheet" href="css/profilestyle.css?v=<?php echo filemtime(__DIR__ . '/css/profilestyle.css'); ?>">
             </head>
-            <?php include('header.php'); ?>
+            <?php $pageTitle = 'Clubs'; include('header.php'); ?>
 </html>
 
         <?php
@@ -43,72 +48,49 @@ if($result == TRUE and $result0 == TRUE) {
         $tregd = $rows0['regd'];
         ?>
 
-        <table class = "darktext profiletbl">
-            <tr class = "bebas-neue darktext pagetitle">
-                <td colspan = "2" style = "text-align:center;"><?php echo $currClub?></td>
-            </tr>
-            <tr class = "boldtext arimo">
-                <td style = "text-align:right;"><?php echo ($mins-1); ?>-<?php echo ($maxs%1000); ?></td>
-                <td style = "text-align:left;"><?php echo $tregd; ?> skaters</td>
-            </tr>
         <?php
+        $seasonCounts = array();
         while($rows = mysqli_fetch_assoc($result)){
-            // Store database details in variables. 
-            $season = $rows['season'];
+            $seasonCounts[(int)$rows['season']] = (int)$rows['regd'];
             $club = $rows['club'];
-            $regd = $rows['regd'];
-            ?>
-            <tr class = "arimo">
-                <td style = "text-align:right;"><?php echo ($season-1)."-".($season%1000)?></td>
-                <td style = "text-align:left;"><?php echo $regd; ?> skaters</td>
-            </tr>
-            <?php
-            $enum++;
         }
+        // Default to the most recent season (also when every season has been deselected)
+        $currSeasons = array_values(array_intersect($currSeasons, array_keys($seasonCounts)));
+        if (!$currSeasons && $seasonCounts) { $currSeasons = array(max(array_keys($seasonCounts))); }
         ?>
-        </table>
+        <div class = "athlete-page">
+        <div class = "profile-hero club-hero">
+            <div class = "profile-frost">
+                <div class = "profile-name bebas-neue"><?php echo $clubHtml; ?></div>
+                <table class = "darktext profiletbl">
+                    <tr class = "boldtext arimo"><td>Seasons</td><td>Skaters</td></tr>
+                    <tr class = "arimo"><td><?php echo ($mins-1) . '-' . sprintf('%02d', $mins%100) . ($mins != $maxs ? ' to ' . ($maxs-1) . '-' . sprintf('%02d', $maxs%100) : ''); ?></td><td><?php echo (int)$tregd; ?></td></tr>
+                </table>
+            </div>
+        </div>
+        <div class = "hero-panel">
+            <div class = "btn-tbl">
+            <?php
+            foreach ($seasonCounts as $season => $regd) {
+                $on = in_array($season, $currSeasons);
+                $next = $on ? implode('s', array_diff($currSeasons, array($season))) : implode('s', $currSeasons) . 's' . $season;
+                ?>
+                <button onclick = "document.location='clubpage.php?club=<?php echo $clubUrl; ?>&y=<?php echo $next; ?>'" class = "darktext bebas-neue pbtns<?php echo $on ? ' activebtn' : ''; ?>"><?php echo ($season-1)."-".sprintf('%02d', $season%100); ?> <span class = "season-count"><?php echo $regd; ?></span></button>
+                <?php
+            }
+            ?>
+            </div>
+        </div>
         <?php
     } else {
         header('location: clubs.php');
+        exit;
     }
 }
 ?>
 
-<div class = "bestbox">
-<div class = "bebas-neue darktext bestbox-banner">Select Season</div>
-<div class = "btn-tbl">
-<tr>
 <?php
-$result = mysqli_query($conn, $sql);
-if ($result == TRUE){
-    $count = mysqli_num_rows($result);
-    if ($count > 0){
-        while($rows = mysqli_fetch_assoc($result)){
-            $season = ($rows['season']);
-            if (in_array($season, $currSeasons)){
-                ?>
-                <td>
-                <button onclick="document.location='clubpage.php?club=<?php echo $currClub; ?>&y=<?php echo implode('s',(array_diff($currSeasons, array($season)))); ?>'" class = "darktext bebas-neue pbtns activebtn"><?php echo ($season%1000-1)."-".($season%1000); ?></button>
-                </td>
-                <?php
-            }
-            else {
-                ?>
-                <td>
-                <button onclick="document.location='clubpage.php?club=<?php echo $currClub; ?>&y=<?php echo implode('s',$currSeasons).'s'.$season; ?>'" class = "darktext bebas-neue pbtns"><?php echo ($season%1000-1)."-".($season%1000); ?></button>
-                </td>
-                <?php
-            }
-        }
-    }
-}
-?>
-</tr>
-</div>
-</div>
-
-<?php
-$seasoncall = "season = ".implode(" OR season = ", $currSeasons);
+$seasoncall = "season = ".implode(" OR season = ", array_map('intval', $currSeasons));
 if (sizeof($currSeasons) > 0){
     $bignum = 0;
     foreach ($ageCats as $c){
@@ -124,7 +106,7 @@ if (sizeof($currSeasons) > 0){
                         $dist = 500;
                         $skatercall = 
                         "SELECT DISTINCT S.skaterID, fName, lName, PB
-                        FROM (SELECT fName, lName, skaterID FROM skaters WHERE (".$seasoncall.") AND club = '".$club."' AND age >= $a AND gender = '$g') AS S
+                        FROM (SELECT fName, lName, skaterID FROM skaters WHERE ".visible_sql('skaterID')." AND (".$seasoncall.") AND club = '".$clubSql."' AND age >= $a AND gender = '$g') AS S
                         LEFT JOIN
                         (SELECT skaterID, MIN(time) AS PB FROM skaters NATURAL JOIN results NATURAL JOIN comps WHERE age >= $a AND gender = '$g' AND (".$seasoncall.") AND time > 0 AND track = $track AND dist = $dist GROUP BY skaterID) AS T
                         ON S.skaterID = T.skaterID
@@ -154,7 +136,7 @@ if (sizeof($currSeasons) > 0){
                         }
                         $skatercall = 
                         "SELECT DISTINCT S.skaterID, fName, lName, PB
-                        FROM (SELECT fName, lName, skaterID FROM skaters WHERE (".$seasoncall.") AND club = '".$club."' AND age = '$a' AND gender = '$g') AS S
+                        FROM (SELECT fName, lName, skaterID FROM skaters WHERE ".visible_sql('skaterID')." AND (".$seasoncall.") AND club = '".$clubSql."' AND age = '$a' AND gender = '$g') AS S
                         LEFT JOIN
                         (SELECT skaterID, MIN(time) AS PB FROM skaters NATURAL JOIN results NATURAL JOIN comps WHERE age = '$a' AND gender = '$g' AND (".$seasoncall.") AND time > 0 AND track = $track AND dist = $dist GROUP BY skaterID) AS T
                         ON S.skaterID = T.skaterID
@@ -216,5 +198,6 @@ if (sizeof($currSeasons) > 0){
     }
 }
 ?>
+</div>
 
 <?php include("footer.php");

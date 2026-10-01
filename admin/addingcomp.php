@@ -1,6 +1,7 @@
 <?php include('navbar.php');
 
-if (isset($_POST["upload"]) ) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !csrf_ok($_POST['csrf'] ?? '')) { $_POST = array(); admin_block('Your session expired, nothing was uploaded. Please try again.'); }
+if (isset($_POST["upload"]) && guard_season($_POST["season"] ?? '')) {
     $location = $_POST["location"];
     $season = $_POST["season"];
     $compName = $_POST["compName"];
@@ -26,7 +27,7 @@ if (isset($_POST["upload"]) ) {
     $count1 = mysqli_num_rows($result1);
 
     if ($count1 > 0) {
-        echo "Identical competition already exists, please rename and try again";
+        echo '<p class = "admin-msg err">An identical competition already exists. Please rename it and <a href = "submit.php">try again</a>.</p>';
     }
     else if ($count1 == 0){
         $compsql = "INSERT INTO comps SET compName = '$compName', season = '$season', location = '$location';";
@@ -215,17 +216,16 @@ if (isset($_POST["upload"]) ) {
                 }
 
                 ?>
-                    <div class = "menuH">
-                    <p class = "bebas-neue darktext pagetitle">Success!</p>
-                    <p class = "arimo darktext medsize">Uploaded data can now be viewed by users and edited by admins.</p>
-                    <div class = "buttons text-center">
-                    <a class = "bebas-neue filesubmission-long darktext" href = "submit.php">Add Another Competition</a>
-                    <br>
-                    <a class = "bebas-neue filesubmission-long darktext" href = "viewskaters.php">Edit Skaters and Times</a>
-                    <br>
-                    <a class = "bebas-neue filesubmission-long darktext" href = "viewcomps.php">Edit Competitions</a>
-                    </div>
-                    </div>
+                    <link rel="stylesheet" href="../css/admin.css?v=<?php echo filemtime(__DIR__ . '/../css/admin.css'); ?>">
+                    <main class = "admin-page admin-narrow">
+                        <h1 class = "admin-h1 bebas-neue">Competition added</h1>
+                        <p class = "admin-msg ok">Uploaded. The results can now be viewed by users and edited by admins.</p>
+                        <div class = "next-links">
+                            <a class = "pair-btn primary" href = "submit.php">Add another competition</a>
+                            <a class = "pair-btn" href = "viewskaters.php">Edit skaters and results</a>
+                            <a class = "pair-btn" href = "viewcomps.php">Edit competitions</a>
+                        </div>
+                    </main>
                 <?php
                 # ROWS OF DATA
 
@@ -233,16 +233,13 @@ if (isset($_POST["upload"]) ) {
         }
         else { 
             ?>
-            <p class = "arimo darktext medsize">There was an error - try again!</p>
-            <div class = "buttons text-center">
-                    <a class = "bebas-neue filesubmission-long darktext" href = "submit.php">Add Another Competition</a>
-            </div>
+            <p class = "admin-msg err">There was an error. <a href = "submit.php">Try again</a></p>
             <?php
         }
     }
 }
 else{
-    echo "error";
+    if (empty($_POST)) { echo '<p class = "admin-msg err">Nothing was uploaded. <a href = "submit.php">Start again</a></p>'; }
 }
 
-include("../fixedfooter.php");
+include("../footer.php");

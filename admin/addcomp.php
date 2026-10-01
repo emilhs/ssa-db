@@ -2,57 +2,42 @@
 #ini_set('display_errors', 1); ini_set('display_startup_errors', 1); error_reporting(E_ALL);
 ?>
 
-<div class = "menuH">
-    <p class = "bebas-neue darktext pagetitle">Submit Results to SSA Database</p>
+<link rel="stylesheet" href="../css/admin.css?v=<?php echo filemtime(__DIR__ . '/../css/admin.css'); ?>">
+<main class = "admin-page admin-wide">
+    <h1 class = "admin-h1 bebas-neue">Add a Competition</h1>
 
 <?php 
 if (isset($_POST["submit"]) ) {
     if (isset($_FILES["csv"])) {
         if ($_FILES["csv"]["error"] > 0) {
-            echo "Return Code: " . $_FILES["csv"]["error"] . "<br/>";
+            echo '<p class = "admin-msg err">Upload failed (code ' . (int)$_FILES["csv"]["error"] . '). <a href = "submit.php">Try again</a></p>';
         }
         else {
             $filename = $_FILES["csv"]["tmp_name"];
             $file = fopen($filename, "r");
             ?>
-            <br>
-            <p class = "arimo darktext smallsize">The following competition will be added to the database:</p>
+            <p class = "admin-hint">Check the details below, then upload.</p>
             <form action="addingcomp.php" method="post" enctype="multipart/form-data">
+            <input type = "hidden" name = "csrf" value = "<?php echo csrf_token(); ?>">
             
             <?php
             if (($getData = fgetcsv($file, 10000, ",")) !== FALSE){ ?>
-                <br>
-                <table class = "searchresult darktext arimo">
-                    <tr class = "toprow smallsize">
-                        <th class = "row-left"><p>Location:</p></th>
-                        <th class = "row-right"><p>Competition Name:</p></th>
-                    </tr>   
-                    <tr>
-                        <th><input class = "filltable login" type = "text" name = "location"></input></th>
-                        <th><input class = "filltable login" type = "text" name = "compName" value = "<?php echo $getData[1]; ?>"></input></th>
-                        </th>
-                    </tr>   
-                </table>
+                <section class = "edit-card">
+                    <div class = "edit-card-title bebas-neue">Competition</div>
+                    <div class = "comp-add">
+                        <label>Location <input type = "text" name = "location"></label>
+                        <label>Competition name <input type = "text" name = "compName" value = "<?php echo htmlspecialchars($getData[1]); ?>"></label>
+                    </div>
+                </section>
                 <?php
                 rewind($file);
             }
             ?>
-            <br>
-            <p class = "arimo darktext smallsize">The following data will be added to the database:</p>
-            <br>
-            <table class = "darktext rankresult arimo">
-                <tr class = "toprow">
-                    <td class = "row-left">Age</td>
-                    <td class = "row-mid">Gender</td>
-                    <td class = "row-mid">Name</td>
-                    <td class = "row-mid">Surname</td>
-                    <td class = "row-mid">Club</td>
-                    <td class = "row-mid">Distance</td>
-                    <td class = "row-mid">Track</td>
-                    <td class = "row-mid">Type</td>
-                    <td class = "row-mid">Time</td>
-                    <td class = "row-right">Total Points</td>
-                </tr>
+            <section class = "edit-card">
+            <div class = "edit-card-title bebas-neue">Results to be added</div>
+            <div class = "edit-scroll">
+            <table class = "edit-table">
+                <tr><th>Age</th><th>Gender</th><th>Name</th><th>Surname</th><th>Club</th><th>Distance</th><th>Track</th><th>Type</th><th>Time</th><th>Total points</th></tr>
 
             <?php
             $olddate = "";
@@ -242,10 +227,12 @@ if (isset($_POST["submit"]) ) {
             }
             ?>
             </table>
+            </div>
+            </section>
             <input type = "hidden" value = "<?php echo $ptslist; ?>" name = "points">
             <input type = "hidden" value = "<?php echo $topass; ?>" name = "skaters">
             <input type = "hidden" value="<?php echo $season?>" name="season">
-            <input class = "filesubmission-wide darktext bebas-neue" type = "submit" value="Upload Competition" name="upload"></input>
+            <button class = "pair-btn primary upload-go" type = "submit" name = "upload" value = "1">Upload competition</button>
             </form>
             <?php
         }
@@ -253,11 +240,11 @@ if (isset($_POST["submit"]) ) {
 }
 else { 
     ?>
-    <p class = "bebas-neue dangertext pagetitle">File not found!</p>
+    <p class = "admin-msg err">File not found. <a href = "submit.php">Try again</a></p>
 <?php 
 }
 ?>
-</div>
+</main>
 
-</body>
+<?php include('../footer.php'); ?>
 </html>

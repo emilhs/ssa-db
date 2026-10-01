@@ -1,11 +1,14 @@
 <?php include('config/constants.php'); 
 include('config/functions.php'); 
+if (is_file(__DIR__ . '/config/visibility.php')) { include_once(__DIR__ . '/config/visibility.php'); }
+if (!function_exists('visible_sql')) { function visible_sql($col = 'skaterID') { return '1 = 1'; } }   // keeps the page working if config/visibility.php hasn't been uploaded
+if (!defined('REQUIRE_BIRTHDAY')) { define('REQUIRE_BIRTHDAY', false); }
 
 if (isset($_GET['id'])){
-    $skaterID = $_GET["id"]; 
+    $skaterID = (int)$_GET["id"];   // numbers only
 }
 
-$sql = "SELECT fName, lName, age, club, gender, season, dob FROM skaters WHERE skaterID = '$skaterID' ORDER BY season DESC LIMIT 1";
+$sql = "SELECT fName, lName, age, club, gender, season, dob, (SELECT MAX(dob) FROM skaters WHERE skaterID = '$skaterID') AS anydob FROM skaters WHERE skaterID = '$skaterID' ORDER BY season DESC LIMIT 1";
 
 // Executing the sql query
 $result = mysqli_query($conn, $sql);
@@ -24,7 +27,17 @@ if($result == TRUE) {
         $gender = $rows['gender'];
         $age = $rows['age'];
         $club = $rows['club'];
-        $dob = $rows['dob'];
+        $dob = $rows['dob'] ?: $rows['anydob'];
+        if (REQUIRE_BIRTHDAY && !$dob) { header('location: search.php'); exit; }
+
+        // Real age today, not the age category from the last season raced
+        $ageShown = $age;                                         // fallback: a category such as Senior or Active Start
+        if ($dob) {
+            $ageShown = (new DateTime($dob))->diff(new DateTime('today'))->y;
+        } elseif (is_numeric($age)) {
+            // No birthdate on file: age at the start of the last season raced, plus the years since (approximate)
+            $ageShown = '~' . ((int)$age + (new DateTime(($season - 1) . '-06-30'))->diff(new DateTime('today'))->y);
+        }
 
     } else {
         header('location: search.php');
@@ -37,6 +50,7 @@ if($result == TRUE) {
     <head>
         <title><?php echo strtoupper($fName); ?> <?php echo ucfirst($lName); ?> SSA Skater Profile</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
+                <?php include_once(__DIR__ . '/config/ga.php'); ga_tag(); ?>
                 <link rel="stylesheet" href="css/profilestyle.css?v=<?php echo filemtime(__DIR__ . '/css/profilestyle.css'); ?>">
     </head>
     <?php include('header.php'); ?>
@@ -55,7 +69,7 @@ if($result == TRUE) {
     </tr>
     <tr class = "arimo">
         <td>
-            <?php echo $age; ?>
+            <?php echo htmlspecialchars((string)$ageShown); ?>
         </td>
         <td>
             <?php echo $gender; ?>
@@ -216,7 +230,7 @@ $sqlTrack = "SELECT DISTINCT season FROM results NATURAL JOIN comps WHERE skater
                         $myseasons[] = $track;
                         ?>
                         <td>
-                        <button onclick="showSTable('<?php echo $track; ?>')" id = "btn<?php echo $track; ?>" class = "darktext bebas-neue sbtns <?php if($numer == 1){?> activebtn <?php } ?>"><?php echo ($track-1); ?>-<?php echo substr($track,2,3); ?></button>
+                        <button onclick="showSTable('<?php echo $track; ?>')" id = "btn<?php echo $track; ?>" class = "darktext bebas-neue sbtns <?php if($numer == $countTrack){?> activebtn <?php } ?>"><?php echo ($track-1); ?>-<?php echo substr($track,2,3); ?></button>
                         </td>
                         <?php
                     $numer++;
@@ -245,7 +259,7 @@ foreach ($myseasons as $s){
         // Initialize display of Athlete Number 
         if($count2 > 0){
         ?>
-        <div id = "table<?php echo $s; ?>" class = "s-table<?php if ($s == $myseasons[0]){ ?> active <?php } ?>">
+        <div id = "table<?php echo $s; ?>" class = "s-table<?php if ($s == end($myseasons)){ ?> active <?php } ?>">
         <table class = "bannertable arimo darktext">
                 <tr class = "darktext bestbox-subbanner">
                     <th width = "20%">Race</th>

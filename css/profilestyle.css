@@ -52,7 +52,6 @@
 
 a, a:hover, a:visited{
     text-decoration: none;
-    margin: 0;
 }
 
 .arimo {
@@ -285,9 +284,6 @@ body { background: #f5f5f5; }
 .header .backlink, .header .backlink:visited { color: #000; font-family: Arial, sans-serif; font-size: 14px; font-weight: normal; align-self: center; }
 
 /* ---- Club list ---- */
-.clubs-list { max-width: 900px; margin: 0 auto; padding: 0 20px 10px; }
-.club-row { display: flex; justify-content: space-between; align-items: center; gap: 16px; background: #fff; border-left: 4px solid #199bff; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); padding: 12px 20px; margin-bottom: 10px; font-size: 26px; color: #435664; }
-.club-row .club-count { color: #97a4ae; font-size: 22px; }
 
 /* ---- Athlete page (frosted style) ---- */
 .athlete-page .profile-hero { position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #0c5a9e 0%, #199bff 100%); width: calc(100% - 40px); max-width: 1100px; margin: 0 auto 20px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
@@ -324,3 +320,14 @@ body { background: #f5f5f5; }
     .athlete-page .profiletbl tr:nth-child(1) td:nth-child(3) { grid-area: 3 / 1 / 4 / 3; padding-top: 8px; }
     .athlete-page .profiletbl tr:nth-child(2) td:nth-child(3) { grid-area: 4 / 1 / 5 / 3; }
 }
+
+/* Club page additions */
+.athlete-page .pbtns .season-count { margin-left: 6px; font-size: 14px; opacity: .65; }
+.athlete-page .bannertable tr[onclick] { cursor: pointer; }
+.athlete-page .bannertable tr[onclick]:hover { background: #dff0ff; }
+
+/* Club banner: line under the name, and a white season panel glued underneath */
+.athlete-page .club-hero .profile-name { padding-bottom: 8px; margin-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,.55); }
+.athlete-page .club-hero { border-radius: 4px 4px 0 0; margin-bottom: 0; }
+.athlete-page .hero-panel { width: calc(100% - 40px); max-width: 1100px; margin: 0 auto 20px; background: #fff; border-radius: 0 0 4px 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+@media (max-width: 700px) { .athlete-page .hero-panel { width: calc(100% - 24px); } }

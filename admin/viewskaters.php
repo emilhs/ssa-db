@@ -3,7 +3,7 @@
 $fValid = FALSE;
 $lValid = FALSE;
 
-if (isset($_POST["newskater"])) {
+if (isset($_POST["newskater"]) && guard_season($_POST["season"] ?? '')) {
     $fName = $_POST["fName"];
     $lName = $_POST["lName"];
     $gender = $_POST["gender"];
@@ -127,8 +127,108 @@ if (isset($_GET['l'])){
 
 ?>
 
-<body>
-<p class = "bebas-neue darktext text-center medsize">Add Skater:</p>
+<link rel="stylesheet" href="../css/search.css?v=<?php echo filemtime(__DIR__ . '/../css/search.css'); ?>">
+<?php
+// Every skater (any club), filtered live in the browser.
+$allSql = "SELECT s.fName, s.lName, s.club, s.skaterID, MAX(c.alberta) AS alb FROM skaters s LEFT JOIN club c ON c.clubName = s.club GROUP BY s.skaterID ORDER BY s.lName, s.fName;";
+$allResult = mysqli_query($conn, $allSql) or die(mysqli_error($conn));
+$skatersJs = array();
+while ($r = mysqli_fetch_assoc($allResult)) {
+    $skatersJs[] = array('id' => (int)$r['skaterID'], 'f' => $r['fName'], 'l' => $r['lName'], 'c' => $r['club'], 'a' => ((int)$r['alb'] === 1));
+}
+?>
+
+<main class = "search-page">
+    <div class = "search-panels">
+    <div class = "search-card search-left">
+        <div class = "search-card-title bebas-neue">Search</div>
+        <div class = "search-bar">
+            <input id = "q" type = "search" placeholder = "Enter Details" autocomplete = "off" autocapitalize = "off" spellcheck = "false">
+            <label class = "alb-only"><input type = "checkbox" id = "albOnly" checked> Only Alberta athletes</label>
+        </div>
+        <div class = "search-card-title bebas-neue">First Name</div>
+        <div id = "fLetters" class = "letters"></div>
+        <div class = "search-card-title bebas-neue">Last Name</div>
+        <div id = "lLetters" class = "letters"></div>
+    </div>
+
+    <div class = "search-card search-right">
+        <div class = "search-card-title bebas-neue">Skaters</div>
+        <div id = "results"></div>
+        <p id = "count" class = "search-count"></p>
+    </div>
+    </div>
+</main>
+
+<script>
+const SKATERS = <?php echo json_encode($skatersJs, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE); ?>;
+const LETTERS = <?php echo json_encode(array_values($letters)); ?>;
+const norm = s => (s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+SKATERS.forEach(s => { s.key = norm(s.f + ' ' + s.l + ' ' + s.l + ' ' + s.f + ' ' + s.c); s.fn = norm(s.f); s.ln = norm(s.l); });
+
+const params = new URLSearchParams(location.search);
+let flet = LETTERS.includes(params.get('f')) ? params.get('f') : '';
+let llet = LETTERS.includes(params.get('l')) ? params.get('l') : '';
+const input = document.getElementById('q');
+input.value = params.get('q') || '';
+const MAX_ROWS = 300;
+const albBox = document.getElementById('albOnly');
+albBox.checked = params.get('alb') !== '0';
+albBox.addEventListener('change', update);
+
+function letterRow(el, current, which) {
+    el.innerHTML = LETTERS.map(x =>
+        '<a class = "' + (x === current ? 'letterbutton-selected' : 'letterbutton') + ' bebas-neue darktext" href = "#" data-w = "' + which + '" data-l = "' + x + '">' + x + '</a>').join('');
+}
+
+function update() {
+    letterRow(document.getElementById('fLetters'), flet, 'f');
+    letterRow(document.getElementById('lLetters'), llet, 'l');
+    const tokens = norm(input.value.trim()).split(/\s+/).filter(Boolean);
+    const out = document.getElementById('results');
+    const count = document.getElementById('count');
+    try {
+        const p = new URLSearchParams();
+        if (input.value.trim()) p.set('q', input.value.trim());
+        if (flet) p.set('f', flet);
+        if (llet) p.set('l', llet);
+        if (!albBox.checked) p.set('alb', '0');
+        history.replaceState(null, '', p.toString() ? '?' + p : location.pathname);
+    } catch (e) {}
+    const pool = albBox.checked ? SKATERS.filter(s => s.a) : SKATERS;
+    if (!tokens.length && !flet && !llet) {
+        count.textContent = pool.length + (albBox.checked ? ' Alberta skaters' : ' skaters');
+        out.innerHTML = '';
+        return;
+    }
+    const f = norm(flet), l = norm(llet);
+    const m = pool.filter(s => (!f || s.fn.startsWith(f)) && (!l || s.ln.startsWith(l)) &&
+        tokens.every(t => t.length === 1 ? (s.fn.startsWith(t) || s.ln.startsWith(t)) : s.key.includes(t)));
+    count.textContent = m.length + ' of ' + pool.length + (albBox.checked ? ' Alberta skaters' : ' skaters') + (m.length > MAX_ROWS ? ' (showing first ' + MAX_ROWS + ')' : '');
+    if (!m.length) {
+        out.innerHTML = '<p class = "search-empty">No skaters found</p>';
+        return;
+    }
+    out.innerHTML = '<table class = "results-table"><tr class = "head"><th>First Name</th><th>Last Name</th><th>Club</th></tr>' +
+        m.slice(0, MAX_ROWS).map((s, i) => '<tr' + (i % 2 ? ' class = "odd"' : '') + ' onclick = "window.location=\'editskater.php?id=' + s.id + '\';"><td>' + esc(s.f) + '</td><td>' + esc(s.l) + '</td><td>' + esc(s.c) + '</td></tr>').join('') + '</table>';
+}
+
+document.addEventListener('click', e => {
+    const a = e.target.closest('a[data-l]');
+    if (!a) return;
+    e.preventDefault();
+    if (a.dataset.w === 'f') flet = (flet === a.dataset.l) ? '' : a.dataset.l;
+    else llet = (llet === a.dataset.l) ? '' : a.dataset.l;
+    update();
+});
+input.addEventListener('input', update);
+update();
+</script>
+
+<div class = "admin-section-title bebas-neue">Add Skater</div>
+<div class = "admin-addwrap">
+
             <table class = "darktext searchresult arimo">
                 <tr class = "toprow">
                     <th class = "row-left">First Name</th>
@@ -173,102 +273,6 @@ if (isset($_GET['l'])){
 </table>
 
 
-<div class = "menuH">
-    <p class = "bebas-neue darktext pagetitle">Skater Search</p>
-    <p class = "arimo desc darktext ">Only skaters that raced one of the <a class = "intextlink" href = "competitions.php">competitions</a> in the database can be found.</p>
-    <p class = "bebas-neue darktext text-center medsize">First Name:</p>
-    <div><?php 
-        foreach ($letters as $x){ 
-                if ($x == $flet){ 
-                    ?>
-                    <a class = "letterbutton-selected bebas-neue darktext" href="viewskaters.php?l=<?php echo $llet?>"><?php echo $x?></a>
-                    <?php 
-                }else{ 
-                    ?>
-                    <a class = "letterbutton bebas-neue darktext" href="viewskaters.php?f=<?php echo $x?>&l=<?php echo $llet;?>"><?php echo $x?></a>
-                    <?php 
-                }
-        } ?>
-    </div>
-    <p class = "bebas-neue darktext text-center medsize">Last Name:</p>
-    <div><?php 
-        foreach ($letters as $x){
-                if ($x == $llet){ 
-                    ?>
-                    <a class = "letterbutton-selected bebas-neue darktext" href="viewskaters.php?f=<?php echo $flet?>"><?php echo $x?></a>
-                    <?php 
-                }else{ 
-                    ?>
-                    <a class = "letterbutton bebas-neue darktext" href="viewskaters.php?f=<?php echo $flet?>&l=<?php echo $x;?>"><?php echo $x?></a>
-                    <?php 
-                }
-        } ?>
-    </div>
-    <p class = "bebas-neue darktext text-center medsize">Skaters:</p>
-        <?php
-        if ($fValid or $lValid){
-                if ($fValid and $lValid){
-                    $sql = "SELECT fName, lName, skaterID, club, MAX(checkInfo) AS checkInfo FROM skaters WHERE fName LIKE '$flet%' AND lName LIKE '$llet%' GROUP BY skaterID ORDER BY lName, fName;";
-                }
-                else if ($lValid){
-                    $sql = "SELECT fName, lName, skaterID, club, MAX(checkInfo) AS checkInfo FROM skaters WHERE lName LIKE '$llet%' GROUP BY skaterID ORDER BY lName, fName;";
-                }
-                else if ($fValid){
-                    $sql = "SELECT fName, lName, skaterID, club, MAX(checkInfo) AS checkInfo FROM skaters WHERE fName LIKE '$flet%' GROUP BY skaterID ORDER BY lName, fName;";
-                }
-                $result = mysqli_query($conn, $sql) or die(mysqli_error());
-                $count = mysqli_num_rows($result);
-                $displayNum = 1;
-                if($count > 0) {
-                            ?>
-                            <table class = "darktext searchresult arimo">
-                                <tr class = "toprow">
-                                    <th class = "row-left">First Name</th>
-                                    <th class = "row-mid">Last Name</th>
-                                    <th class = "row-mid">Club</th>
-                                    <th class = "row-right"></th>
-                                </tr>    
-                            <?php
-                            // For everything in the database, display
-                            while($rows = mysqli_fetch_assoc($result)){
-                                // Store database details in variables. 
-                                $fName = $rows['fName'];
-                                $lName = $rows['lName'];
-                                $club = $rows['club'];
-                                $skaterID = $rows['skaterID'];
-                                $FLAG = $rows['checkInfo'];
-                                ?>
-                                <tr <?php if($displayNum%2==0){?> class = "odd" <?php } ?> onclick="window.location='editskater.php?id=<?php echo $skaterID?>';">
-                                    <td class = "row-left"><?php echo $fName; ?></td>
-                                    <td><?php echo $lName; ?></td>
-                                    <td><?php echo $club; ?></td>
-                                    <?php
-                                    if ($FLAG != NULL and $FLAG == 1){
-                                        ?>
-                                        <td class = "row-right"><p class = "dangertext">CHECK INFO</p></td>
-                                        <?php
-                                    }
-                                    else{ 
-                                        ?>
-                                        <td class = "row-right"></td>
-                                        <?php
-                                    }
-                                    ?>
-                                </tr>
-                            <?php
-                            $displayNum++;
-                            }?>
-                    </table></div><?php
-                }
-                else{?>
-                    <p class = "arimo darktext text-center medsize">No skaters found for the selected letter(s)</p>
-                <?php }
-        } 
-        else {
-        ?>
-    <p class = "arimo darktext text-center medsize">Search for a skater by their first name or last name</p>
-    <?php
-        }
-        ?>
 </div>
+
 <?php include('../footer.php');

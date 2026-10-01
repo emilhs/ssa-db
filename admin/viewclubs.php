@@ -1,4 +1,5 @@
 <?php include('navbar.php');
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !csrf_ok($_POST['csrf'] ?? '')) { $_POST = array(); admin_block('Your session expired, nothing was changed. Please try again.'); }
 
 if (isset($_POST["makealberta"])) {
     $clubName = $_POST["clubName"];
@@ -62,87 +63,40 @@ if($result == TRUE) {
     }
 }
 ?>
-<div class = "menuH">
-    <p class = "bebas-neue darktext padded text-center medsize">Flag if the Following Clubs are in Alberta:</p>
-    <?php
-    $sql2 = "SELECT * FROM club ORDER BY alberta ASC, clubName ASC;";
-    // Executing the sql query
-    $result2 = mysqli_query($conn, $sql2);
-    // Verify that SQL Query is executed or not
-    if($result2 == TRUE) {
-        // Count the number of rows which will be a way to verify if there is data in the database
-        $count2 = mysqli_num_rows($result2);
-        // Initialize display of Athlete Number 
-        if($count2 > 0){
-            $displayNum = 1;
-            ?>
-            <table class = "darktext searchresult arimo">
-                <tr class = "toprow">
-                    <th class = "row-left">Club</th>
-                    <th class = "row-right">Alberta</th>
-                </tr>    
-            <?php
-            while($rows2 = mysqli_fetch_assoc($result2)){
-                $clubName = $rows2['clubName'];
-                $alberta = $rows2['alberta'];
-                ?>
-                <form action="" method="post" enctype="multipart/form-data">
-                    <tr <?php if($displayNum%2==0){?> class = "odd" <?php } ?>>    
-                        <input type = "hidden" value = '<?php echo $clubName; ?>' name = "clubName">
-                        <td class = "row-left"><?php echo $clubName?></td>
-                        <td class = "row-right">
-                        <?php
-                            if ($alberta == NULL) {
-                                ?>
-                                <input class = "filesubmission bebas-neue darktext" type = "submit" value="Not Alberta" name="notalberta">
-                                <input class = "filesubmission bebas-neue darktext" type = "submit" value="Alberta" name="makealberta">
-                                <?php
-                            }
-                            else{
-                                if ($alberta > 0){
-                                    ?>
-                                    <input class = "filesubmission bebas-neue darktext" type = "submit" value="Not Alberta" name="notalberta">
-                                    <button class = "filesubmission-selected bebas-neue darktext">Alberta</button>
-                                    <?php
-                                }
-                                else {
-                                    ?>
-                                    <button class = "filesubmission-selected bebas-neue darktext">Not Alberta</button>
-                                    <input class = "filesubmission bebas-neue darktext" type = "submit" value="Alberta" name="makealberta">
-                                    <?php
-                                }
-                            }
-
-                        ?>
-                        </td>
-                    </tr>
-                </form>
-                <?php 
-                $sql3 = "SELECT * FROM dates NATURAL JOIN comps WHERE compID = '$compID';";
-                $result3 = mysqli_query($conn, $sql3);
-                // Verify that SQL Query is executed or not
-                if($result3 == TRUE) {
-                    // Count the number of rows which will be a way to verify if there is data in the database
-                    $count3 = mysqli_num_rows($result3);
-                    // Initialize display of Athlete Number 
-                    if($count3 > 0){
-                        while($rows3 = mysqli_fetch_assoc($result3)){
-                            $compID = $rows3['compID'];
-                            $dayID = $rows3['dayID'];
-                            $date = $rows3['date'];
-                        }
-                    }
-                } 
-                $displayNum++;
-            }
-            ?>
-            </table>
-            <?php
-        }
-    }
-?>
-</div>
+<link rel="stylesheet" href="../css/admin.css?v=<?php echo filemtime(__DIR__ . '/../css/admin.css'); ?>">
 <?php
+$token = csrf_token();
+$clubRows = array();
+$cq = mysqli_query($conn, "SELECT c.clubName, c.alberta, (SELECT COUNT(DISTINCT s.skaterID) FROM skaters s WHERE s.club = c.clubName) AS skaters FROM club c ORDER BY c.alberta ASC, c.clubName ASC");
+while ($cr = mysqli_fetch_assoc($cq)) $clubRows[] = $cr;
+$unassigned = 0;
+foreach ($clubRows as $cr) if ($cr['alberta'] === null) $unassigned++;
+?>
+
+<main class = "admin-page admin-wide">
+    <h1 class = "admin-h1 bebas-neue">Assign Province</h1>
+    <p class = "admin-hint">Mark each club as Alberta or not. <?php echo $unassigned ? '<strong>' . $unassigned . '</strong> club' . ($unassigned == 1 ? '' : 's') . ' still need' . ($unassigned == 1 ? 's' : '') . ' a province.' : 'Every club has a province.'; ?></p>
+
+    <section class = "edit-card">
+        <?php foreach ($clubRows as $i => $cr) { ?><form id = "cl<?php echo $i; ?>" method = "post"><input type = "hidden" name = "csrf" value = "<?php echo $token; ?>"><input type = "hidden" name = "clubName" value = "<?php echo htmlspecialchars($cr['clubName']); ?>"></form><?php } ?>
+        <div class = "edit-scroll">
+        <table class = "edit-table filterable">
+            <tr><th>Club</th><th>Skaters</th><th>Province</th></tr>
+            <?php foreach ($clubRows as $i => $cr) { $f = 'cl' . $i; $a = $cr['alberta']; ?>
+            <tr>
+                <td><?php echo htmlspecialchars($cr['clubName']); ?><?php if ($a === null) { ?> <span class = "pair-tag pair-warn">Needs province</span><?php } ?></td>
+                <td><?php echo (int)$cr['skaters']; ?></td>
+                <td class = "seg">
+                    <?php if ($a !== null && $a > 0) { ?><span class = "pair-btn sel">Alberta</span><?php } else { ?><button form = "<?php echo $f; ?>" class = "pair-btn" type = "submit" name = "makealberta" value = "1">Alberta</button><?php } ?><?php if ($a !== null && $a <= 0) { ?><span class = "pair-btn sel">Not Alberta</span><?php } else { ?><button form = "<?php echo $f; ?>" class = "pair-btn" type = "submit" name = "notalberta" value = "1">Not Alberta</button><?php } ?>
+                </td>
+            </tr>
+            <?php } ?>
+        </table>
+        </div>
+    </section>
+</main>
+<?php
+$filterLabel = 'Filter clubs'; include('rowfilter.php');
 include("../footer.php");
 
 $getinfo = "SELECT * FROM club;"

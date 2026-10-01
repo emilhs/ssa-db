@@ -1,4 +1,7 @@
-<?php include('navbar.php'); 
+<?php include('navbar.php');
+if (is_file(__DIR__ . '/config/visibility.php')) { include_once(__DIR__ . '/config/visibility.php'); }
+if (!function_exists('visible_sql')) { function visible_sql($col = 'skaterID') { return '1 = 1'; } }   // keeps the page working if config/visibility.php hasn't been uploaded
+if (!defined('REQUIRE_BIRTHDAY')) { define('REQUIRE_BIRTHDAY', false); } 
 
 $currDists = array();
 if (isset($_GET['y'])){
@@ -334,7 +337,7 @@ else {
                         }
                     }
 
-                    $skatersql = "SELECT * FROM skaters AS A NATURAL JOIN (SELECT clubName AS club FROM club WHERE alberta = TRUE) AS B WHERE skaterID = '$skaterID'".$addQuery." ORDER BY season DESC LIMIT 1;";
+                    $skatersql = "SELECT * FROM skaters AS A NATURAL JOIN (SELECT clubName AS club FROM club WHERE alberta = TRUE) AS B WHERE skaterID = '$skaterID' AND ".visible_sql('skaterID')."".$addQuery." ORDER BY season DESC LIMIT 1;";
 
                     // Executing the sql query
                     $result2 = mysqli_query($conn, $skatersql);

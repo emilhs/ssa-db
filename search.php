@@ -1,7 +1,10 @@
 <?php include('navbar.php');
+if (is_file(__DIR__ . '/config/visibility.php')) { include_once(__DIR__ . '/config/visibility.php'); }
+if (!function_exists('visible_sql')) { function visible_sql($col = 'skaterID') { return '1 = 1'; } }   // keeps the page working if config/visibility.php hasn't been uploaded
+if (!defined('REQUIRE_BIRTHDAY')) { define('REQUIRE_BIRTHDAY', false); }
 
 // Every skater that has raced in an Alberta club; filtered live in the browser.
-$sql = "SELECT fName, lName, club, skaterID FROM skaters AS A NATURAL JOIN (SELECT clubName AS club FROM club WHERE alberta = TRUE) AS B GROUP BY skaterID ORDER BY lName, fName;";
+$sql = "SELECT fName, lName, club, skaterID FROM skaters AS A NATURAL JOIN (SELECT clubName AS club FROM club WHERE alberta = TRUE) AS B WHERE " . visible_sql('skaterID') . " GROUP BY skaterID ORDER BY lName, fName;";
 $result = mysqli_query($conn, $sql) or die(mysqli_error($conn));
 $skaters = array();
 while ($rows = mysqli_fetch_assoc($result)) {
@@ -12,13 +15,6 @@ while ($rows = mysqli_fetch_assoc($result)) {
 <link rel="stylesheet" href="css/search.css?v=<?php echo filemtime(__DIR__ . '/css/search.css'); ?>">
 
 <main class = "search-page">
-    <div class = "search-hero">
-        <img src = "images/DSC00762-scaled.jpg" alt = "">
-        <div class = "search-frost">
-            <div class = "search-title bebas-neue">Skater Search</div>
-        </div>
-    </div>
-
     <div class = "search-panels">
     <div class = "search-card search-left">
         <div class = "search-card-title bebas-neue">Search</div>

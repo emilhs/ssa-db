@@ -1,4 +1,7 @@
-<?php include('navbar.php'); 
+<?php include('navbar.php');
+if (is_file(__DIR__ . '/config/visibility.php')) { include_once(__DIR__ . '/config/visibility.php'); }
+if (!function_exists('visible_sql')) { function visible_sql($col = 'skaterID') { return '1 = 1'; } }   // keeps the page working if config/visibility.php hasn't been uploaded
+if (!defined('REQUIRE_BIRTHDAY')) { define('REQUIRE_BIRTHDAY', false); } 
 
 $currDists = array();
 if (isset($_GET['y'])){
@@ -199,7 +202,7 @@ if ($currSeason > 0){
                             FROM points WHERE compID = '".$c."'
                         ) AS A 
                         NATURAL JOIN 
-                        (SELECT * FROM skaters WHERE gender = '".$currGender."' AND age = '".$currAge."' AND season = '".$currSeason."') AS S
+                        (SELECT * FROM skaters WHERE ".visible_sql('skaterID')." AND gender = '".$currGender."' AND age = '".$currAge."' AND season = '".$currSeason."') AS S
                         JOIN
                         club AS P
                         WHERE P.clubName = S.club AND P.alberta = TRUE) AS ".$letters[$lettercount-1]."
@@ -221,7 +224,7 @@ if ($currSeason > 0){
                             FROM points WHERE compID = '".$c."'
                         ) AS A 
                         NATURAL JOIN 
-                        (SELECT * FROM skaters WHERE age = '".$currAge."' AND season = '".$currSeason."') AS S
+                        (SELECT * FROM skaters WHERE ".visible_sql('skaterID')." AND age = '".$currAge."' AND season = '".$currSeason."') AS S
                         JOIN
                         club AS P
                         WHERE P.clubName = S.club AND P.alberta = TRUE) AS ".$letters[$lettercount-1]."
@@ -237,7 +240,7 @@ if ($currSeason > 0){
                 FROM 
                 (SELECT * FROM club) AS CLUB
                 JOIN
-                (SELECT * FROM skaters WHERE gender = '".$currGender."' AND age = '".$currAge."' AND season = '".$currSeason."') AS BASE 
+                (SELECT * FROM skaters WHERE ".visible_sql('skaterID')." AND gender = '".$currGender."' AND age = '".$currAge."' AND season = '".$currSeason."') AS BASE 
                 ON CLUB.clubName = BASE.club AND CLUB.alberta = TRUE
                 LEFT JOIN 
                 ".implode(" LEFT JOIN ",$cPtsArray)."
@@ -248,7 +251,7 @@ if ($currSeason > 0){
                 FROM 
                 (SELECT * FROM club) AS CLUB
                 JOIN
-                (SELECT * FROM skaters WHERE age = '".$currAge."' AND season = '".$currSeason."') AS BASE 
+                (SELECT * FROM skaters WHERE ".visible_sql('skaterID')." AND age = '".$currAge."' AND season = '".$currSeason."') AS BASE 
                 ON CLUB.clubName = BASE.club AND CLUB.alberta = TRUE
                 LEFT JOIN 
                 ".implode(" LEFT JOIN ",$cPtsArray)."
